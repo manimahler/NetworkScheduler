@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">3G Scheduler</string>
+    <string name="three_g_scheduler">3G\nScheduler</string>
+    <string name="dummy_button">3G Scheduler enabled</string>
+    <string name="dummy_button_disable">3G Scheduler disabled</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="night_starts_at">Start mobile network data access</string>
+    <string name="night_ends_at">Stop mobile network data access</string>
+</resources>
