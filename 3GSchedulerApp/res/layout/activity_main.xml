@@ -1,53 +1,55 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android" 
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="#0099cc"
-    android:scrollbarAlwaysDrawVerticalTrack="false"
+    android:layout_height="fill_parent"   
+    android:isScrollContainer="true"
     android:scrollbars="vertical"
-    tools:context=".MainActivity" >
+    android:layout_gravity="top"          
+    android:orientation="vertical"
+    android:background="#0099cc"
+    tools:context=".MainActivity" >   
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"    
+    android:orientation="vertical"
+     >
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/textViewStart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="top"
-        android:orientation="vertical" >
+        android:fillViewport="true"
+        android:layout_marginTop="5dp"
+        android:text="@string/night_starts_at"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <TextView
-            android:id="@+id/textViewStart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/night_starts_at"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+    <TimePicker
+        android:id="@+id/timePickerStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
-        <TimePicker
-            android:id="@+id/timePickerStart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/textViewEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="@string/night_ends_at"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <TextView
-            android:id="@+id/textViewEnd"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="@string/night_ends_at"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+    <TimePicker
+        android:id="@+id/timePickerEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
-        <TimePicker
-            android:id="@+id/timePickerEnd"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+    <ToggleButton
+        android:id="@+id/dummy_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:onClick="onToggleClicked"
+        android:textOff="@string/dummy_button_disable"
+        android:textOn="@string/dummy_button" />
 
-        <ToggleButton
-            android:id="@+id/dummy_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:onClick="onToggleClicked"
-            android:textOff="@string/dummy_button_disable"
-            android:textOn="@string/dummy_button" />
-
-    </LinearLayout>
-
-</FrameLayout>
+</LinearLayout>
+</ScrollView>
