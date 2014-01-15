@@ -3,15 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_gravity="top"
-    android:background="#0099cc"
+    android:background="@drawable/background"
+    android:fillViewport="true"
+    android:fitsSystemWindows="true"
     android:isScrollContainer="true"
     android:orientation="vertical"
     android:scrollbars="vertical"
     tools:context=".MainActivity" >
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
@@ -21,26 +22,31 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:fillViewport="true"
-            android:text="@string/night_starts_at"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:text="@string/start_text"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
-        <TimePicker
-            android:id="@+id/timePickerStart"
+        <Button
+            android:id="@+id/buttonTimeStart"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:onClick="buttonStartClicked" />
 
         <TextView
             android:id="@+id/textViewEnd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="@string/night_ends_at"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:text="@string/stop_text"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
-        <TimePicker
-            android:id="@+id/timePickerEnd"
+        <Button
+            android:id="@+id/buttonTimeStop"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:background="@drawable/time_button"
+            android:onClick="buttonStopClicked"
+            android:textColor="#FFFFFF"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <ToggleButton
             android:id="@+id/dummy_button"
@@ -50,6 +56,14 @@
             android:onClick="onToggleClicked"
             android:textOff="@string/dummy_button_disable"
             android:textOn="@string/dummy_button" />
+
+        <TextView
+            android:id="@+id/textViewNextTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/stop_text"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
     </LinearLayout>
 
 </ScrollView>

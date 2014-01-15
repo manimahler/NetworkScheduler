@@ -2,9 +2,17 @@
 <resources>
     <string name="app_name">3G Scheduler</string>
     <string name="three_g_scheduler">3G\nScheduler</string>
-    <string name="dummy_button">3G Scheduler enabled</string>
-    <string name="dummy_button_disable">3G Scheduler disabled</string>
+    <string name="dummy_button">3G scheduling ON</string>
+    <string name="dummy_button_disable">3G scheduling OFF</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="night_starts_at">Start mobile network data access</string>
-    <string name="night_ends_at">Stop mobile network data access</string>
+    <string name="start_text">Start mobile data</string>
+    <string name="stop_text">Stop mobile data</string>
+    <string name="otl_img_description">Blablablabal</string>
+    <string name="MON">MON</string>
+    <string name="TUE">TUE</string>
+    <string name="WED">WED</string>
+    <string name="THU">THU</string>
+    <string name="FRI">FRI</string>
+    <string name="SAT">SAT</string>
+    <string name="SUN">SUN</string>
 </resources>
