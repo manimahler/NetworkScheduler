@@ -2,11 +2,12 @@
 
     <item
         android:id="@+id/gradient"
+        android:dither="true"
         android:drawable="@drawable/gradient"/>
     <item>
         <bitmap
-            android:alpha="0.5"
-            android:gravity="right"
+            android:alpha="10"
+            android:gravity="center"
             android:src="@drawable/ic_launcher" />
     </item>
     <!-- 

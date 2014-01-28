@@ -10,7 +10,7 @@
             android:shape="line" >
             <stroke
                 android:width="4dp"
-                android:color="#d3d3d3" />
+                android:color="@android:color/white" />
 
             <size android:height="1dp" />
 

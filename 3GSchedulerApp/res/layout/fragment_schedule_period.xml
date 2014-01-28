@@ -1,117 +1,97 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:theme="@android:style/Theme.Translucent"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical" 
-    android:background="@drawable/background" >
+    android:layout_height="fill_parent"
+    android:background="@drawable/background"
+    android:fillViewport="true"
+    android:fitsSystemWindows="true"
+    android:isScrollContainer="true"
+    android:orientation="vertical"
+    android:scrollbars="vertical" >
 
     <LinearLayout
-        android:id="@+id/layout_time_start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-
-        <Button
-            android:id="@+id/buttonTimeStart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/time_button"
-            android:onClick="buttonStartClicked"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#FFFFFF" />
-
-        <TextView
-            android:id="@+id/textViewStart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fillViewport="true"
-            android:text="@string/start_text"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layout_time_stop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-
-        <Button
-            android:id="@+id/buttonTimeStop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/time_button"
-            android:onClick="buttonStopClicked"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#FFFFFF" />
-
-        <TextView
-            android:id="@+id/textViewEnd"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="@string/stop_text"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layout_weekdays"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-
-        <ToggleButton
-            android:id="@+id/button_mon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/day_button"
-        android:checked="true"
-        android:gravity="center_vertical|center_horizontal"
-        android:minHeight="24dip"
-        android:minWidth="32dip"
-
-
-
-            android:onClick="buttonDayToggleClicked"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textOff="@string/MON"
-            android:textOn="@string/MON" />
-
-        <ToggleButton
-            android:id="@+id/button_tue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/day_button"
-        android:checked="true"
-        android:gravity="center_vertical|center_horizontal"
-        android:minHeight="24dip"
-        android:minWidth="32dip"
-        	
-        	
-        	
-            android:onClick="buttonDayToggleClicked"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textOff="@string/TUE"
-            android:textOn="@string/TUE" />
-
-        <ToggleButton
-            android:id="@+id/button_wed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/day_button"
-            android:checked="false"
-            android:gravity="center_vertical|center_horizontal"
-            android:minHeight="24dip"
-            android:minWidth="32dip"
-            android:onClick="buttonDayToggleClicked"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textOff="@string/WED"
-            android:textOn="@string/WED" />
-
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/textViewNextTime"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="@string/stop_text"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:orientation="vertical"
+        android:theme="@android:style/Theme.Translucent" >
 
-</LinearLayout>
+        <LinearLayout
+            android:id="@+id/layout_time_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/buttonTimeStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/time_button"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/textViewStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fillViewport="true"
+                android:text="@string/start_text"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_time_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/buttonTimeStop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/time_button"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/textViewEnd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@string/stop_text"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+        </LinearLayout>
+
+        <com.manimahler.android.scheduler3g.FlowLayout
+            android:id="@+id/flowlayout_weekdays"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+        </com.manimahler.android.scheduler3g.FlowLayout>
+
+        <CheckBox
+            android:id="@+id/checkBoxMobileData"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mobile data"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <CheckBox
+            android:id="@+id/checkBoxWifi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Wi-Fi"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <CheckBox
+            android:id="@+id/checkBoxBluetooth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bluetooth"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/textViewNextTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/stop_text"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+    </LinearLayout>
+
+</ScrollView>

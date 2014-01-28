@@ -27,7 +27,7 @@ public class AutostartNotifyReceiver extends BroadcastReceiver {
 	
 	public void RestartAlarmAfterBoot(Context context)
 	{
-		AlarmHandler alarmHandler = new AlarmHandler();
+		NetworkScheduler alarmHandler = new NetworkScheduler();
 		
 		SharedPreferences prefs = alarmHandler.GetPreferences(context);
 		

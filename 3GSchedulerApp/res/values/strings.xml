@@ -1,18 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">3G Scheduler</string>
-    <string name="three_g_scheduler">3G\nScheduler</string>
+    <string name="app_name">Network Scheduler</string>
+    <string name="three_g_scheduler">Network\nScheduler</string>
     <string name="dummy_button">3G scheduling ON</string>
     <string name="dummy_button_disable">3G scheduling OFF</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="start_text">Start mobile data</string>
-    <string name="stop_text">Stop mobile data</string>
+    <string name="start_text">Start</string>
+    <string name="stop_text">Stop</string>
     <string name="otl_img_description">Blablablabal</string>
-    <string name="MON">MON</string>
-    <string name="TUE">TUE</string>
-    <string name="WED">WED</string>
-    <string name="THU">THU</string>
-    <string name="FRI">FRI</string>
-    <string name="SAT">SAT</string>
-    <string name="SUN">SUN</string>
+    <string name="delete">Delete</string>
+    <string name="modify">Modify</string>
+    <string name="action_3g_on">Action3gOn</string>
+    <string name="action_3g_off">Action3gOff</string>
+    <string name="period_id">PERIOD_ID</string>
+    <string name="mobile_data">Mobile data</string>
+    <string name="wifi">Wi-Fi</string>
+    <string name="bluetooth">Bluetooth</string>
+    <string name="switch_off_all">Switching off Wi-Fi, Mobile Data and Bluetooth in a few moments...</string>
+    <string name="switch_off_wifi_mobile">Switching off Wi-Fi and Mobile Data in a few moments...</string>
+    <string name="switch_off_wifi_bluetooth">Switching off Wi-Fi and Bluetooth in a few moments...</string>
+    <string name="switch_off_mobile_bluetooth">Switching off Mobile Data and Bluetooth in a few moments...</string>
+    <string name="switch_off_wifi">Switching off Wi-Fi in a few moments...</string>
+    <string name="switch_off_mobile">Switching off Mobile Data in a few moments...</string>
+    <string name="switch_off_bluetooth">Switching off Bluetooth in a few moments...</string>
 </resources>

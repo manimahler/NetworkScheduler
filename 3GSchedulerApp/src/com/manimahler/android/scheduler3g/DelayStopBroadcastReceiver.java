@@ -10,22 +10,24 @@ public class DelayStopBroadcastReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-
-		Log.d("DelayStopBroadcastReceiver", "Receiving delay broadcast");
-
 		try
 		{
+			int periodId = intent.getExtras().getInt(
+					context.getString(R.string.period_id), -4);
+			
+			Log.d("DelayStopBroadcastReceiver", "Received delay broadcast for id " + periodId);
+			
 			// check if really needed:
 			NotificationManager notificationManager = 
 				(NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 			
-			notificationManager.cancel(17);
+			notificationManager.cancel(periodId);
 			
-			AlarmHandler ah = new AlarmHandler();
+			NetworkScheduler scheduler = new NetworkScheduler();
 			
-			ah.cancelSwitchOff(context, "OFF");
+			scheduler.cancelSwitchOff(context, "OFF");
 			
-			ah.scheduleSwitchOff(context, 36, "OFF_DELAYED");	
+			scheduler.scheduleSwitchOff(context, 36, "OFF_DELAYED", periodId);	
 		}
 		catch (Exception e)
 		{

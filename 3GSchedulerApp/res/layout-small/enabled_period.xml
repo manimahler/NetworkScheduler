@@ -1,0 +1,78 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/background_enabled_period"
+    >
+    <TextView
+        android:id="@+id/topLine"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="16dp"
+        android:gravity="center_vertical"
+        android:text="Mobile Data and Wifi"
+        android:textSize="16sp"
+        android:typeface="sans" />
+
+        <TextView
+            android:id="@+id/textViewOn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/textViewStartTime"
+            android:layout_alignBottom="@+id/textViewStartTime"
+            android:layout_alignLeft="@+id/topLine"
+            android:ellipsize="marquee"
+            android:singleLine="false"
+            android:text="on"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/textViewStartTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/topLine"
+            android:layout_marginRight="12dp"
+            android:layout_toRightOf="@+id/textViewOn"
+            android:text="07:00"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="24sp"
+            android:typeface="sans" />
+
+        <TextView
+            android:id="@+id/bottomLine"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textViewOn"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/TextViewStopTime"
+            android:gravity="center_vertical"
+            android:text="MON -FRI"
+            android:textSize="16sp"
+            android:typeface="sans" />
+
+        <TextView
+            android:id="@+id/TextViewStopTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textViewStartTime"
+            android:layout_toRightOf="@+id/TextViewOff"
+            android:layout_weight="1"
+            android:text="09:00"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="24sp"
+            android:typeface="sans" />
+
+        <TextView
+            android:id="@+id/TextViewOff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/TextViewStopTime"
+            android:layout_alignBottom="@+id/TextViewStopTime"
+            android:layout_alignRight="@+id/textViewOn"
+            android:ellipsize="marquee"
+            android:singleLine="false"
+            android:text="off"
+            android:textSize="12sp" />
+
+</RelativeLayout>

@@ -1,6 +1,7 @@
 package com.manimahler.android.scheduler3g;
 
 import android.content.SharedPreferences;
+import android.os.Bundle;
 
 public class ScheduleSettings {
 	private static final String END_TIME = "EndTime";
@@ -58,9 +59,15 @@ public class ScheduleSettings {
 		editor.putBoolean(SCHEDULING_ENABLED, _schedulingEnabled);
 		editor.putLong(START_TIME, _startTimeMillis);
 		editor.putLong(END_TIME, _endTimeMillis);
-
+		
+		
 		// Commit to storage
 		editor.commit();
+	}
+	
+	public void saveToBundle(Bundle bundle)
+	{
+		//bundle.putboo
 	}
 
 }

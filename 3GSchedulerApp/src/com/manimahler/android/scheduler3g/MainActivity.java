@@ -1,9 +1,15 @@
 package com.manimahler.android.scheduler3g;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
+import com.manimahler.android.scheduler3g.SchedulePeriodFragment.OnPeriodUpdatedListener;
+import com.manimahler.android.scheduler3g.R;
+
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.SharedPreferences;
+import android.graphics.PixelFormat;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -11,12 +17,23 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TimePicker;
 import android.widget.TimePicker.OnTimeChangedListener;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 /**
@@ -25,19 +42,153 @@ import android.widget.ToggleButton;
  * 
  * @see SystemUiHider
  */
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements
+		OnPeriodUpdatedListener {
 
 	ScheduleSettings _settings;
-	
+
+	ArrayList<EnabledPeriod> _enabledPeriods;
+
+	private PeriodListAdapter adapter;
+
 	final static boolean DEBUG = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		// getWindow().setFormat(PixelFormat.RGBA_8888);
+
 		setContentView(R.layout.activity_main);
 
 		SharedPreferences preferences = GetPreferences();
+
+		_enabledPeriods = PersistenceUtils.readFromPreferences(preferences);
+
+		final ListView listview = (ListView) findViewById(R.id.listview);
+
+		this.registerForContextMenu(listview);
+
+		//listview.setClickable(true);
+		//listview.setLongClickable(true);
+
+		// EnabledPeriod[] values = new EnabledPeriod[2];
+		//
+		// values[0] = new EnabledPeriod(preferences);
+		// values[1] = new EnabledPeriod(preferences);
+
+		// final ArrayList<EnabledPeriod> list = new ArrayList<EnabledPeriod>();
+		// for (int i = 0; i < values.length; ++i) {
+		//
+		// EnabledPeriod period = values[i];
+		// period.set_id(i);
+		// list.add(period);
+		// }
+
+		adapter = new PeriodListAdapter(MainActivity.this, _enabledPeriods);
+
+		listview.setAdapter(adapter);
+
+		listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, final View view,
+					int position, long id) {
+				
+				Log.d("MainActivity.AdapterView.OnItemClickListener", "Item clicked at " + position);
+
+				EnabledPeriod item = adapter.getItem(position);
+
+				showPeriodDetails(item);
+
+				// ((Button)view.findViewById(android.R.id.button1)).setBackgroundResource(R.drawable.time_button);
+
+				// final String item = (String)
+				// parent.getItemAtPosition(position);
+				// view.animate().setDuration(2000).alpha(0)
+				// .withEndAction(new Runnable() {
+				// @Override
+				// public void run() {
+				// list.remove(item);
+				// adapter.notifyDataSetChanged();
+				// //view.setAlpha(1);
+				// }
+				// });
+			}
+		});
+
+		listview.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+
+			@Override
+			public void onCreateContextMenu(ContextMenu menu, View v,
+					ContextMenuInfo menuInfo) {
+
+				MenuInflater inflater = getMenuInflater();
+				inflater.inflate(R.menu.context_menu, menu);
+
+			}
+		});
+		//
+		// listview.setOnItemLongClickListener(new
+		// AdapterView.OnItemLongClickListener() {
+		//
+		// @Override
+		// public boolean onItemLongClick(AdapterView<?> parent, View view,
+		// int position, long id) {
+		//
+		// // TODO Auto-generated method stub
+		// AlertDialog.Builder adb = new AlertDialog.Builder(MainActivity.this);
+		// adb.setTitle("Are you sure want to delete this item");
+		//
+		// // adb.setPositiveButton("Yes",
+		// // new DialogInterface.OnClickListener() {
+		// //
+		// // @Override
+		// // public void onClick(DialogInterface dialog,
+		// // int which) {
+		// // // TODO Auto-generated method stub
+		// // itemArrey.remove(position);
+		// // itemAdapter.notifyDataSetChanged();
+		// //
+		// // }
+		// // });
+		// // adb.setNegativeButton("NO",
+		// // new DialogInterface.OnClickListener() {
+		// //
+		// // @Override
+		// // public void onClick(DialogInterface dialog,
+		// // int which) {
+		// // // TODO Auto-generated method stub
+		// // dialog.dismiss();
+		// //
+		// // }
+		// // });
+		// adb.show();
+		//
+		// return false;
+		//
+		// }
+		//
+		// });
+
+//		listview.setOnTouchListener(new OnSwipeTouchListener() {
+//
+//			public void onSwipeRight() {
+//				Toast.makeText(MainActivity.this, "right", Toast.LENGTH_SHORT)
+//						.show();
+//
+//			}
+//
+//			public void onSwipeLeft() {
+//				Toast.makeText(MainActivity.this, "left", Toast.LENGTH_SHORT)
+//						.show();
+//			}
+//
+//			public void onSwipeBottom() {
+//				Toast.makeText(MainActivity.this, "bottom", Toast.LENGTH_SHORT)
+//						.show();
+//			}
+//		});
 
 		_settings = new ScheduleSettings(preferences);
 
@@ -75,23 +226,82 @@ public class MainActivity extends FragmentActivity {
 		// Button stopButton = (Button)findViewById(R.id.buttonTimeStop);
 		// setButtonTime(_settings.get_endTimeMillis(), stopButton);
 
-		settingsChanged(false);
+		// settingsChanged(false);
 
 		// Upon interacting with UI controls, delay any scheduled hide()
 		// operations to prevent the jarring behavior of controls going away
 		// while interacting with the UI.
-		ToggleButton button = (ToggleButton) findViewById(R.id.dummy_button);
+		// ToggleButton button = (ToggleButton) findViewById(R.id.dummy_button);
+		//
+		// button.setChecked(_settings.is_schedulingEnabled());
 
-		button.setChecked(_settings.is_schedulingEnabled());
+		View addBtn = findViewById(R.id.buttonAdd);
+
+		Animation myFadeInAnimation = AnimationUtils.loadAnimation(
+				MainActivity.this, R.anim.fadein);
+
+		addBtn.startAnimation(myFadeInAnimation);
+
+		// TransitionDrawable trans = (TransitionDrawable)
+		// layout.getBackground();
+		// trans.startTransition(2000);
+	}
+
+	@Override
+	public void onPeriodUpdated(EnabledPeriod period) {
+		// TODO Auto-generated method stub
+
+		adapter.updateItem(period);
+
+		saveSettings();
 		
-		View layout = findViewById(R.id.textViewNextTime);
-		
-		Animation myFadeInAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.fadein);
-		
-		layout.startAnimation(myFadeInAnimation);
-		
-//		TransitionDrawable trans = (TransitionDrawable) layout.getBackground();
-//		trans.startTransition(2000);
+		Toast.makeText(MainActivity.this, "Updating time period",
+				Toast.LENGTH_SHORT).show();
+
+	}
+
+	// @Override
+	// public void onAttachedToWindow() {
+	// // trial to mitigate gradient banding on tablets
+	// super.onAttachedToWindow();
+	// Window window = getWindow();
+	// window.setFormat(PixelFormat.RGBA_8888);
+	// }
+
+	public void onAddClicked(View view) {
+		long start = DateTimeUtils.getNextTimeIn24hInMillis(6, 30);
+		long end = DateTimeUtils.getNextTimeIn24hInMillis(23, 30);
+
+		EnabledPeriod newPeriod = new EnabledPeriod(true, start, end,
+				new boolean[7]);
+
+		showPeriodDetails(newPeriod);
+
+		// adapter.addItem();
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+				.getMenuInfo();
+		switch (item.getItemId()) {
+		case R.id.delete:
+			Log.d("MainActivity.onContextItemSelected", "Delete pressed");
+			
+			adapter.removeAt(info.position);
+			
+			saveSettings();
+			return true;
+		case R.id.modify:
+			
+			Log.d("MainActivity.onContextItemSelected", "Edit pressed");
+			
+			EnabledPeriod period = adapter.getItem(info.position);
+
+			showPeriodDetails(period);
+		default:
+			return super.onContextItemSelected(item);
+		}
 	}
 
 	public void onToggleClicked(View view) {
@@ -103,37 +313,39 @@ public class MainActivity extends FragmentActivity {
 		setAlarm();
 	}
 
-	public void buttonStartClicked(View v) {
+	//
+	// public void buttonStartClicked(View v) {
+	//
+	// FragmentManager fm = getSupportFragmentManager();
+	// SchedulePeriodFragment editNameDialog = new SchedulePeriodFragment();
+	// editNameDialog.show(fm, "fragment_schedule_period");
+	//
+	//
+	// DialogFragment newFragment = new TimePickerFragment(
+	// _settings.get_startTimeMillis()) {
+	// @Override
+	// public void onTimeSetAndDone(int hourOfDay, int minute) {
+	//
+	// startTimePicked(hourOfDay, minute);
+	// }
+	// };
+	//
+	// newFragment.show(getSupportFragmentManager(), "timePickerStart");
+	// }
 
-        FragmentManager fm = getSupportFragmentManager();
-        SchedulePeriodFragment editNameDialog = new SchedulePeriodFragment();
-        editNameDialog.show(fm, "fragment_schedule_period");
-
-		
-		DialogFragment newFragment = new TimePickerFragment(
-				_settings.get_startTimeMillis()) {
-			@Override
-			public void onTimeSetAndDone(int hourOfDay, int minute) {
-
-				startTimePicked(hourOfDay, minute);
-			}
-		};
-
-		newFragment.show(getSupportFragmentManager(), "timePickerStart");
-	}
-
-	public void buttonStopClicked(View v) {
-		DialogFragment newFragment = new TimePickerFragment(
-				_settings.get_endTimeMillis()) {
-			@Override
-			public void onTimeSetAndDone(int hourOfDay, int minute) {
-				// Do something with the time chosen by the user
-				endTimePicked(hourOfDay, minute);
-			}
-		};
-
-		newFragment.show(getSupportFragmentManager(), "timePickerStart");
-	}
+	//
+	// public void buttonStopClicked(View v) {
+	// DialogFragment newFragment = new TimePickerFragment(
+	// _settings.get_endTimeMillis()) {
+	// @Override
+	// public void onTimeSetAndDone(int hourOfDay, int minute) {
+	// // Do something with the time chosen by the user
+	// endTimePicked(hourOfDay, minute);
+	// }
+	// };
+	//
+	// newFragment.show(getSupportFragmentManager(), "timePickerStart");
+	// }
 
 	private void setPickerTime(long timeInMillis, TimePicker picker) {
 
@@ -161,34 +373,9 @@ public class MainActivity extends FragmentActivity {
 			calendar.setTimeInMillis(timeInMillis);
 		}
 
-		String hour;
-
-		if (DateFormat.is24HourFormat(this)) {
-			hour = String.format("%02d", calendar.get(Calendar.HOUR_OF_DAY));
-		} else {
-			hour = String.format("%02d", calendar.get(Calendar.HOUR));
-		}
-
-		String min = String.format("%02d", calendar.get(Calendar.MINUTE));
-
-		String text;
-
-		if (DateFormat.is24HourFormat(this)) {
-			text = String.format("%1$s : %2$s", hour, min);
-		} else {
-			String am_pm;
-
-			if (calendar.get(Calendar.AM_PM) == Calendar.AM) {
-				am_pm = "AM";
-			} else {
-				am_pm = "PM";
-			}
-
-			text = String.format("%1$s : %2$s %3$s", hour, min, am_pm);
-		}
+		String text = DateTimeUtils.getHourMinuteText(this, calendar);
 
 		button.setText(text);
-
 	}
 
 	@Override
@@ -203,7 +390,7 @@ public class MainActivity extends FragmentActivity {
 
 		// loseTimePickersFocus();
 
-		saveSettings();
+		//saveSettings();
 	}
 
 	@Override
@@ -213,13 +400,18 @@ public class MainActivity extends FragmentActivity {
 		// onPause is called e.g. when the back button is pressed
 		// loseTimePickersFocus();
 
-		saveSettings();
+		//saveSettings();
+
 	}
 
 	private void saveSettings() {
 		SharedPreferences preferences = GetPreferences();
 
-		_settings.saveToPreferences(preferences);
+		Log.d("saveSettings", "Saving to preferences...");
+		PersistenceUtils.saveToPreferences(preferences, _enabledPeriods);
+		
+		setAlarm();
+		// _settings.saveToPreferences(preferences);
 	}
 
 	// private void loseTimePickersFocus()
@@ -251,8 +443,6 @@ public class MainActivity extends FragmentActivity {
 		return calendar.getTimeInMillis();
 	}
 
-
-
 	//
 	// private void setAlarm(boolean on) {
 	//
@@ -279,60 +469,80 @@ public class MainActivity extends FragmentActivity {
 
 	private void setAlarm() {
 
-		AlarmHandler alarmHandler = new AlarmHandler();
+		NetworkScheduler scheduler = new NetworkScheduler();
 
-		alarmHandler.setAlarm(MainActivity.this, _settings);
-
-		Log.d("MainActivity", "Alarm set: " + _settings.is_schedulingEnabled());
-
-		
-		if (_settings.is_schedulingEnabled()) {
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTimeInMillis(_settings.get_startTimeMillis());
-
-			Log.d("MainActivity", "start Time: " + calendar.toString());
-
-			calendar.setTimeInMillis(_settings.get_endTimeMillis());
-
-			Log.d("MainActivity", "stop Time: " + calendar.toString());
+		for (EnabledPeriod period : _enabledPeriods) {
+			scheduler.setAlarm(MainActivity.this, period);
 		}
+		
+//		
+//		alarmHandler.setAlarm(MainActivity.this, _settings);
+//
+//		Log.d("MainActivity", "Alarm set: " + _settings.is_schedulingEnabled());
+//
+//		if (_settings.is_schedulingEnabled()) {
+//			Calendar calendar = Calendar.getInstance();
+//			calendar.setTimeInMillis(_settings.get_startTimeMillis());
+//
+//			Log.d("MainActivity", "start Time: " + calendar.toString());
+//
+//			calendar.setTimeInMillis(_settings.get_endTimeMillis());
+//
+//			Log.d("MainActivity", "stop Time: " + calendar.toString());
+//		}
 	}
 
 	private SharedPreferences GetPreferences() {
-		AlarmHandler alarmHandler = new AlarmHandler();
+		NetworkScheduler alarmHandler = new NetworkScheduler();
 
 		return alarmHandler.GetPreferences(MainActivity.this);
 	}
 
-	private void startTimePicked(int hourOfDay, int minute) {
+	//
+	// private void startTimePicked(int hourOfDay, int minute) {
+	//
+	// long nextStartTimeInMillis =
+	// DateTimeUtils.getNextTimeIn24hInMillis(hourOfDay, minute);
+	//
+	// _settings.set_startTimeMillis(nextStartTimeInMillis);
+	//
+	// settingsChanged(true);
+	// }
+	//
+	// private void endTimePicked(int hourOfDay, int minute) {
+	//
+	// long nextEndTimeInMillis =
+	// DateTimeUtils.getNextTimeIn24hInMillis(hourOfDay, minute);
+	//
+	// _settings.set_endTimeMillis(nextEndTimeInMillis);
+	//
+	// settingsChanged(true);
+	// }
+	//
+	// private void settingsChanged(boolean setAlarm) {
+	// Button startButton = (Button) findViewById(R.id.buttonTimeStart);
+	// setButtonTime(_settings.get_startTimeMillis(), (Button) startButton);
+	//
+	// Button stopButton = (Button) findViewById(R.id.buttonTimeStop);
+	// setButtonTime(_settings.get_endTimeMillis(), (Button) stopButton);
+	//
+	// saveSettings();
+	//
+	// if (setAlarm) {
+	// setAlarm();
+	// }
+	// }
 
-		long nextStartTimeInMillis = DateTimeUtils.getNextTimeIn24hInMillis(hourOfDay, minute);
+	public void showPeriodDetails(EnabledPeriod item) {
+		FragmentManager fm = getSupportFragmentManager();
+		SchedulePeriodFragment schedulePeriodFragment = SchedulePeriodFragment
+				.newInstance(item);
 
-		_settings.set_startTimeMillis(nextStartTimeInMillis);
-
-		settingsChanged(true);
+		//
+		// Bundle bundle = new Bundle();
+		// item.saveToBundle(bundle);
+		// schedulePeriodFragment.setArguments(bundle);
+		schedulePeriodFragment.show(fm, "fragment_schedule_period");
 	}
 
-	private void endTimePicked(int hourOfDay, int minute) {
-
-		long nextEndTimeInMillis = DateTimeUtils.getNextTimeIn24hInMillis(hourOfDay, minute);
-
-		_settings.set_endTimeMillis(nextEndTimeInMillis);
-
-		settingsChanged(true);
-	}
-
-	private void settingsChanged(boolean setAlarm) {
-		Button startButton = (Button) findViewById(R.id.buttonTimeStart);
-		setButtonTime(_settings.get_startTimeMillis(), (Button) startButton);
-
-		Button stopButton = (Button) findViewById(R.id.buttonTimeStop);
-		setButtonTime(_settings.get_endTimeMillis(), (Button) stopButton);
-
-		saveSettings();
-
-		if (setAlarm) {
-			setAlarm();
-		}
-	}
 }
