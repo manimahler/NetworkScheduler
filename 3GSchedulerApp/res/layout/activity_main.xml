@@ -8,90 +8,49 @@
 
     <ListView
         android:id="@+id/listview"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_weight="1"
-        android:dividerHeight="15dp"
-        android:divider="@android:color/transparent" />
-
-    <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_weight="2"
-        android:fillViewport="true"
-        android:fitsSystemWindows="true"
-        android:isScrollContainer="true"
-        android:orientation="vertical"
-        android:scrollbars="vertical"
-        tools:context=".MainActivity" >
+        android:layout_weight="8"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="15dp" 
+        android:clipToPadding="false" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="124dp"
+        android:layout_weight="1"
+        android:gravity="bottom"
+        android:orientation="vertical" >
 
         <LinearLayout
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="bottom"
-            android:orientation="vertical" >
-
-            <!-- 
-            <TextView
-                android:id="@+id/textViewStart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:fillViewport="true"
-                android:text="@string/start_text"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-
-            <Button
-                android:id="@+id/buttonTimeStart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="buttonStartClicked" />
+            android:layout_gravity="top"
+            android:layout_marginBottom="20dp" >
 
             <TextView
-                android:id="@+id/textViewEnd"
+                android:id="@+id/nextOffText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="@string/stop_text"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:text="@string/stop_text" />
 
             <Button
-                android:id="@+id/buttonTimeStop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/time_button"
-                android:onClick="buttonStopClicked"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="#FFFFFF" />
-
-            <ToggleButton
-                android:id="@+id/dummy_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:onClick="onToggleClicked"
-                android:textOff="@string/dummy_button_disable"
-                android:textOn="@string/dummy_button" />
-
-            <TextView
-                android:id="@+id/textViewNextTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="@string/stop_text"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
-
- -->
-            <Button
-                android:id="@+id/buttonAdd"
+                android:id="@+id/buttonSkipToday"
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:onClick="onAddClicked"
-                android:background="@drawable/add_button" />
+                android:text="Skip today" />
 
         </LinearLayout>
-    </ScrollView>
+
+        <Button
+            android:id="@+id/buttonAdd"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/add_button"
+            android:onClick="onAddClicked" />
+    </LinearLayout>
 
 </LinearLayout>

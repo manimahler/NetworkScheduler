@@ -3,8 +3,6 @@ package com.manimahler.android.scheduler3g;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 import android.app.NotificationManager;
 import android.bluetooth.BluetoothAdapter;
@@ -15,7 +13,6 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -51,19 +48,19 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 				EnabledPeriod referencedPeriod = PersistenceUtils.getPeriod(
 						sharedPrefs, periodId);
 				
-				if (! appliesToday(referencedPeriod))
+				boolean on = bundle.getBoolean(context
+						.getString(R.string.action_3g_on));
+				
+				if (! appliesToday(referencedPeriod, on))
 				{
 					Log.d("StartStopBroadcastReceiver", "action does not apply today ");
 					return;
 				}
 				
-				boolean on = bundle.getBoolean(context
-						.getString(R.string.action_3g_on));
-
 				if (!on) {
 					scheduleNotifiedSwitchOff(context, 30, referencedPeriod);
 				} else {
-					toggleNetworkState(context, referencedPeriod, on);
+					ConnectionUtils.toggleNetworkState(context, referencedPeriod, on);
 				}
 			}
 
@@ -76,9 +73,33 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 		}
 	}
 	
-	private boolean appliesToday(EnabledPeriod referencedPeriod) throws Exception {
+	private boolean appliesToday(EnabledPeriod referencedPeriod, boolean enable) throws Exception {
 		
-		return (referencedPeriod.get_weekDays()[DateTimeUtils.getWeekdayIndexOfToday()]);
+		// do not use todays time but the official end time because the
+		// broadcast might arrive late (esp. with inexact repeating on kitkat)
+		
+		long alarmTime;
+		
+		Log.d("StartStopReceiver", "enable: " + enable);
+		
+		if (enable)
+		{
+			alarmTime = referencedPeriod.get_startTimeMillis();
+		}
+		else
+		{
+			alarmTime = referencedPeriod.get_endTimeMillis();
+		}
+		
+		long actualAlarmTime = DateTimeUtils.getPreviousTimeIn24hInMillis(alarmTime);
+		
+		Log.d("StartStopReceiver", "actualAlarmTime: " + actualAlarmTime);
+		
+		int weekdayIndex = DateTimeUtils.getWeekdayIndex(actualAlarmTime);
+		
+		Log.d("StartStopReceiver", "weekdayIndex: " + weekdayIndex);
+		
+		return (referencedPeriod.get_weekDays()[weekdayIndex]);
 	}
 
 	private void scheduleNotifiedSwitchOff(Context context, int seconds,
@@ -134,7 +155,7 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 				// before switching off, remove notification
 
 				notificationManager.cancel(periodId);
-				toggleNetworkState(context, referencedPeriod, false);
+				ConnectionUtils.toggleNetworkState(context, referencedPeriod, false);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -187,138 +208,61 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 	// notificationManager.cancel(17);
 	// }
 
-	private void toggleNetworkState(Context context, int periodId,
-			boolean enable) throws ClassNotFoundException,
-			NoSuchFieldException, IllegalArgumentException,
-			IllegalAccessException, NoSuchMethodException,
-			InvocationTargetException {
+//	private void toggleNetworkState(Context context, int periodId,
+//			boolean enable) throws ClassNotFoundException,
+//			NoSuchFieldException, IllegalArgumentException,
+//			IllegalAccessException, NoSuchMethodException,
+//			InvocationTargetException {
+//
+//		NetworkScheduler scheduler = new NetworkScheduler();
+//		SharedPreferences sharedPrefs = scheduler.GetPreferences(context);
+//
+//		EnabledPeriod referencedPeriod = PersistenceUtils.getPeriod(
+//				sharedPrefs, periodId);
+//		toggleNetworkState(context, referencedPeriod, enable);
+//	}
 
-		NetworkScheduler scheduler = new NetworkScheduler();
-		SharedPreferences sharedPrefs = scheduler.GetPreferences(context);
-
-		EnabledPeriod referencedPeriod = PersistenceUtils.getPeriod(
-				sharedPrefs, periodId);
-		toggleNetworkState(context, referencedPeriod, enable);
-	}
-
-	private void toggleNetworkState(Context context,
-			EnabledPeriod enabledPeriod, boolean enable)
-			throws ClassNotFoundException, NoSuchFieldException,
-			IllegalArgumentException, IllegalAccessException,
-			NoSuchMethodException, InvocationTargetException {
-
-		if (enabledPeriod.is_mobileData()) {
-			toggleMobileData(context, enable);
-		}
-
-		if (enabledPeriod.is_wifi()) {
-			toggleWifi(context, enable);
-		}
-
-		if (enabledPeriod.is_bluetooth()) {
-			toggleBluetooth(context, enable);
-		}
-	}
-
-	private void toggleWifi(Context context, boolean enable) {
-		WifiManager wifiManager = (WifiManager) context
-				.getSystemService(Context.WIFI_SERVICE);
-		wifiManager.setWifiEnabled(enable);
-
-		// boolean wifiEnabled = wifiManager.isWifiEnabled();
-	}
-
-	private void toggleBluetooth(Context context, boolean enable) {
-		BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-
-		if (adapter != null) {
-			if (adapter.getState() == BluetoothAdapter.STATE_ON) {
-
-				if (enable) {
-					Log.d("Bluetooth", "Bluetooth already enabled");
-				} else {
-					adapter.disable();
-				}
-
-			} else if (adapter.getState() == BluetoothAdapter.STATE_OFF) {
-
-				if (enable) {
-					adapter.enable();
-				} else {
-					Log.d("Bluetooth", "Bluetooth already disabled");
-				}
-			} else {
-				// State.INTERMEDIATE_STATE;
-			}
-		}
-	}
-
-	// found on the Internet and adapted slightly
-	private void toggleMobileData(Context context, boolean enable)
-			throws ClassNotFoundException, NoSuchFieldException,
-			IllegalArgumentException, IllegalAccessException,
-			NoSuchMethodException, InvocationTargetException {
-
-		final ConnectivityManager conman = (ConnectivityManager) context
-				.getSystemService(Context.CONNECTIVITY_SERVICE);
-		final Class<?> conmanClass = Class.forName(conman.getClass().getName());
-		final Field iConnectivityManagerField = conmanClass
-				.getDeclaredField("mService");
-		iConnectivityManagerField.setAccessible(true);
-		final Object iConnectivityManager = iConnectivityManagerField
-				.get(conman);
-		final Class<?> iConnectivityManagerClass = Class
-				.forName(iConnectivityManager.getClass().getName());
-		final Method setMobileDataEnabledMethod = iConnectivityManagerClass
-				.getDeclaredMethod("setMobileDataEnabled", Boolean.TYPE);
-
-		Log.d("StartStopBroadcastReceiver",
-				"Switching mobile data ON status to " + enable);
-
-		setMobileDataEnabledMethod.setAccessible(true);
-		setMobileDataEnabledMethod.invoke(iConnectivityManager, enable);
-	}
-
-	private void Stop3g(long expectedStartMillis, Context context) {
-		// re-check if there was a change
-		NetworkScheduler ah = new NetworkScheduler();
-		SharedPreferences sharedPrefs = ah.GetPreferences(context);
-
-		ScheduleSettings currentSettings = new ScheduleSettings(sharedPrefs);
-	}
-
-	private void makeDataEnableToast(Context context, boolean enable,
-			TelephonyManager telephonyManager) {
-		if (telephonyManager.getDataState() == TelephonyManager.DATA_CONNECTED) {
-			if (enable) {
-				Toast.makeText(
-						context,
-						"3G Mobile Data Scheduler: Data access over mobile network is alredy enabled",
-						Toast.LENGTH_LONG).show();
-			} else {
-				Toast.makeText(
-						context,
-						"3G Mobile Data Scheduler: Switching off data access over mobile network",
-						Toast.LENGTH_LONG).show();
-			}
-		} else if (telephonyManager.getDataState() == TelephonyManager.DATA_DISCONNECTED) {
-			if (enable) {
-				Toast.makeText(
-						context,
-						"3G Mobile Data Scheduler: Switching on data access over mobile network",
-						Toast.LENGTH_LONG).show();
-			} else {
-				Toast.makeText(
-						context,
-						"3G Mobile Data Scheduler: Data access over mobile network is alredy disabled",
-						Toast.LENGTH_LONG).show();
-			}
-		} else {
-			Toast.makeText(
-					context,
-					"3G Mobile Data Scheduler: Unexpected state of mobile data. Please report.",
-					Toast.LENGTH_LONG).show();
-		}
-	}
+//
+//	private void Stop3g(long expectedStartMillis, Context context) {
+//		// re-check if there was a change
+//		NetworkScheduler ah = new NetworkScheduler();
+//		SharedPreferences sharedPrefs = ah.GetPreferences(context);
+//
+//		ScheduleSettings currentSettings = new ScheduleSettings(sharedPrefs);
+//	}
+//
+//	private void makeDataEnableToast(Context context, boolean enable,
+//			TelephonyManager telephonyManager) {
+//		if (telephonyManager.getDataState() == TelephonyManager.DATA_CONNECTED) {
+//			if (enable) {
+//				Toast.makeText(
+//						context,
+//						"3G Mobile Data Scheduler: Data access over mobile network is alredy enabled",
+//						Toast.LENGTH_LONG).show();
+//			} else {
+//				Toast.makeText(
+//						context,
+//						"3G Mobile Data Scheduler: Switching off data access over mobile network",
+//						Toast.LENGTH_LONG).show();
+//			}
+//		} else if (telephonyManager.getDataState() == TelephonyManager.DATA_DISCONNECTED) {
+//			if (enable) {
+//				Toast.makeText(
+//						context,
+//						"3G Mobile Data Scheduler: Switching on data access over mobile network",
+//						Toast.LENGTH_LONG).show();
+//			} else {
+//				Toast.makeText(
+//						context,
+//						"3G Mobile Data Scheduler: Data access over mobile network is alredy disabled",
+//						Toast.LENGTH_LONG).show();
+//			}
+//		} else {
+//			Toast.makeText(
+//					context,
+//					"3G Mobile Data Scheduler: Unexpected state of mobile data. Please report.",
+//					Toast.LENGTH_LONG).show();
+//		}
+//	}
 
 }

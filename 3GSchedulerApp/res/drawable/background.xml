@@ -4,12 +4,14 @@
         android:id="@+id/gradient"
         android:dither="true"
         android:drawable="@drawable/gradient"/>
-    <item>
+ <!-- <item>
         <bitmap
-            android:alpha="10"
+            android:alpha="99"
             android:gravity="center"
             android:src="@drawable/ic_launcher" />
+ 
     </item>
+     -->
     <!-- 
     <item>
         <shape

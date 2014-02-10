@@ -1,10 +1,14 @@
 package com.manimahler.android.scheduler3g;
 
+import java.util.Date;
+
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.text.format.DateFormat;
 import android.util.Log;
+import android.widget.Toast;
 
 public class DelayStopBroadcastReceiver extends BroadcastReceiver {
 
@@ -15,7 +19,8 @@ public class DelayStopBroadcastReceiver extends BroadcastReceiver {
 			int periodId = intent.getExtras().getInt(
 					context.getString(R.string.period_id), -4);
 			
-			Log.d("DelayStopBroadcastReceiver", "Received delay broadcast for id " + periodId);
+			String action = intent.getAction();
+			Log.d("DelayStopBroadcastReceiver", "Received delay broadcast for action " + action + " and period id " + periodId);
 			
 			// check if really needed:
 			NotificationManager notificationManager = 
@@ -27,7 +32,24 @@ public class DelayStopBroadcastReceiver extends BroadcastReceiver {
 			
 			scheduler.cancelSwitchOff(context, "OFF");
 			
-			scheduler.scheduleSwitchOff(context, 36, "OFF_DELAYED", periodId);	
+			if (action.equals("SKIP"))
+			{
+				Toast.makeText(context, "Switch off skipped today", Toast.LENGTH_LONG).show();
+				//do nothing
+				return;
+			}
+			
+			// TODO
+			int delayInSec = 36;
+			
+			scheduler.scheduleSwitchOff(context, delayInSec, "OFF_DELAYED", periodId);
+			
+			long delayTime = DateTimeUtils.getTimeFromNowInMillis(delayInSec);
+			
+			String timeFormat = DateFormat.getTimeFormat(context).format(new Date(delayTime));
+			String toastText = String.format("Switch off delayed until %s", timeFormat);
+			
+			Toast.makeText(context, toastText, Toast.LENGTH_LONG).show();
 		}
 		catch (Exception e)
 		{

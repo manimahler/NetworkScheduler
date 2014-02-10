@@ -6,9 +6,14 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.PorterDuff.Mode;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +22,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
 import android.widget.ToggleButton;
 
 import com.manimahler.android.scheduler3g.FlowLayout.LayoutParams;
@@ -60,8 +67,10 @@ public class SchedulePeriodFragment extends DialogFragment {
 		View view = inflator.inflate(R.layout.fragment_schedule_period, null);
 
 		builder.setView(view);
-		builder.setTitle("Set Time Period");
-		builder.setIcon(R.drawable.ic_launcher);
+//		builder.setTitle("Set Time Period");
+//		builder.setIcon(R.drawable.ic_launcher);
+		
+		
 
 		builder.setNegativeButton(android.R.string.no, null);
 		builder.setPositiveButton(android.R.string.ok,
@@ -73,7 +82,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 						_listener.onPeriodUpdated(_enabledPeriod);
 					}
 				});
-
+		
 		Bundle savedData;
 		if (savedInstanceState != null) {
 			savedData = savedInstanceState;
@@ -82,6 +91,47 @@ public class SchedulePeriodFragment extends DialogFragment {
 		}
 
 		_enabledPeriod = new EnabledPeriod(savedData);
+		
+		// name
+		EditText editTextName = (EditText) view.findViewById(R.id.editTextName);
+		editTextName.setText(_enabledPeriod.get_name());
+		editTextName.addTextChangedListener(new TextWatcher() {
+			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {}
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {}
+			
+			@Override
+			public void afterTextChanged(Editable s) {
+				_enabledPeriod.set_name(s.toString());
+				
+			}
+		});
+		
+		// check boxes to schedule start / stop
+		CheckBox checkBoxScheduleStart = (CheckBox) view.findViewById(R.id.checkBoxScheduleStart);
+		CheckBox checkBoxScheduleStop = (CheckBox) view.findViewById(R.id.checkBoxScheduleStop);
+		
+		checkBoxScheduleStart.setChecked(_enabledPeriod.is_scheduleStart());
+		checkBoxScheduleStart.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				_enabledPeriod.set_scheduleStart(isChecked);
+			}
+		});
+		
+		checkBoxScheduleStop.setChecked(_enabledPeriod.is_scheduleStop());
+		checkBoxScheduleStop.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				_enabledPeriod.set_scheduleStop(isChecked);
+			}
+		});
 
 		// start time
 		Button timeStart = (Button) view.findViewById(R.id.buttonTimeStart);
@@ -112,6 +162,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 				.findViewById(R.id.flowlayout_weekdays);
 		inflateWeekdays(inflator, null, flowlayout);
 
+		// TODO: make custom check box with the desired behavior
 		// network sensors
 		CheckBox toggleMobileData = (CheckBox) view
 				.findViewById(R.id.checkBoxMobileData);
@@ -123,7 +174,8 @@ public class SchedulePeriodFragment extends DialogFragment {
 				onToggleMobileDataClicked(v);
 			}
 		});
-
+		updateCheckboxAppearance(toggleMobileData, R.drawable.ic_action_mobile_data);
+		
 		CheckBox toggleWifi = (CheckBox) view.findViewById(R.id.checkBoxWifi);
 		toggleWifi.setChecked(_enabledPeriod.is_wifi());
 		toggleWifi.setOnClickListener(new OnClickListener() {
@@ -133,6 +185,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 				onToggleWifiClicked(v);
 			}
 		});
+		updateCheckboxAppearance(toggleWifi, R.drawable.ic_action_wifi);
 
 		CheckBox toggleBluetooth = (CheckBox) view
 				.findViewById(R.id.checkBoxBluetooth);
@@ -144,12 +197,32 @@ public class SchedulePeriodFragment extends DialogFragment {
 				onToggleBluetoothClicked(buttonView);				
 			}
 		});
-
+		updateCheckboxAppearance(toggleBluetooth, R.drawable.ic_action_bluetooth1);
+		
 		AlertDialog dialog = builder.create();
 
 		return dialog;
 	}
 
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        Button okButton =  ((AlertDialog) getDialog()).getButton(DialogInterface.BUTTON_POSITIVE);
+        Button cancelButton =  ((AlertDialog) getDialog()).getButton(DialogInterface.BUTTON_NEGATIVE);
+
+		if (cancelButton != null)
+		{
+			cancelButton.setBackgroundResource(R.drawable.dialog_button);
+		}
+		
+		if (okButton != null)
+		{
+			//okButton.setBackgroundColor(getResources().getColor(R.color.button_blue));
+			okButton.setBackgroundResource(R.drawable.dialog_button);
+		}
+    }
+	
 	// @Override
 	// public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	// Bundle savedInstanceState) {
@@ -241,7 +314,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 	public void inflateWeekdays(LayoutInflater inflater, ViewGroup container,
 			FlowLayout flowlayout) {
 
-		String[] weekdays = DateTimeUtils.getShortWeekdays();
+		String[] weekdays = DateTimeUtils.getShortWeekdays(getActivity());
 
 		for (int i = 0; i < weekdays.length; i++) {
 			String day = weekdays[i];
@@ -250,13 +323,13 @@ public class SchedulePeriodFragment extends DialogFragment {
 					R.layout.toggle_button_weekday, container);
 			button.setTag(i);
 
-			button.setText(day.toUpperCase());
-			button.setTextOff(day.toUpperCase());
-			button.setTextOn(day.toUpperCase());
+			button.setText(day);
+			button.setTextOff(day);
+			button.setTextOn(day);
 			button.setChecked(_enabledPeriod.get_weekDays()[i]);
 
-			button.setTextColor(getResources().getColorStateList(
-					R.drawable.toggle_button_textcolor));
+//			button.setTextColor(getResources().getColorStateList(
+//					R.drawable.toggle_button_textcolor));
 
 			button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 				public void onCheckedChanged(CompoundButton buttonView,
@@ -281,16 +354,20 @@ public class SchedulePeriodFragment extends DialogFragment {
 	public void onToggleMobileDataClicked(View v) {
 		boolean isChecked = ((CheckBox) v).isChecked();
 		_enabledPeriod.set_mobileData(isChecked);
+		updateCheckboxAppearance((CheckBox) v, R.drawable.ic_action_mobile_data);
 	}
 
 	public void onToggleWifiClicked(View v) {
 		boolean isChecked = ((CheckBox) v).isChecked();
 		_enabledPeriod.set_wifi(isChecked);
+		updateCheckboxAppearance((CheckBox) v, R.drawable.ic_action_wifi);
 	}
+
 
 	public void onToggleBluetoothClicked(View v) {
 		boolean isChecked = ((CheckBox) v).isChecked();
 		_enabledPeriod.set_bluetooth(isChecked);
+		updateCheckboxAppearance((CheckBox) v, R.drawable.ic_action_bluetooth1);
 	}
 
 	public void buttonStartClicked(View v) {
@@ -306,8 +383,26 @@ public class SchedulePeriodFragment extends DialogFragment {
 				startTimePicked(hourOfDay, minute);
 			}
 		};
-
+		
 		timePicker.show(fm, "timePickerStart");
+	}
+	
+	private void updateCheckboxAppearance(CheckBox v, int iconResourceId) {
+
+		int tint = getResources().getColor(R.color.button_unchecked);
+		
+		boolean isChecked = ((CheckBox) v).isChecked();
+		
+		Drawable icon = getActivity().getResources().getDrawable(iconResourceId);
+		if (isChecked)
+		{
+			icon.clearColorFilter();
+		}
+		else
+		{
+			icon.setColorFilter(tint, Mode.MULTIPLY);
+		}
+		((CheckBox) v).setButtonDrawable(icon);
 	}
 
 	private void startTimePicked(int hourOfDay, int minute) {

@@ -1,9 +1,16 @@
 <resources>
 
     <color name="black_overlay">#66000000</color>
+  <!-- dark: <color name="button_blue">#011837</color>    -->
+  
+    <color name="button_unchecked">#00375C</color>
+    <color name="button_blue">#0081B0</color>
+    <color name="toggle_button_unchecked">#CCAAAAAA</color>
     <color name="blue">#20401EFF</color>
-    <color name="bright_blue">#88C4FF</color>
+    <color name="bright_blue">#88C4FF</color>    <!-- 88C4FF -->
+    <color name="button_pressed_blue">#BB3BAEF4</color>
     <color name="very_bright_blue">#CCE6FF</color>
 	<color name="transparent">#00FFFFFF</color>
 	<color name="grey_transparent">#80FFFFFF</color>
+	<color name="weak_grey_transparent">#20FFFFFF</color>
 </resources>

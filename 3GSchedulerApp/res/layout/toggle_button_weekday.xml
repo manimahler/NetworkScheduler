@@ -8,5 +8,5 @@
     android:minHeight="24dip"
     android:minWidth="32dip"
     android:textAppearance="?android:attr/textAppearanceMedium"
-    android:textColor="#FFFFFF"
+    android:textColor="@drawable/toggle_button_textcolor"
     android:typeface="sans" />

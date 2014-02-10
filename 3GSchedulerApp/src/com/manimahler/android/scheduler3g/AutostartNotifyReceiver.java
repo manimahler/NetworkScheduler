@@ -1,5 +1,7 @@
 package com.manimahler.android.scheduler3g;
 
+import java.util.ArrayList;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -31,8 +33,15 @@ public class AutostartNotifyReceiver extends BroadcastReceiver {
 		
 		SharedPreferences prefs = alarmHandler.GetPreferences(context);
 		
-		ScheduleSettings settings = new ScheduleSettings(prefs);
+		ArrayList<EnabledPeriod> enabledPeriods = 
+			PersistenceUtils.readFromPreferences(prefs);
 		
-		alarmHandler.setAlarm(context, settings);
+		for (EnabledPeriod enabledPeriod : enabledPeriods) {
+			alarmHandler.setAlarm(context, enabledPeriod);
+		}
+		
+//		ScheduleSettings settings = new ScheduleSettings(prefs);
+//		
+//		alarmHandler.setAlarm(context, settings);
 	}
 }

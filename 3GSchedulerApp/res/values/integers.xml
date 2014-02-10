@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="grid_timeperiod_columns">2</integer>
+    <integer name="context_menu_id_up">10</integer>
+    <integer name="context_menu_id_down">20</integer>
 </resources>

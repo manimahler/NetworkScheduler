@@ -1,6 +1,5 @@
 package com.manimahler.android.scheduler3g;
 
-import java.text.MessageFormat;
 import java.util.Calendar;
 
 import android.app.AlarmManager;
@@ -17,6 +16,7 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.telephony.TelephonyManager;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -31,76 +31,80 @@ public class NetworkScheduler {
 		AlarmManager am = (AlarmManager) context
 				.getSystemService(Context.ALARM_SERVICE);
 
+		long interval24h = 24 * 60 * 60 * 1000;
+		
+		
 		PendingIntent pendingIntentOn = getPendingIntent(context, period, true);
-		PendingIntent pendingIntentOff = getPendingIntent(context, period,
-				false);
+		PendingIntent pendingIntentOff = getPendingIntent(context, period, false);
+		
+		if (! period.is_schedulingEnabled()) {
+			// cancel both
+			am.cancel(pendingIntentOn);
+			am.cancel(pendingIntentOff);
+			
+			return;
+		}
 
-		if (period.is_schedulingEnabled()) {
-
-			long interval24h = 24 * 60 * 60 * 1000;
+		
+		if (period.is_scheduleStart())
+		{
 			long startMillis = DateTimeUtils.getNextTimeIn24hInMillis(period
 					.get_startTimeMillis());
+			
+			am.setRepeating(AlarmManager.RTC_WAKEUP, startMillis, interval24h,
+					pendingIntentOn);
+		}
+		else
+		{
+			am.cancel(pendingIntentOn);
+		}
+		
+		if (period.is_scheduleStop())
+		{
 			long stopMillis = DateTimeUtils.getNextTimeIn24hInMillis(period
 					.get_endTimeMillis());
-			// long window = 1 * 60 * 1000;
-
-			// am.setWindow(AlarmManager.RTC_WAKEUP, startMillis, window,
-			// pendingIntentOn);
-			// am.setWindow(AlarmManager.RTC_WAKEUP, stopMillis, window,
-			// pendingIntentOff);
-			am.setRepeating(AlarmManager.RTC_WAKEUP, startMillis, interval24h,
-					pendingIntentOn);
 			am.setRepeating(AlarmManager.RTC_WAKEUP, stopMillis, interval24h,
 					pendingIntentOff);
-		} else {
-			// cancel
-			am.cancel(pendingIntentOn);
-			am.cancel(pendingIntentOff);
 		}
-
-	}
-
-	public void setAlarm(Context context, ScheduleSettings settings) {
-
-		AlarmManager am = (AlarmManager) context
-				.getSystemService(Context.ALARM_SERVICE);
-
-		PendingIntent pendingIntentOn = getPendingIntent(context, true);
-		PendingIntent pendingIntentOff = getPendingIntent(context, false);
-
-		if (settings.is_schedulingEnabled()) {
-
-			long interval24h = 24 * 60 * 60 * 1000;
-			long startMillis = DateTimeUtils.getNextTimeIn24hInMillis(settings
-					.get_startTimeMillis());
-			long stopMillis = DateTimeUtils.getNextTimeIn24hInMillis(settings
-					.get_endTimeMillis());
-			// long window = 1 * 60 * 1000;
-
-			// am.setWindow(AlarmManager.RTC_WAKEUP, startMillis, window,
-			// pendingIntentOn);
-			// am.setWindow(AlarmManager.RTC_WAKEUP, stopMillis, window,
-			// pendingIntentOff);
-			am.setRepeating(AlarmManager.RTC_WAKEUP, startMillis, interval24h,
-					pendingIntentOn);
-			am.setRepeating(AlarmManager.RTC_WAKEUP, stopMillis, interval24h,
-					pendingIntentOff);
-		} else {
-			// cancel
-			am.cancel(pendingIntentOn);
+		else
+		{
 			am.cancel(pendingIntentOff);
 		}
 	}
+//
+//	public void setAlarm(Context context, ScheduleSettings settings) {
+//
+//		AlarmManager am = (AlarmManager) context
+//				.getSystemService(Context.ALARM_SERVICE);
+//
+//		PendingIntent pendingIntentOn = getPendingIntent(context, true);
+//		PendingIntent pendingIntentOff = getPendingIntent(context, false);
+//
+//		if (settings.is_schedulingEnabled()) {
+//
+//			long interval24h = 24 * 60 * 60 * 1000;
+//			long startMillis = DateTimeUtils.getNextTimeIn24hInMillis(settings
+//					.get_startTimeMillis());
+//			long stopMillis = DateTimeUtils.getNextTimeIn24hInMillis(settings
+//					.get_endTimeMillis());
+//			// long window = 1 * 60 * 1000;
+//
+//			// am.setWindow(AlarmManager.RTC_WAKEUP, startMillis, window,
+//			// pendingIntentOn);
+//			// am.setWindow(AlarmManager.RTC_WAKEUP, stopMillis, window,
+//			// pendingIntentOff);
+//			am.setRepeating(AlarmManager.RTC_WAKEUP, startMillis, interval24h,
+//					pendingIntentOn);
+//			am.setRepeating(AlarmManager.RTC_WAKEUP, stopMillis, interval24h,
+//					pendingIntentOff);
+//		} else {
+//			// cancel
+//			am.cancel(pendingIntentOn);
+//			am.cancel(pendingIntentOff);
+//		}
+//	}
 
 	public void makeDisableNotification(Context context, EnabledPeriod period) {
-		//
-		//
-		// boolean enable = false;
-
-		// if (!needsAction(enable, telephonyManager)) {
-		// Log.d("AlarmHandler", "No action needed");
-		// // return;
-		// }
 
 		String tickerText = getTickerText(period, context);
 
@@ -124,26 +128,50 @@ public class NetworkScheduler {
 
 		PendingIntent delayIntentPending = PendingIntent.getBroadcast(context,
 				0, delayIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+		
+		
+		
+		Intent skipIntent = new Intent(context,
+				DelayStopBroadcastReceiver.class);
 
+		// delayIntent.putExtra(context.getString(R.string.period_id),
+		// periodId);
+		skipIntent.setAction("SKIP");
+		skipIntent.putExtra(context.getString(R.string.period_id),
+				period.get_id());
+
+		PendingIntent skipIntentPending = PendingIntent.getBroadcast(context,
+				0, skipIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+		
+		// TODO: settings / preferences for vibration, sound, toast
+		
+		int delayTimeMin = 69;
+		
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.MINUTE, delayTimeMin);
+		
+		CharSequence delayText = DateUtils.getRelativeTimeSpanString(
+				cal.getTimeInMillis(), System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS,  DateUtils.FORMAT_ABBREV_RELATIVE);
+		
+		//delayText = delayText.subSequence(3, delayText.length());
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(
 				context)
 				.setSmallIcon(R.drawable.clock_notification)
 				.setLargeIcon(bm)
 				.setContentTitle("Switching off network")
-				.setContentText(tickerText + " in a few moments")
+				.setContentText(tickerText)
 				.setTicker(tickerText)
 				.setPriority(NotificationCompat.PRIORITY_HIGH)
-				.addAction(R.drawable.clock_notification, "Delay by 1 hour",
+				.addAction(R.drawable.clock_notification, delayText,
 						delayIntentPending)
+				.addAction(R.drawable.clock_notification, context.getString(R.string.not_today), skipIntentPending)
 				.setVibrate(new long[] { -1, 800, 1000 }) // if watching full
 															// screen video, the
 															// ticker is not
 															// shown!
 				.setAutoCancel(true);
 
-		Toast.makeText(context,
-				"Switching off network connection in a few moments...",
-				Toast.LENGTH_LONG).show();
+		
 
 		// Creates an Intent for the Activity
 		Intent intent = new Intent(context, MainActivity.class);
@@ -159,28 +187,30 @@ public class NetworkScheduler {
 		// periodId allows updating / cancelling the notification later on
 		notificationManager.notify(period.get_id(), builder.build());
 	}
-//
-//	private String getTickerText(boolean enable3g,
-//			TelephonyManager telephonyManager) {
-//		String tickerText;
-//
-//		if (telephonyManager.getDataState() == TelephonyManager.DATA_CONNECTED) {
-//			if (enable3g) {
-//				tickerText = "3G/4G: Data access alredy enabled";
-//			} else {
-//				tickerText = "3G/4G: Data access OFF in 30s";
-//			}
-//		} else if (telephonyManager.getDataState() == TelephonyManager.DATA_DISCONNECTED) {
-//			if (enable3g) {
-//				tickerText = "3G/4G: Data access ON in 30s";
-//			} else {
-//				tickerText = "3G/4G: Data access alredy disabled";
-//			}
-//		} else {
-//			tickerText = "";
-//		}
-//		return tickerText;
-//	}
+
+	//
+	// private String getTickerText(boolean enable3g,
+	// TelephonyManager telephonyManager) {
+	// String tickerText;
+	//
+	// if (telephonyManager.getDataState() == TelephonyManager.DATA_CONNECTED) {
+	// if (enable3g) {
+	// tickerText = "3G/4G: Data access alredy enabled";
+	// } else {
+	// tickerText = "3G/4G: Data access OFF in 30s";
+	// }
+	// } else if (telephonyManager.getDataState() ==
+	// TelephonyManager.DATA_DISCONNECTED) {
+	// if (enable3g) {
+	// tickerText = "3G/4G: Data access ON in 30s";
+	// } else {
+	// tickerText = "3G/4G: Data access alredy disabled";
+	// }
+	// } else {
+	// tickerText = "";
+	// }
+	// return tickerText;
+	// }
 
 	private String getTickerText(EnabledPeriod period, Context context) {
 
@@ -188,7 +218,7 @@ public class NetworkScheduler {
 		boolean wifi = false;
 		boolean bluetooth = false;
 
-		//String sensors = "";
+		// String sensors = "";
 
 		if (period.is_mobileData()) {
 
@@ -197,7 +227,7 @@ public class NetworkScheduler {
 
 			if (telephonyManager.getDataState() == TelephonyManager.DATA_CONNECTED) {
 				mobileData = true;
-				//sensors = context.getString(R.string.mobile_data);
+				// sensors = context.getString(R.string.mobile_data);
 			}
 		}
 
@@ -211,11 +241,11 @@ public class NetworkScheduler {
 
 				wifi = true;
 
-//				if (sensors.length() > 0) {
-//					sensors += ", ";
-//				}
-//
-//				sensors += context.getString(R.string.wifi);
+				// if (sensors.length() > 0) {
+				// sensors += ", ";
+				// }
+				//
+				// sensors += context.getString(R.string.wifi);
 			}
 		}
 
@@ -223,16 +253,16 @@ public class NetworkScheduler {
 			BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
 
 			if (adapter != null) {
-				if (adapter.getState() != BluetoothAdapter.STATE_ON) {
+				if (adapter.getState() == BluetoothAdapter.STATE_ON) {
 
 					bluetooth = true;
 					// TODO: differentiate between STATE_ON and STATE_CONNECTED,
 					// etc. -> settings to force off despite connected
-//					if (sensors.length() > 0) {
-//						sensors += ", ";
-//					}
-//
-//					sensors += context.getString(R.string.bluetooth);
+					// if (sensors.length() > 0) {
+					// sensors += ", ";
+					// }
+					//
+					// sensors += context.getString(R.string.bluetooth);
 				}
 			}
 		}
@@ -267,29 +297,31 @@ public class NetworkScheduler {
 		// return null;
 		// }
 	}
-//
-//	private boolean needsAction(boolean enable3g,
-//			TelephonyManager telephonyManager) {
-//
-//		boolean result;
-//
-//		if (telephonyManager.getDataState() == TelephonyManager.DATA_CONNECTED) {
-//			if (enable3g) {
-//				result = false;
-//			} else {
-//				result = true;
-//			}
-//		} else if (telephonyManager.getDataState() == TelephonyManager.DATA_DISCONNECTED) {
-//			if (enable3g) {
-//				result = true;
-//			} else {
-//				result = false;
-//			}
-//		} else {
-//			result = true;
-//		}
-//		return result;
-//	}
+
+	//
+	// private boolean needsAction(boolean enable3g,
+	// TelephonyManager telephonyManager) {
+	//
+	// boolean result;
+	//
+	// if (telephonyManager.getDataState() == TelephonyManager.DATA_CONNECTED) {
+	// if (enable3g) {
+	// result = false;
+	// } else {
+	// result = true;
+	// }
+	// } else if (telephonyManager.getDataState() ==
+	// TelephonyManager.DATA_DISCONNECTED) {
+	// if (enable3g) {
+	// result = true;
+	// } else {
+	// result = false;
+	// }
+	// } else {
+	// result = true;
+	// }
+	// return result;
+	// }
 
 	public void cancelSwitchOff(Context context, String actionName) {
 		try {
@@ -332,10 +364,9 @@ public class NetworkScheduler {
 		PendingIntent pendingIntentOff = getSwitchOffIntent(context, period,
 				actionName);
 
-		int delayMillis = warningPeriodSeconds * 1000;
-
-		long wakeTime = SystemClock.elapsedRealtime() + delayMillis;
-
+		long wakeTime = DateTimeUtils.getTimeFromNowInMillis(warningPeriodSeconds);
+		
+		
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(wakeTime);
 
@@ -367,34 +398,34 @@ public class NetworkScheduler {
 	//
 	// am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, wakeTime, pendingIntentOff);
 	// }
-
-	private PendingIntent getPendingIntent(Context context, boolean enable3g) {
-
-		String action;
-
-		if (enable3g) {
-			action = "Enabling 3G";
-		} else {
-			action = "Disabling 3G";
-		}
-
-		Intent intent = new Intent(context, StartStopBroadcastReceiver.class);
-
-		// to differentiate the intents, otherwise they update each other! NOTE:
-		// Extras are not enough!
-		intent.setAction(action);
-
-		Bundle bundle = new Bundle();
-		bundle.putBoolean(context.getString(R.string.action_3g_on), enable3g);
-
-		intent.putExtras(bundle);
-
-		// using service because getActivity needs API level 16
-		PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
-				intent, Intent.FLAG_ACTIVITY_NEW_TASK);
-
-		return pendingIntent;
-	}
+//
+//	private PendingIntent getPendingIntent(Context context, boolean enable3g) {
+//
+//		String action;
+//
+//		if (enable3g) {
+//			action = context.getString(R.string.action_enable);
+//		} else {
+//			action = context.getString(R.string.action_disable);
+//		}
+//
+//		Intent intent = new Intent(context, StartStopBroadcastReceiver.class);
+//
+//		// to differentiate the intents, otherwise they update each other! NOTE:
+//		// Extras are not enough!
+//		intent.setAction(action);
+//
+//		Bundle bundle = new Bundle();
+//		bundle.putBoolean(context.getString(R.string.action_3g_on), enable3g);
+//
+//		intent.putExtras(bundle);
+//
+//		// using service because getActivity needs API level 16
+//		PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
+//				intent, Intent.FLAG_ACTIVITY_NEW_TASK);
+//
+//		return pendingIntent;
+//	}
 
 	private PendingIntent getPendingIntent(Context context,
 			EnabledPeriod period, boolean start) {
@@ -402,9 +433,9 @@ public class NetworkScheduler {
 		String action;
 
 		if (period.is_schedulingEnabled()) {
-			action = "Enabling 3G";
+			action = context.getString(R.string.action_enable);
 		} else {
-			action = "Disabling 3G";
+			action = context.getString(R.string.action_disable);
 		}
 
 		Intent intent = new Intent(context, StartStopBroadcastReceiver.class);

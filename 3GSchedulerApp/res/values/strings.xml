@@ -8,19 +8,33 @@
     <string name="start_text">Start</string>
     <string name="stop_text">Stop</string>
     <string name="otl_img_description">Blablablabal</string>
+    
+    <string name="modify">Edit</string>
+    <string name="activate_now">Activate now</string>
+    <string name="deactivate_now">Deactivate now</string>
     <string name="delete">Delete</string>
-    <string name="modify">Modify</string>
+    <string name="move_up">Move up</string>
+    <string name="move_down">Move down</string>
+    
     <string name="action_3g_on">Action3gOn</string>
     <string name="action_3g_off">Action3gOff</string>
     <string name="period_id">PERIOD_ID</string>
+    <string name="name_hint">Name (optional)</string>
     <string name="mobile_data">Mobile data</string>
     <string name="wifi">Wi-Fi</string>
     <string name="bluetooth">Bluetooth</string>
-    <string name="switch_off_all">Switching off Wi-Fi, Mobile Data and Bluetooth in a few moments...</string>
-    <string name="switch_off_wifi_mobile">Switching off Wi-Fi and Mobile Data in a few moments...</string>
-    <string name="switch_off_wifi_bluetooth">Switching off Wi-Fi and Bluetooth in a few moments...</string>
-    <string name="switch_off_mobile_bluetooth">Switching off Mobile Data and Bluetooth in a few moments...</string>
-    <string name="switch_off_wifi">Switching off Wi-Fi in a few moments...</string>
-    <string name="switch_off_mobile">Switching off Mobile Data in a few moments...</string>
-    <string name="switch_off_bluetooth">Switching off Bluetooth in a few moments...</string>
+    <string name="switch_off_all">Switching off Wi-Fi, Mobile Data and Bluetooth in a few moments</string>
+    <string name="switch_off_wifi_mobile">Switching off Wi-Fi and Mobile Data in a few moments</string>
+    <string name="switch_off_wifi_bluetooth">Switching off Wi-Fi and Bluetooth in a few moments</string>
+    <string name="switch_off_mobile_bluetooth">Switching off Mobile Data and Bluetooth in a few moments</string>
+    <string name="switch_off_wifi">Switching off Wi-Fi in a few moments</string>
+    <string name="switch_off_mobile">Switching off Mobile Data in a few moments</string>
+    <string name="switch_off_bluetooth">Switching off Bluetooth in a few moments</string>
+    <string name="action_enable">Enabling 3G</string>
+    <string name="action_disable">Disabling 3G</string>
+    <string name="everyday">Everyday</string>
+    <string name="never">Never</string>
+    <string name="on">on</string>
+    <string name="off">off</string>
+    <string name="not_today">not today</string>
 </resources>

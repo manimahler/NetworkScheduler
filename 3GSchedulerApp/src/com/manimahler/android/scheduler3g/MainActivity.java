@@ -1,6 +1,8 @@
 package com.manimahler.android.scheduler3g;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 
 import com.manimahler.android.scheduler3g.SchedulePeriodFragment.OnPeriodUpdatedListener;
@@ -8,16 +10,22 @@ import com.manimahler.android.scheduler3g.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
+import android.graphics.Point;
 import android.graphics.drawable.TransitionDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.text.format.DateFormat;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Display;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,7 +53,7 @@ import android.widget.ToggleButton;
 public class MainActivity extends FragmentActivity implements
 		OnPeriodUpdatedListener {
 
-	ScheduleSettings _settings;
+	SchedulerSettings _settings;
 
 	ArrayList<EnabledPeriod> _enabledPeriods;
 
@@ -57,8 +65,6 @@ public class MainActivity extends FragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// getWindow().setFormat(PixelFormat.RGBA_8888);
-
 		setContentView(R.layout.activity_main);
 
 		SharedPreferences preferences = GetPreferences();
@@ -66,24 +72,42 @@ public class MainActivity extends FragmentActivity implements
 		_enabledPeriods = PersistenceUtils.readFromPreferences(preferences);
 
 		final ListView listview = (ListView) findViewById(R.id.listview);
+//		
+//		int width = getAvailableScreenWitdh(this);
+//		
+//		int someOtherPadding = 100;
+//		int maxWidth = 1000;
+//		
+//	    int paddingTop = listview.getPaddingTop();
+//	    int paddingBottom = listview.getPaddingBottom();
+//	    int paddingLeftRight;
+//	    
+//		if (width + someOtherPadding > maxWidth)
+//		{
+////		    ListView.LayoutParams lp = new ListView.LayoutParams(
+////		    		maxWidth - someOtherPadding, 
+////		    		ListView.LayoutParams.WRAP_CONTENT);
+////		    
+////		    rowView.setLayoutParams(lp);
+//		    
+//
+//		    
+//		    paddingLeftRight = (width - 100 - maxWidth) / 2;
+//		    
+//		    Log.d("PeriodListAdapter", "Setting padding: " + paddingLeftRight);
+//		    
+//		    //listview.setPadding(paddingLeftRight, paddingTop, paddingLeftRight, paddingBottom);
+//		}
+//		else
+//		{
+//			paddingLeftRight = 0;
+//		}
+//		
+//		listview.setPadding(paddingLeftRight, paddingTop, paddingLeftRight, paddingBottom);
+//		
 
 		this.registerForContextMenu(listview);
 
-		//listview.setClickable(true);
-		//listview.setLongClickable(true);
-
-		// EnabledPeriod[] values = new EnabledPeriod[2];
-		//
-		// values[0] = new EnabledPeriod(preferences);
-		// values[1] = new EnabledPeriod(preferences);
-
-		// final ArrayList<EnabledPeriod> list = new ArrayList<EnabledPeriod>();
-		// for (int i = 0; i < values.length; ++i) {
-		//
-		// EnabledPeriod period = values[i];
-		// period.set_id(i);
-		// list.add(period);
-		// }
 
 		adapter = new PeriodListAdapter(MainActivity.this, _enabledPeriods);
 
@@ -125,9 +149,23 @@ public class MainActivity extends FragmentActivity implements
 
 				MenuInflater inflater = getMenuInflater();
 				inflater.inflate(R.menu.context_menu, menu);
-
+				
+		        AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+		        
+		        if (info.position > 0)
+		        {
+		        	menu.add(0, R.integer.context_menu_id_up, 6, R.string.move_up); //.setIcon(R.drawable.your-logout-icon);
+		        }
+		        
+		        if (info.position < adapter.getCount()-1)
+		        {
+		        	menu.add(0, R.integer.context_menu_id_down, 10, R.string.move_down); //.setIcon(R.drawable.your-logout-icon);
+		        }
 			}
 		});
+		
+		
+		
 		//
 		// listview.setOnItemLongClickListener(new
 		// AdapterView.OnItemLongClickListener() {
@@ -190,15 +228,7 @@ public class MainActivity extends FragmentActivity implements
 //			}
 //		});
 
-		_settings = new ScheduleSettings(preferences);
 
-		if (_settings.get_startTimeMillis() <= 0) {
-			_settings.set_startTimeMillis(System.currentTimeMillis());
-		}
-
-		if (_settings.get_endTimeMillis() <= 0) {
-			_settings.set_endTimeMillis(System.currentTimeMillis());
-		}
 
 		// TimePicker startPicker =
 		// (TimePicker)findViewById(R.id.timePickerStart);
@@ -246,51 +276,103 @@ public class MainActivity extends FragmentActivity implements
 		// layout.getBackground();
 		// trans.startTransition(2000);
 	}
+	
+	@Override
+	public void onStart(){
+		super.onStart();
+		
+
+		final ListView listview = (ListView) findViewById(R.id.listview);
+		
+		int width = getAvailableScreenWitdh(this);
+		
+		Log.d("MainActivity", "width: " + width);
+		
+		int maxWidth = 1000;
+		
+	    int paddingTop = listview.getPaddingTop();
+	    int paddingBottom = listview.getPaddingBottom();
+	    int paddingLeftRight;
+	    
+		if (width > maxWidth)
+		{
+//		    ListView.LayoutParams lp = new ListView.LayoutParams(
+//		    		maxWidth - someOtherPadding, 
+//		    		ListView.LayoutParams.WRAP_CONTENT);
+//		    
+//		    rowView.setLayoutParams(lp);
+		    
+
+		    
+		    paddingLeftRight = (width - 100 - maxWidth) / 2;
+		    
+		    
+		    
+		    //listview.setPadding(paddingLeftRight, paddingTop, paddingLeftRight, paddingBottom);
+		}
+		else
+		{
+			paddingLeftRight = 0;
+		}
+		
+		Log.d("MainActivity", "Setting padding: " + paddingLeftRight);
+		listview.setPadding(paddingLeftRight, paddingTop, paddingLeftRight, paddingBottom);
+		
+	}
 
 	@Override
 	public void onPeriodUpdated(EnabledPeriod period) {
-		// TODO Auto-generated method stub
 
 		adapter.updateItem(period);
 
 		saveSettings();
 		
-		Toast.makeText(MainActivity.this, "Updating time period",
-				Toast.LENGTH_SHORT).show();
+		View addBtn = findViewById(R.id.buttonSkipToday);
+
+		Animation myFadeInAnimation = AnimationUtils.loadAnimation(
+				MainActivity.this, R.anim.fadein);
+
+		addBtn.startAnimation(myFadeInAnimation);
+		
+//		Toast.makeText(MainActivity.this, "Updating time period",
+//				Toast.LENGTH_SHORT).show();
 
 	}
 
-	// @Override
-	// public void onAttachedToWindow() {
-	// // trial to mitigate gradient banding on tablets
-	// super.onAttachedToWindow();
-	// Window window = getWindow();
-	// window.setFormat(PixelFormat.RGBA_8888);
-	// }
 
 	public void onAddClicked(View view) {
 		long start = DateTimeUtils.getNextTimeIn24hInMillis(6, 30);
 		long end = DateTimeUtils.getNextTimeIn24hInMillis(23, 30);
 
-		EnabledPeriod newPeriod = new EnabledPeriod(true, start, end,
-				new boolean[7]);
+		boolean[] weekDays = new boolean[7];
+		Arrays.fill(weekDays, true);
+		
+		EnabledPeriod newPeriod = new EnabledPeriod(true, start, end, weekDays);
 
 		showPeriodDetails(newPeriod);
-
-		// adapter.addItem();
 	}
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
+		
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 				.getMenuInfo();
+		
+		EnabledPeriod selectedPeriod = adapter.getItem(info.position);
+
+		boolean enable;
 		switch (item.getItemId()) {
 		case R.id.delete:
 			Log.d("MainActivity.onContextItemSelected", "Delete pressed");
+		
+			// cancel the alarm
+			selectedPeriod.set_schedulingEnabled(false);
+			NetworkScheduler scheduler = new NetworkScheduler();
+			scheduler.setAlarm(MainActivity.this, selectedPeriod);
 			
 			adapter.removeAt(info.position);
-			
 			saveSettings();
+			
 			return true;
 		case R.id.modify:
 			
@@ -299,20 +381,64 @@ public class MainActivity extends FragmentActivity implements
 			EnabledPeriod period = adapter.getItem(info.position);
 
 			showPeriodDetails(period);
+			return true;
+		case R.id.activate_now:
+			toggleNetworkState(selectedPeriod, true);
+			return true;
+		case R.id.deactivate_now:
+			toggleNetworkState(selectedPeriod, false);
+			return true;
+		case R.integer.context_menu_id_up:
+			adapter.moveUp(info.position);
+			return true;
+		case R.integer.context_menu_id_down:
+			adapter.moveDown(info.position);
 		default:
 			return super.onContextItemSelected(item);
 		}
 	}
 
-	public void onToggleClicked(View view) {
-		// loseTimePickersFocus();
-
-		// Is the toggle on?
-		_settings.set_schedulingEnabled(((ToggleButton) view).isChecked());
-
-		setAlarm();
+	private void toggleNetworkState(EnabledPeriod selectedPeriod,
+			boolean enable) {
+		try {
+			ConnectionUtils.toggleNetworkState(this, selectedPeriod, enable);
+		} catch (Exception e) {
+			Toast.makeText(this, "Error (de-)activating selected profile", Toast.LENGTH_SHORT).show();
+			e.printStackTrace();
+		}
 	}
 
+	
+
+	private int getAvailableScreenWitdh(Activity activity)
+	{
+		  
+		WindowManager w = activity.getWindowManager();
+		Display d = w.getDefaultDisplay();
+		DisplayMetrics metrics = new DisplayMetrics();
+		d.getMetrics(metrics);
+		// since SDK_INT = 1;
+		int widthPixels = metrics.widthPixels;
+		int heightPixels = metrics.heightPixels;
+		// includes window decorations (statusbar bar/menu bar)
+		if (Build.VERSION.SDK_INT >= 14 && Build.VERSION.SDK_INT < 17)
+		try {
+		    widthPixels = (Integer) Display.class.getMethod("getRawWidth").invoke(d);
+		    heightPixels = (Integer) Display.class.getMethod("getRawHeight").invoke(d);
+		} catch (Exception ignored) {
+		}
+		// includes window decorations (statusbar bar/menu bar)
+		if (Build.VERSION.SDK_INT >= 17)
+		try {
+		    Point realSize = new Point();
+		    Display.class.getMethod("getRealSize", Point.class).invoke(d, realSize);
+		    widthPixels = realSize.x;
+		    heightPixels = realSize.y;
+		} catch (Exception ignored) {
+		}
+		
+		return widthPixels;
+	}
 	//
 	// public void buttonStartClicked(View v) {
 	//
@@ -346,6 +472,9 @@ public class MainActivity extends FragmentActivity implements
 	//
 	// newFragment.show(getSupportFragmentManager(), "timePickerStart");
 	// }
+	
+	
+
 
 	private void setPickerTime(long timeInMillis, TimePicker picker) {
 
@@ -414,16 +543,6 @@ public class MainActivity extends FragmentActivity implements
 		// _settings.saveToPreferences(preferences);
 	}
 
-	// private void loseTimePickersFocus()
-	// {
-	// //TimePicker startPicker =
-	// (TimePicker)findViewById(R.id.timePickerStart);
-	// //startPicker.clearFocus();
-	//
-	// TimePicker endPicker = (TimePicker)findViewById(R.id.timePickerEnd);
-	// endPicker.clearFocus();
-	// }
-
 	private long getNextTimeMillisFromPicker(TimePicker timePicker) {
 
 		Calendar calendar = Calendar.getInstance();
@@ -443,29 +562,6 @@ public class MainActivity extends FragmentActivity implements
 		return calendar.getTimeInMillis();
 	}
 
-	//
-	// private void setAlarm(boolean on) {
-	//
-	// long startTime = 0;
-	// //getNextTimeMillisFromPicker((TimePicker)findViewById(R.id.timePickerStart));
-	// long stopTime =
-	// getNextTimeMillisFromPicker((TimePicker)findViewById(R.id.timePickerEnd));
-	//
-	// AlarmHandler alarmHandler = new AlarmHandler();
-	//
-	// alarmHandler.setAlarm(MainActivity.this, on, startTime, stopTime);
-	//
-	//
-	// Log.d("MainActivity", "Alarm set: " + on);
-	//
-	// if (on)
-	// {
-	// Calendar calendar = Calendar.getInstance();
-	// calendar.setTimeInMillis(startTime);
-	//
-	// Log.d("MainActivity", "start Time: " + calendar.toString());
-	// }
-	// }
 
 	private void setAlarm() {
 
@@ -475,21 +571,6 @@ public class MainActivity extends FragmentActivity implements
 			scheduler.setAlarm(MainActivity.this, period);
 		}
 		
-//		
-//		alarmHandler.setAlarm(MainActivity.this, _settings);
-//
-//		Log.d("MainActivity", "Alarm set: " + _settings.is_schedulingEnabled());
-//
-//		if (_settings.is_schedulingEnabled()) {
-//			Calendar calendar = Calendar.getInstance();
-//			calendar.setTimeInMillis(_settings.get_startTimeMillis());
-//
-//			Log.d("MainActivity", "start Time: " + calendar.toString());
-//
-//			calendar.setTimeInMillis(_settings.get_endTimeMillis());
-//
-//			Log.d("MainActivity", "stop Time: " + calendar.toString());
-//		}
 	}
 
 	private SharedPreferences GetPreferences() {
@@ -498,40 +579,6 @@ public class MainActivity extends FragmentActivity implements
 		return alarmHandler.GetPreferences(MainActivity.this);
 	}
 
-	//
-	// private void startTimePicked(int hourOfDay, int minute) {
-	//
-	// long nextStartTimeInMillis =
-	// DateTimeUtils.getNextTimeIn24hInMillis(hourOfDay, minute);
-	//
-	// _settings.set_startTimeMillis(nextStartTimeInMillis);
-	//
-	// settingsChanged(true);
-	// }
-	//
-	// private void endTimePicked(int hourOfDay, int minute) {
-	//
-	// long nextEndTimeInMillis =
-	// DateTimeUtils.getNextTimeIn24hInMillis(hourOfDay, minute);
-	//
-	// _settings.set_endTimeMillis(nextEndTimeInMillis);
-	//
-	// settingsChanged(true);
-	// }
-	//
-	// private void settingsChanged(boolean setAlarm) {
-	// Button startButton = (Button) findViewById(R.id.buttonTimeStart);
-	// setButtonTime(_settings.get_startTimeMillis(), (Button) startButton);
-	//
-	// Button stopButton = (Button) findViewById(R.id.buttonTimeStop);
-	// setButtonTime(_settings.get_endTimeMillis(), (Button) stopButton);
-	//
-	// saveSettings();
-	//
-	// if (setAlarm) {
-	// setAlarm();
-	// }
-	// }
 
 	public void showPeriodDetails(EnabledPeriod item) {
 		FragmentManager fm = getSupportFragmentManager();
@@ -543,6 +590,7 @@ public class MainActivity extends FragmentActivity implements
 		// item.saveToBundle(bundle);
 		// schedulePeriodFragment.setArguments(bundle);
 		schedulePeriodFragment.show(fm, "fragment_schedule_period");
+				
 	}
 
 }

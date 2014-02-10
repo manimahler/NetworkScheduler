@@ -1,78 +1,108 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/background_enabled_period"
-    >
+    android:background="@drawable/background_enabled_period" >
+
     <TextView
-        android:id="@+id/topLine"
-        android:layout_width="fill_parent"
+        android:id="@+id/TextViewName"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="16dp"
-        android:gravity="center_vertical"
-        android:text="Mobile Data and Wifi"
-        android:textSize="16sp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="24sp"
         android:typeface="sans" />
 
-        <TextView
-            android:id="@+id/textViewOn"
+    <LinearLayout
+        android:id="@+id/topLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/TextViewName"
+        android:layout_below="@id/TextViewName"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:textSize="24sp"
+        android:typeface="sans" >
+
+        <ImageView
+            android:id="@+id/imageViewWifi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/textViewStartTime"
-            android:layout_alignBottom="@+id/textViewStartTime"
-            android:layout_alignLeft="@+id/topLine"
-            android:ellipsize="marquee"
-            android:singleLine="false"
-            android:text="on"
-            android:textSize="12sp" />
+            android:contentDescription="@string/wifi"
+            android:src="@drawable/ic_action_wifi" />
 
-        <TextView
-            android:id="@+id/textViewStartTime"
+        <ImageView
+            android:id="@+id/imageViewMobileData"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/topLine"
-            android:layout_marginRight="12dp"
-            android:layout_toRightOf="@+id/textViewOn"
-            android:text="07:00"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="24sp"
-            android:typeface="sans" />
+            android:contentDescription="@string/mobile_data"
+            android:src="@drawable/ic_action_mobile_data" />
 
-        <TextView
-            android:id="@+id/bottomLine"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/textViewOn"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/TextViewStopTime"
-            android:gravity="center_vertical"
-            android:text="MON -FRI"
-            android:textSize="16sp"
-            android:typeface="sans" />
-
-        <TextView
-            android:id="@+id/TextViewStopTime"
+        <ImageView
+            android:id="@+id/imageViewBluetooth"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/textViewStartTime"
-            android:layout_toRightOf="@+id/TextViewOff"
-            android:layout_weight="1"
-            android:text="09:00"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="24sp"
-            android:typeface="sans" />
+            android:contentDescription="@string/bluetooth"
+            android:src="@drawable/ic_action_bluetooth1" />
+    </LinearLayout>
 
-        <TextView
-            android:id="@+id/TextViewOff"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/TextViewStopTime"
-            android:layout_alignBottom="@+id/TextViewStopTime"
-            android:layout_alignRight="@+id/textViewOn"
-            android:ellipsize="marquee"
-            android:singleLine="false"
-            android:text="off"
-            android:textSize="12sp" />
+    <TextView
+        android:id="@+id/textViewOn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textViewStartTime"
+        android:layout_alignBottom="@+id/textViewStartTime"
+        android:layout_alignLeft="@+id/topLine"
+        android:ellipsize="marquee"
+        android:singleLine="false"
+        android:text="@string/on"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/textViewStartTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topLine"
+        android:layout_marginRight="12dp"
+        android:layout_toRightOf="@+id/textViewOn"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="24sp"
+        android:typeface="sans" />
+
+    <TextView
+        android:id="@+id/bottomLine"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textViewOn"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/TextViewStopTime"
+        android:gravity="center_vertical"
+        android:textSize="16sp"
+        android:textColor="@android:color/white"
+        android:typeface="sans" />
+
+    <TextView
+        android:id="@+id/TextViewStopTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewStartTime"
+        android:layout_toRightOf="@+id/textViewOff"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="24sp"
+        android:typeface="sans" />
+
+    <TextView
+        android:id="@+id/textViewOff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/TextViewStopTime"
+        android:layout_alignBottom="@+id/TextViewStopTime"
+        android:layout_alignRight="@+id/textViewOn"
+        android:ellipsize="marquee"
+        android:singleLine="false"
+        android:text="@string/off"
+        android:textColor="@android:color/white"
+        android:textSize="12sp" />
 
 </RelativeLayout>
