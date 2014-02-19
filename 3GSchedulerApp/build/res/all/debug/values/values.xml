@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- From: file:/C:/git/ema/ThreeGScheduler/3GSchedulerApp/res/values/colors.xml -->
+    <color name="black_overlay">#66000000</color>
+    <color name="blue">#20401EFF</color>
+    <color name="bright_blue">#88C4FF</color>
+    <color name="button_blue">#0081B0</color>
+    <color name="button_pressed_blue">#BB3BAEF4</color>
+    <color name="button_unchecked">#00375C</color>
+    <color name="grey_transparent">#80FFFFFF</color>
+    <color name="toggle_button_unchecked">#CCAAAAAA</color>
+    <color name="transparent">#00FFFFFF</color>
+    <color name="very_bright_blue">#CCE6FF</color>
+    <color name="weak_grey_transparent">#20FFFFFF</color>
+    <!-- From: file:/C:/git/ema/ThreeGScheduler/3GSchedulerApp/res/values/attrs.xml -->
+    <declare-styleable name="ButtonBarContainerTheme">
+        <attr name="buttonBarStyle" format="reference" />
+        <attr name="buttonBarButtonStyle" format="reference" />
+    </declare-styleable>
+    <!-- From: file:/C:/git/ema/ThreeGScheduler/3GSchedulerApp/res/values/integers.xml -->
+    <integer name="context_menu_id_down">20</integer>
+    <integer name="context_menu_id_up">10</integer>
+    <integer name="grid_timeperiod_columns">2</integer>
+    <!-- From: file:/C:/git/ema/ThreeGScheduler/3GSchedulerApp/res/values/strings.xml -->
+    <string name="action_3g_off">Action3gOff</string>
+    <string name="action_3g_on">Action3gOn</string>
+    <string name="action_disable">Disabling 3G</string>
+    <string name="action_enable">Enabling 3G</string>
+    <string name="activate_now">Activate now</string>
+    <string name="app_name">Network Scheduler</string>
+    <string name="bluetooth">Bluetooth</string>
+    <string name="deactivate_now">Deactivate now</string>
+    <string name="delete">Delete</string>
+    <string name="dummy_button">3G scheduling ON</string>
+    <string name="dummy_button_disable">3G scheduling OFF</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="everyday">Everyday</string>
+    <string name="mobile_data">Mobile data</string>
+    <string name="modify">Edit</string>
+    <string name="move_down">Move down</string>
+    <string name="move_up">Move up</string>
+    <string name="name_hint">Name (optional)</string>
+    <string name="never">Never</string>
+    <string name="not_today">not today</string>
+    <string name="off">off</string>
+    <string name="on">on</string>
+    <string name="otl_img_description">Blablablabal</string>
+    <string name="period_id">PERIOD_ID</string>
+    <string name="start_text">Start</string>
+    <string name="stop_text">Stop</string>
+    <string name="switch_off_all">Switching off Wi-Fi, Mobile Data and Bluetooth in a few moments</string>
+    <string name="switch_off_bluetooth">Switching off Bluetooth in a few moments</string>
+    <string name="switch_off_mobile">Switching off Mobile Data in a few moments</string>
+    <string name="switch_off_mobile_bluetooth">Switching off Mobile Data and Bluetooth in a few moments</string>
+    <string name="switch_off_wifi">Switching off Wi-Fi in a few moments</string>
+    <string name="switch_off_wifi_bluetooth">Switching off Wi-Fi and Bluetooth in a few moments</string>
+    <string name="switch_off_wifi_mobile">Switching off Wi-Fi and Mobile Data in a few moments</string>
+    <string name="three_g_scheduler">Network\nScheduler</string>
+    <string name="wifi">Wi-Fi</string>
+    <!-- From: file:/C:/git/ema/ThreeGScheduler/3GSchedulerApp/res/values/styles.xml -->
+    <style name="AppBaseTheme" parent="android:Theme.Light">
+        <!--
+             Theme customizations available in newer API levels can go in res/values-vXX/styles.xml, 
+			while customizations related to backward-compatibility can go here.
+        -->
+    </style>
+
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!--
+             All customizations that are NOT specific to a particular API-level 
+			can go here.
+        -->
+    </style>
+
+    <style name="ButtonBar">
+        <item name="android:paddingLeft">2dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingRight">2dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:background">@android:drawable/bottom_bar</item>
+    </style>
+
+    <style name="ButtonBarButton" />
+
+    <style name="Theme.Transparent" parent="FullscreenTheme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+</resources>

@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger>
+
+    <dataSet config="main" >
+        <source path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res" >
+            <file
+                name="fadein"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\anim\fadein.xml"
+                qualifiers=""
+                type="anim" />
+            <file
+                name="add_button"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable\add_button.xml"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="add_button_layers"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable\add_button_layers.xml"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="add_button_layers_pressed"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable\add_button_layers_pressed.xml"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="background"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable\background.xml"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="background_enabled_period"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable\background_enabled_period.xml"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="clock"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable\clock.xml"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="day_button"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable\day_button.xml"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="gradient"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable\gradient.xml"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="time_button"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable\time_button.xml"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="toggle_button_textcolor"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable\toggle_button_textcolor.xml"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="transition"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable\transition.xml"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="underline"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable\underline.xml"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="clock_notification"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-hdpi\clock_notification.png"
+                qualifiers="hdpi"
+                type="drawable" />
+            <file
+                name="ic_action_bluetooth"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-hdpi\ic_action_bluetooth.png"
+                qualifiers="hdpi"
+                type="drawable" />
+            <file
+                name="ic_action_bluetooth1"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-hdpi\ic_action_bluetooth1.png"
+                qualifiers="hdpi"
+                type="drawable" />
+            <file
+                name="ic_action_mobile_data"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-hdpi\ic_action_mobile_data.png"
+                qualifiers="hdpi"
+                type="drawable" />
+            <file
+                name="ic_action_new"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-hdpi\ic_action_new.png"
+                qualifiers="hdpi"
+                type="drawable" />
+            <file
+                name="ic_action_wifi"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-hdpi\ic_action_wifi.png"
+                qualifiers="hdpi"
+                type="drawable" />
+            <file
+                name="ic_launcher"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-hdpi\ic_launcher.png"
+                qualifiers="hdpi"
+                type="drawable" />
+            <file
+                name="clock_notification"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-ldpi\clock_notification.png"
+                qualifiers="ldpi"
+                type="drawable" />
+            <file
+                name="ic_action_bluetooth"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-ldpi\ic_action_bluetooth.png"
+                qualifiers="ldpi"
+                type="drawable" />
+            <file
+                name="ic_action_bluetooth1"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-ldpi\ic_action_bluetooth1.png"
+                qualifiers="ldpi"
+                type="drawable" />
+            <file
+                name="ic_action_mobile_data"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-ldpi\ic_action_mobile_data.png"
+                qualifiers="ldpi"
+                type="drawable" />
+            <file
+                name="ic_action_wifi"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-ldpi\ic_action_wifi.png"
+                qualifiers="ldpi"
+                type="drawable" />
+            <file
+                name="ic_launcher"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-ldpi\ic_launcher.png"
+                qualifiers="ldpi"
+                type="drawable" />
+            <file
+                name="clock_notification"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-mdpi\clock_notification.png"
+                qualifiers="mdpi"
+                type="drawable" />
+            <file
+                name="ic_action_bluetooth"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-mdpi\ic_action_bluetooth.png"
+                qualifiers="mdpi"
+                type="drawable" />
+            <file
+                name="ic_action_mobile_data"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-mdpi\ic_action_mobile_data.png"
+                qualifiers="mdpi"
+                type="drawable" />
+            <file
+                name="ic_action_new"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-mdpi\ic_action_new.png"
+                qualifiers="mdpi"
+                type="drawable" />
+            <file
+                name="ic_action_wifi"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-mdpi\ic_action_wifi.png"
+                qualifiers="mdpi"
+                type="drawable" />
+            <file
+                name="ic_launcher"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-mdpi\ic_launcher.png"
+                qualifiers="mdpi"
+                type="drawable" />
+            <file
+                name="clock_notification"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-xhdpi\clock_notification.png"
+                qualifiers="xhdpi"
+                type="drawable" />
+            <file
+                name="ic_action_bluetooth"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-xhdpi\ic_action_bluetooth.png"
+                qualifiers="xhdpi"
+                type="drawable" />
+            <file
+                name="ic_action_bluetooth1"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-xhdpi\ic_action_bluetooth1.png"
+                qualifiers="xhdpi"
+                type="drawable" />
+            <file
+                name="ic_action_mobile_data"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-xhdpi\ic_action_mobile_data.png"
+                qualifiers="xhdpi"
+                type="drawable" />
+            <file
+                name="ic_action_new"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-xhdpi\ic_action_new.png"
+                qualifiers="xhdpi"
+                type="drawable" />
+            <file
+                name="ic_action_wifi"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-xhdpi\ic_action_wifi.png"
+                qualifiers="xhdpi"
+                type="drawable" />
+            <file
+                name="ic_launcher"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-xhdpi\ic_launcher.png"
+                qualifiers="xhdpi"
+                type="drawable" />
+            <file
+                name="ic_action_bluetooth"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-xxhdpi\ic_action_bluetooth.png"
+                qualifiers="xxhdpi"
+                type="drawable" />
+            <file
+                name="ic_action_mobile_data"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-xxhdpi\ic_action_mobile_data.png"
+                qualifiers="xxhdpi"
+                type="drawable" />
+            <file
+                name="ic_action_new"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-xxhdpi\ic_action_new.png"
+                qualifiers="xxhdpi"
+                type="drawable" />
+            <file
+                name="ic_launcher"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable-xxhdpi\ic_launcher.png"
+                qualifiers="xxhdpi"
+                type="drawable" />
+            <file
+                name="activity_main"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\layout\activity_main.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="enabled_period"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\layout\enabled_period.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="fragment_schedule_period"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\layout\fragment_schedule_period.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="toggle_button_weekday"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\layout\toggle_button_weekday.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="enabled_period"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\layout-small\enabled_period.xml"
+                qualifiers="small"
+                type="layout" />
+            <file
+                name="context_menu"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\menu\context_menu.xml"
+                qualifiers=""
+                type="menu" />
+            <file
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\values\attrs.xml"
+                qualifiers="" >
+                <declare-styleable name="ButtonBarContainerTheme" >
+                    <attr
+                        name="buttonBarStyle"
+                        format="reference" />
+                    <attr
+                        name="buttonBarButtonStyle"
+                        format="reference" />
+                </declare-styleable>
+            </file>
+            <file
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\values\colors.xml"
+                qualifiers="" >
+                <color name="button_pressed_blue" >#BB3BAEF4
+                </color>
+                <color name="blue" >#20401EFF
+                </color>
+                <color name="button_unchecked" >#00375C
+                </color>
+                <color name="transparent" >#00FFFFFF
+                </color>
+                <color name="weak_grey_transparent" >#20FFFFFF
+                </color>
+                <color name="toggle_button_unchecked" >#CCAAAAAA
+                </color>
+                <color name="black_overlay" >#66000000
+                </color>
+                <color name="button_blue" >#0081B0
+                </color>
+                <color name="very_bright_blue" >#CCE6FF
+                </color>
+                <color name="grey_transparent" >#80FFFFFF
+                </color>
+                <color name="bright_blue" >#88C4FF
+                </color>
+            </file>
+            <file
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\values\integers.xml"
+                qualifiers="" >
+                <integer name="context_menu_id_up" >
+10
+                </integer>
+                <integer name="context_menu_id_down" >
+20
+                </integer>
+                <integer name="grid_timeperiod_columns" >
+2
+                </integer>
+            </file>
+            <file
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\values\strings.xml"
+                qualifiers="" >
+                <string name="switch_off_bluetooth" >Switching off Bluetooth in a few moments
+                </string>
+                <string name="switch_off_wifi_mobile" >Switching off Wi-Fi and Mobile Data in a few moments
+                </string>
+                <string name="dummy_button_disable" >3G scheduling OFF
+                </string>
+                <string name="otl_img_description" >Blablablabal
+                </string>
+                <string name="bluetooth" >Bluetooth
+                </string>
+                <string name="never" >Never
+                </string>
+                <string name="three_g_scheduler" >Network\nScheduler
+                </string>
+                <string name="switch_off_all" >Switching off Wi-Fi, Mobile Data and Bluetooth in a few moments
+                </string>
+                <string name="action_enable" >Enabling 3G
+                </string>
+                <string name="modify" >Edit
+                </string>
+                <string name="on" >on
+                </string>
+                <string name="mobile_data" >Mobile data
+                </string>
+                <string name="dummy_content" >DUMMY\nCONTENT
+                </string>
+                <string name="switch_off_wifi_bluetooth" >Switching off Wi-Fi and Bluetooth in a few moments
+                </string>
+                <string name="switch_off_mobile" >Switching off Mobile Data in a few moments
+                </string>
+                <string name="activate_now" >Activate now
+                </string>
+                <string name="name_hint" >Name (optional)
+                </string>
+                <string name="switch_off_wifi" >Switching off Wi-Fi in a few moments
+                </string>
+                <string name="everyday" >Everyday
+                </string>
+                <string name="action_3g_off" >Action3gOff
+                </string>
+                <string name="period_id" >PERIOD_ID
+                </string>
+                <string name="off" >off
+                </string>
+                <string name="action_disable" >Disabling 3G
+                </string>
+                <string name="dummy_button" >3G scheduling ON
+                </string>
+                <string name="deactivate_now" >Deactivate now
+                </string>
+                <string name="stop_text" >Stop
+                </string>
+                <string name="move_down" >Move down
+                </string>
+                <string name="not_today" >not today
+                </string>
+                <string name="action_3g_on" >Action3gOn
+                </string>
+                <string name="move_up" >Move up
+                </string>
+                <string name="app_name" >Network Scheduler
+                </string>
+                <string name="start_text" >Start
+                </string>
+                <string name="switch_off_mobile_bluetooth" >Switching off Mobile Data and Bluetooth in a few moments
+                </string>
+                <string name="delete" >Delete
+                </string>
+                <string name="wifi" >Wi-Fi
+                </string>
+            </file>
+            <file
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\values\styles.xml"
+                qualifiers="" >
+
+                <style
+                    name="Theme.Transparent"
+                    parent="FullscreenTheme" >
+                    <item name="android:windowIsTranslucent">
+true
+                    </item>
+                    <item name="android:windowBackground">
+@android:color/transparent
+                    </item>
+                    <item name="android:windowContentOverlay">
+@null
+                    </item>
+                    <item name="android:windowNoTitle">
+true
+                    </item>
+                    <item name="android:windowIsFloating">
+false
+                    </item>
+                    <item name="android:backgroundDimEnabled">
+true
+                    </item>
+                </style>
+
+                <style
+                    name="AppBaseTheme"
+                    parent="android:Theme.Light" >
+
+                    <!--
+             Theme customizations available in newer API levels can go in res/values-vXX/styles.xml, 
+			while customizations related to backward-compatibility can go here.
+                    -->
+                </style>
+
+                <style name="ButtonBar" >
+                    <item name="android:paddingLeft">
+2dp
+                    </item>
+                    <item name="android:paddingTop">
+5dp
+                    </item>
+                    <item name="android:paddingRight">
+2dp
+                    </item>
+                    <item name="android:paddingBottom">
+0dp
+                    </item>
+                    <item name="android:background">
+@android:drawable/bottom_bar
+                    </item>
+                </style>
+
+                <style name="ButtonBarButton" />
+
+                <style
+                    name="AppTheme"
+                    parent="AppBaseTheme" >
+
+                    <!--
+             All customizations that are NOT specific to a particular API-level 
+			can go here.
+                    -->
+                </style>
+            </file>
+            <file
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\values-v11\styles.xml"
+                qualifiers="v11" >
+
+                <style
+                    name="FullscreenTheme"
+                    parent="android:Theme.Holo" >
+                    <item name="android:actionBarStyle">
+@style/FullscreenActionBarStyle
+                    </item>
+                    <item name="android:windowActionBarOverlay">
+false
+                    </item>
+                    <item name="android:windowBackground">
+@null
+                    </item>
+                    <item name="buttonBarStyle">
+?android:attr/buttonBarStyle
+                    </item>
+                    <item name="buttonBarButtonStyle">
+?android:attr/buttonBarButtonStyle
+                    </item>
+                </style>
+
+                <style
+                    name="FullscreenActionBarStyle"
+                    parent="android:Widget.Holo.ActionBar" >
+                    <item name="android:background">
+@color/black_overlay
+                    </item>
+                </style>
+
+                <style
+                    name="AppBaseTheme"
+                    parent="android:Theme.Holo.Light" >
+
+                    <!-- API 11 theme customizations can go here. -->
+                </style>
+            </file>
+            <file
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\values-v14\styles.xml"
+                qualifiers="v14" >
+
+                <style
+                    name="AppBaseTheme"
+                    parent="android:Theme.Holo.Light.DarkActionBar" >
+
+                    <!-- API 14 theme customizations can go here. -->
+                </style>
+            </file>
+            <file
+                name="dialog_button"
+                path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\res\drawable\dialog_button.xml"
+                qualifiers=""
+                type="drawable" />
+        </source>
+        <source path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\build\res\rs\debug" />
+    </dataSet>
+    <dataSet config="debug" >
+        <source path="C:\git\ema\ThreeGScheduler\3GSchedulerApp\build-types\debug\res" />
+    </dataSet>
+
+</merger>
