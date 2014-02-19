@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
     <item
         android:id="@+id/modify"
         android:title="@string/modify">
     </item>
-  	<item
+    <!-- android:icon="@android:drawable/ic_menu_edit" -->
+    <item
         android:id="@+id/activate_now"
         android:title="@string/activate_now">
     </item>
-  	<item
+    <!-- android:icon="@android:drawable/ic_media_play" -->
+    <item
         android:id="@+id/deactivate_now"
         android:title="@string/deactivate_now">
     </item>
+    <!-- android:icon="@android:drawable/ic_menu_revert" -->
     <item
         android:id="@+id/delete"
         android:title="@string/delete">
     </item>
-
+    <!-- android:icon="@android:drawable/ic_delete" -->
 
 </menu>
