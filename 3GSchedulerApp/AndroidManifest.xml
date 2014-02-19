@@ -12,13 +12,11 @@
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-	
-	<uses-permission android:name="android.permission.BLUETOOTH" />
-	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -26,11 +24,22 @@
         <activity
             android:name="com.manimahler.android.scheduler3g.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/FullscreenTheme" >   <!-- alternative: @style/Theme.Transparent -->
+            android:theme="@style/FullscreenTheme" > <!-- alternative: @style/Theme.Transparent -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.manimahler.android.scheduler3g.SettingsActivity"
+            android:label="@string/settings"
+            android:parentActivityName="com.manimahler.android.scheduler3g.MainActivity" >
+
+            <!-- Parent activity meta-data to support API level 7+ -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.manimahler.android.scheduler3g.MainActivity" />
         </activity>
 
         <receiver android:name=".AutostartNotifyReceiver" >
@@ -43,6 +52,7 @@
         </receiver>
         <receiver android:name=".DelayStopBroadcastReceiver" >
         </receiver>
+
     </application>
 
 </manifest>
