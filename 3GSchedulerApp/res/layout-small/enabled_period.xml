@@ -98,7 +98,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/TextViewStopTime"
         android:layout_alignBottom="@+id/TextViewStopTime"
-        android:layout_alignRight="@+id/textViewOn"
+        android:layout_alignLeft="@+id/topLine"
         android:ellipsize="marquee"
         android:singleLine="false"
         android:text="@string/off"
