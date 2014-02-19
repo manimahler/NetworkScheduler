@@ -1,18 +1,14 @@
 package com.manimahler.android.scheduler3g;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import android.app.NotificationManager;
-import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -30,23 +26,31 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 			// TODO: magic number for default
 			int periodId = bundle.getInt(context.getString(R.string.period_id),
 					-2);
-
+			
 			Log.d("StartStopBroadcastReceiver", "Received broadcast action "
 					+ action + " for period id " + periodId);
+			
+			// cancel existing notifications
+			NotificationManager notificationManager = (NotificationManager) context
+					.getSystemService(Context.NOTIFICATION_SERVICE);
+			// before switching off, remove notification
+			notificationManager.cancel(periodId);
 
 			// do not use == for string comparison in Java!
 			if (action.equals("OFF")) {
-				trySwitchOffMobileData(context, periodId, stopTime, false);
+				trySwitchOffConnections(context, periodId, stopTime, false);
 			} else if (action.equals("OFF_DELAYED")) {
-				trySwitchOffMobileData(context, periodId, stopTime, true);
+				trySwitchOffConnections(context, periodId, stopTime, true);
 			} else {
 
 				// normal schedule: test weekday
 				NetworkScheduler scheduler = new NetworkScheduler();
-				SharedPreferences sharedPrefs = scheduler.GetPreferences(context);
+				SharedPreferences sharedPrefs = scheduler.getSchedulesPreferences(context);
 
 				EnabledPeriod referencedPeriod = PersistenceUtils.getPeriod(
 						sharedPrefs, periodId);
+				
+				SchedulerSettings settings = PersistenceUtils.readSettings(context);
 				
 				boolean on = bundle.getBoolean(context
 						.getString(R.string.action_3g_on));
@@ -57,13 +61,13 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 					return;
 				}
 				
-				if (!on) {
-					scheduleNotifiedSwitchOff(context, 30, referencedPeriod);
+				if (!on && settings.is_warnOnDeactivation()) {
+					
+					switchOff(context, referencedPeriod, settings);
 				} else {
 					ConnectionUtils.toggleNetworkState(context, referencedPeriod, on);
 				}
 			}
-
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -101,25 +105,64 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 		
 		return (referencedPeriod.get_weekDays()[weekdayIndex]);
 	}
-
-	private void scheduleNotifiedSwitchOff(Context context, int seconds,
-			EnabledPeriod period) {
+	
+	private void switchOff(Context context, EnabledPeriod period, SchedulerSettings settings) throws ClassNotFoundException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+		
 		
 		NetworkScheduler scheduler = new NetworkScheduler();
-
-		scheduler.makeDisableNotification(context, period);
-
-		scheduler.scheduleSwitchOff(context, seconds, "OFF", period);
+		
+		if (! scheduler.isSwitchOffRequired(context, period))
+		{
+			Log.d("StartStopReceiver", "No action required.");
+			
+			return;
+		}
+		
+		boolean enableFalse = false;
+		if (! settings.is_warnOnDeactivation())
+		{
+			ConnectionUtils.toggleNetworkState(context, period, enableFalse);
+		}
+		
+		PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        boolean isScreenOn = powerManager.isScreenOn();
+        
+		if (! isScreenOn && settings.is_warnOnlyWhenScreenOn())
+		{
+			ConnectionUtils.toggleNetworkState(context, period, enableFalse);
+		}
+		else
+		{
+			if (settings.is_autoDelay())
+			{
+				Log.d("StartStopReceiver", "Screen is on: auto-delay.");
+				
+				int delayInSec = settings.get_delay() * 60;
+				
+				scheduler.makeAutoDelayNotification(context, period, settings);
+				scheduler.scheduleSwitchOff(context, delayInSec, "OFF_DELAYED", period);
+			}
+			else
+			{
+				Log.d("StartStopReceiver", "Screen is on: notification.");
+				scheduler.makeDisableNotification(context, period, settings);
+				
+				int fewMomentsInSec = 45;
+				scheduler.scheduleSwitchOff(context, fewMomentsInSec, "OFF", period);
+			}
+		}
 	}
-
-	private void trySwitchOffMobileData(Context context, int periodId,
+	
+	private void trySwitchOffConnections(Context context, int periodId,
 			long expectedStopTime, boolean reWarn) {
 
 		NetworkScheduler scheduler = new NetworkScheduler();
-		SharedPreferences sharedPrefs = scheduler.GetPreferences(context);
+		SharedPreferences sharedPrefs = scheduler.getSchedulesPreferences(context);
 
 		EnabledPeriod referencedPeriod = PersistenceUtils.getPeriod(
 				sharedPrefs, periodId);
+		
+		SchedulerSettings settings = PersistenceUtils.readSettings(context);
 
 		if (referencedPeriod == null) {
 			// it might have been deleted? Test!
@@ -136,25 +179,19 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 
 		if (!referencedPeriod.is_schedulingEnabled()) {
 			Log.d("SwitchOff", "Scheduling was disabled. Not stopping");
-
+			
 			return;
 		}
-
-		// TODO: check sensors
-
-		NotificationManager notificationManager = (NotificationManager) context
-				.getSystemService(Context.NOTIFICATION_SERVICE);
-
+		
 		try {
 			if (reWarn) {
+				// TODO: in a delayed switch-off there should be a check if a sensor was
+				//       not already 'switched on' again by another period and we should drop the switch-off
+				
 				// add notification
-				scheduler.makeDisableNotification(context, referencedPeriod);
-				scheduler.scheduleSwitchOff(context, 30, "OFF",
-						referencedPeriod);
+				switchOff(context, referencedPeriod, settings);
 			} else {
-				// before switching off, remove notification
-
-				notificationManager.cancel(periodId);
+				
 				ConnectionUtils.toggleNetworkState(context, referencedPeriod, false);
 			}
 		} catch (Exception e) {
@@ -165,104 +202,4 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 					Toast.LENGTH_SHORT).show();
 		}
 	}
-
-	//
-	// private void trySwitchOffMobileData(Context context, long
-	// expectedStopTime,
-	// boolean reWarn) {
-	//
-	// NetworkScheduler scheduler = new NetworkScheduler();
-	// SharedPreferences sharedPrefs = scheduler.GetPreferences(context);
-	//
-	// ScheduleSettings currentSettings = new ScheduleSettings(sharedPrefs);
-	//
-	// if (currentSettings.get_endTimeMillis() != expectedStopTime) {
-	// Log.d("SwitchOff", "Expected stop time has changed. Not stopping.");
-	//
-	// return;
-	// }
-	//
-	// if (!currentSettings.is_schedulingEnabled()) {
-	// Log.d("SwitchOff", "Scheduling was disabled. Not stopping");
-	//
-	// return;
-	// }
-	//
-	// try {
-	// if (reWarn) {
-	// scheduleNotifiedSwitchOff(context, 30, );
-	// } else {
-	// toggleMobileData(context, false);
-	// }
-	// } catch (Exception e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	//
-	// Toast.makeText(context, "Error changing 3g setting",
-	// Toast.LENGTH_SHORT).show();
-	// }
-	//
-	// NotificationManager notificationManager = (NotificationManager) context
-	// .getSystemService(Context.NOTIFICATION_SERVICE);
-	//
-	// notificationManager.cancel(17);
-	// }
-
-//	private void toggleNetworkState(Context context, int periodId,
-//			boolean enable) throws ClassNotFoundException,
-//			NoSuchFieldException, IllegalArgumentException,
-//			IllegalAccessException, NoSuchMethodException,
-//			InvocationTargetException {
-//
-//		NetworkScheduler scheduler = new NetworkScheduler();
-//		SharedPreferences sharedPrefs = scheduler.GetPreferences(context);
-//
-//		EnabledPeriod referencedPeriod = PersistenceUtils.getPeriod(
-//				sharedPrefs, periodId);
-//		toggleNetworkState(context, referencedPeriod, enable);
-//	}
-
-//
-//	private void Stop3g(long expectedStartMillis, Context context) {
-//		// re-check if there was a change
-//		NetworkScheduler ah = new NetworkScheduler();
-//		SharedPreferences sharedPrefs = ah.GetPreferences(context);
-//
-//		ScheduleSettings currentSettings = new ScheduleSettings(sharedPrefs);
-//	}
-//
-//	private void makeDataEnableToast(Context context, boolean enable,
-//			TelephonyManager telephonyManager) {
-//		if (telephonyManager.getDataState() == TelephonyManager.DATA_CONNECTED) {
-//			if (enable) {
-//				Toast.makeText(
-//						context,
-//						"3G Mobile Data Scheduler: Data access over mobile network is alredy enabled",
-//						Toast.LENGTH_LONG).show();
-//			} else {
-//				Toast.makeText(
-//						context,
-//						"3G Mobile Data Scheduler: Switching off data access over mobile network",
-//						Toast.LENGTH_LONG).show();
-//			}
-//		} else if (telephonyManager.getDataState() == TelephonyManager.DATA_DISCONNECTED) {
-//			if (enable) {
-//				Toast.makeText(
-//						context,
-//						"3G Mobile Data Scheduler: Switching on data access over mobile network",
-//						Toast.LENGTH_LONG).show();
-//			} else {
-//				Toast.makeText(
-//						context,
-//						"3G Mobile Data Scheduler: Data access over mobile network is alredy disabled",
-//						Toast.LENGTH_LONG).show();
-//			}
-//		} else {
-//			Toast.makeText(
-//					context,
-//					"3G Mobile Data Scheduler: Unexpected state of mobile data. Please report.",
-//					Toast.LENGTH_LONG).show();
-//		}
-//	}
-
 }

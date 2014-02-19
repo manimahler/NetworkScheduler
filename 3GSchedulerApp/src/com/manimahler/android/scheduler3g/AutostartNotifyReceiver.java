@@ -31,7 +31,7 @@ public class AutostartNotifyReceiver extends BroadcastReceiver {
 	{
 		NetworkScheduler alarmHandler = new NetworkScheduler();
 		
-		SharedPreferences prefs = alarmHandler.GetPreferences(context);
+		SharedPreferences prefs = alarmHandler.getSchedulesPreferences(context);
 		
 		ArrayList<EnabledPeriod> enabledPeriods = 
 			PersistenceUtils.readFromPreferences(prefs);

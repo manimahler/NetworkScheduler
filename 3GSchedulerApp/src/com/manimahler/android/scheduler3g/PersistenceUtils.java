@@ -2,7 +2,9 @@ package com.manimahler.android.scheduler3g;
 
 import java.util.ArrayList;
 
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class PersistenceUtils {
@@ -10,12 +12,9 @@ public class PersistenceUtils {
 	private static final String ARRAY_SIZE = "ARRAY_SIZE";
 	private static final String PREF_VERSION = "VERSION";
 	
-	private static final String VIBRATE = "Vibrate";
-	private static final String WARN_DEACTIVATION = "WarnOnDeactivation";
-	private static final String CONNECT_INTERVAL = "ConnectInterval";
 
 	public static void saveToPreferences(SharedPreferences preferences,
-			ArrayList<EnabledPeriod> periods, SchedulerSettings settings) {
+			ArrayList<EnabledPeriod> periods) {
 		// Rough idea: EnabledPeriod could implement some interface
 		// 'IKeyValuePersistable'
 		// that has a Save(Writer writer) method. A Writer has the common
@@ -46,8 +45,7 @@ public class PersistenceUtils {
 				period.saveToPreferences(editor, Integer.toString(i));
 			}
 			
-			putSettings(settings, editor);
-
+			
 			// Commit to storage
 			editor.commit();
 
@@ -59,12 +57,22 @@ public class PersistenceUtils {
 		}
 	}
 	
-	public static void putSettings(SchedulerSettings settings, SharedPreferences.Editor editor)
+//	public static void putSettings(SchedulerSettings settings, SharedPreferences.Editor editor)
+//	{
+//		editor.putBoolean(VIBRATE, settings.is_vibrate());
+//		editor.putBoolean(WARN_DEACTIVATION, settings.is_warnOnDeactivation());
+//		editor.putInt(CONNECT_INTERVAL, settings.get_connectInterval());
+//		
+//	}
+	
+	public static SchedulerSettings readSettings(Context context)
 	{
-		editor.putBoolean(VIBRATE, settings.is_vibrate());
-		editor.putBoolean(WARN_DEACTIVATION, settings.is_warnOnDeactivation());
-		editor.putInt(CONNECT_INTERVAL, settings.get_connectInterval());
+		SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
 		
+		// initialize defaults, in case the prefs screen was never opened
+		PreferenceManager.setDefaultValues(context, R.xml.preferences, false);
+		
+		return new SchedulerSettings(sharedPrefs);		
 	}
 
 	public static ArrayList<EnabledPeriod> readFromPreferences(

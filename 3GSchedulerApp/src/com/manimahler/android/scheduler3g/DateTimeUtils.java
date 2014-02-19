@@ -14,7 +14,7 @@ public class DateTimeUtils {
 	{
 		int delayMillis = secondsFromNow * 1000;
 
-		long result = SystemClock.elapsedRealtime() + delayMillis;
+		long result = System.currentTimeMillis() + delayMillis;
 		
 		return result;
 	}

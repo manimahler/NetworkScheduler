@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 public class ConnectionUtils {
@@ -29,6 +30,56 @@ public class ConnectionUtils {
 		if (enabledPeriod.is_bluetooth()) {
 			toggleBluetooth(context, enable);
 		}
+	}
+	
+
+	public static boolean isBluetoothOn() {
+		
+		boolean isBluetoothEnabled = false;
+		
+		BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+
+		if (adapter != null) {
+			if (adapter.getState() == BluetoothAdapter.STATE_ON) {
+				
+				Log.d("ConnectionUtils", "bluetooth state: " + adapter.getState());
+
+				isBluetoothEnabled = true;
+				// TODO: differentiate between STATE_ON and STATE_CONNECTED,
+				// etc. -> settings to force off despite connected
+				// if (sensors.length() > 0) {
+				// sensors += ", ";
+				// }
+				//
+				// sensors += context.getString(R.string.bluetooth);
+			}
+		}
+		
+		return isBluetoothEnabled;
+	}
+	
+	public static boolean isWifiOn(Context context) {
+		
+		WifiManager wifiManager = (WifiManager) context
+				.getSystemService(Context.WIFI_SERVICE);
+		boolean wifiEnabled = wifiManager.isWifiEnabled();
+
+		return wifiEnabled;
+	}
+	
+	public static boolean isMobileDataOn(Context context) {
+		
+		boolean mobileDataEnabled = false;
+		
+		TelephonyManager telephonyManager = (TelephonyManager) context
+				.getSystemService(Context.TELEPHONY_SERVICE);
+
+		if (telephonyManager.getDataState() == TelephonyManager.DATA_CONNECTED) {
+			mobileDataEnabled = true;
+			// sensors = context.getString(R.string.mobile_data);
+		}
+		
+		return mobileDataEnabled;
 	}
 
 	private static void toggleWifi(Context context, boolean enable) {
