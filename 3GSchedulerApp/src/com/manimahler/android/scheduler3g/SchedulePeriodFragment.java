@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -22,7 +21,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ToggleButton;
@@ -38,6 +36,8 @@ public class SchedulePeriodFragment extends DialogFragment {
 
 	EnabledPeriod _enabledPeriod;
 	OnPeriodUpdatedListener _listener;
+	
+	View _view;
 
 	// Factory method
 	public static SchedulePeriodFragment newInstance(EnabledPeriod enabledPeriod) {
@@ -124,6 +124,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 			}
 		});
 		
+		
 		checkBoxScheduleStop.setChecked(_enabledPeriod.is_scheduleStop());
 		checkBoxScheduleStop.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			
@@ -154,6 +155,16 @@ public class SchedulePeriodFragment extends DialogFragment {
 			@Override
 			public void onClick(View v) {
 				buttonStopClicked(v);
+			}
+		});
+		
+		// check box interval connect
+		CheckBox checkBoxIntervalConnect = (CheckBox) view.findViewById(R.id.checkBoxScheduleInterval);
+		checkBoxIntervalConnect.setChecked(_enabledPeriod.is_intervalConnect());
+		checkBoxIntervalConnect.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				_enabledPeriod.set_intervalConnect(isChecked);
 			}
 		});
 
@@ -200,9 +211,12 @@ public class SchedulePeriodFragment extends DialogFragment {
 		updateCheckboxAppearance(toggleBluetooth, R.drawable.ic_action_bluetooth1);
 		
 		AlertDialog dialog = builder.create();
+		
+		_view = view;
 
 		return dialog;
 	}
+	
 
     @Override
     public void onStart()
@@ -287,14 +301,14 @@ public class SchedulePeriodFragment extends DialogFragment {
 		}
 	}
 
-	@Override
-	public void show(FragmentManager fm, String tag) {
-
-		super.show(fm, tag);
-
-		// ((Button)getDialog().findViewById(android.R.id.button1)).setBackgroundResource(R.drawable.time_button);
-
-	}
+//	@Override
+//	public void show(FragmentManager fm, String tag) {
+//
+//		super.show(fm, tag);
+//
+//		// ((Button)getDialog().findViewById(android.R.id.button1)).setBackgroundResource(R.drawable.time_button);
+//
+//	}
 
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -320,27 +334,30 @@ public class SchedulePeriodFragment extends DialogFragment {
 			String day = weekdays[i];
 
 			ToggleButton button = (ToggleButton) inflater.inflate(
-					R.layout.toggle_button_weekday, container);
+					R.layout.toggle_button_weekday, null);
+			
 			button.setTag(i);
-
-			button.setText(day);
-			button.setTextOff(day);
-			button.setTextOn(day);
-			button.setChecked(_enabledPeriod.get_weekDays()[i]);
-
-//			button.setTextColor(getResources().getColorStateList(
-//					R.drawable.toggle_button_textcolor));
-
+			
 			button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+				@Override
 				public void onCheckedChanged(CompoundButton buttonView,
 						boolean isChecked) {
 					buttonDayToggleClicked(buttonView, isChecked);
 				}
 			});
 
+			button.setText(day);
+			button.setTextOff(day);
+			button.setTextOn(day);
+			button.setChecked(_enabledPeriod.get_weekDays()[i]);
+			
+			// this is critical: otherwise android tries to set the
+			// check boxes on its own but fails to do it properly:
+			// http://stackoverflow.com/questions/2512010/android-checkbox-restoring-state-after-screen-rotation
+			button.setSaveEnabled(false);
+			
 			LayoutParams flowLP = new LayoutParams(5, 5);
 			flowlayout.addView(button, flowLP);
-
 		}
 	}
 
@@ -391,7 +408,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 
 		int tint = getResources().getColor(R.color.button_unchecked);
 		
-		boolean isChecked = ((CheckBox) v).isChecked();
+		boolean isChecked = (v).isChecked();
 		
 		Drawable icon = getActivity().getResources().getDrawable(iconResourceId);
 		if (isChecked)
@@ -402,7 +419,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 		{
 			icon.setColorFilter(tint, Mode.MULTIPLY);
 		}
-		((CheckBox) v).setButtonDrawable(icon);
+		(v).setButtonDrawable(icon);
 	}
 
 	private void startTimePicked(int hourOfDay, int minute) {

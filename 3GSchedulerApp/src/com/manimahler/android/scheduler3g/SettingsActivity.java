@@ -69,20 +69,11 @@ public class SettingsActivity extends PreferenceActivity implements
     		p.setSummary(String.format(summaryFormat,editTextPref.getText()));
     	}
     	
-//    	
-//    	Log.d("SettingsActivity", "Updating summary");
-//    	
-//        if (p instanceof ListPreference) {
-//            ListPreference listPref = (ListPreference) p;
-//            p.setSummary(String.format((String)p.getSummary(), listPref.getEntry()));
-//        }
-//        if (p instanceof EditTextPreference) {
-//            EditTextPreference editTextPref = (EditTextPreference) p;
-//            
-//            Log.d("SettingsActivity", "Updating summary for " + editTextPref.getKey());
-//            
-//            p.setSummary(summaryResId)
-//            p.setSummary(String.format((String)p.getSummary(),editTextPref.getText()));
-//        }
+    	if (p.getKey().equals(this.getString(R.string.pref_key_connect_interval)))
+    	{
+    		EditTextPreference editTextPref = (EditTextPreference) p;
+    		String summaryFormat = this.getString(R.string.pref_summary_connect_interval);
+    		p.setSummary(String.format(summaryFormat,editTextPref.getText()));
+    	}
     }
 }

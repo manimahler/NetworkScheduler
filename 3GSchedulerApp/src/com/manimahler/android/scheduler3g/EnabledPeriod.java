@@ -19,6 +19,8 @@ public class EnabledPeriod {
 	private static final String MOBILE_DATA = "MOBILE_DATA";
 
 	private static final String WEEK_DAYS = "WeekDays";
+	
+	private static final String INTERVAL_CONNECT = "IntervalConnect";
 
 	private int _id;
 	private String _name;
@@ -33,6 +35,8 @@ public class EnabledPeriod {
 	private boolean _bluetooth;
 
 	private boolean[] _weekDays;
+	
+	private boolean _intervalConnect;
 
 	public EnabledPeriod(Bundle bundle) {
 
@@ -56,6 +60,8 @@ public class EnabledPeriod {
 		if (_weekDays == null) {
 			_weekDays = new boolean[7];
 		}
+		
+		_intervalConnect = bundle.getBoolean(INTERVAL_CONNECT, false);
 	}
 
 	public EnabledPeriod(SharedPreferences preferences, String qualifier) {
@@ -81,6 +87,8 @@ public class EnabledPeriod {
 			_weekDays[i] = preferences.getBoolean(WEEK_DAYS + qualifier + "_"
 					+ i, false);
 		}
+		
+		_intervalConnect = preferences.getBoolean(INTERVAL_CONNECT + qualifier, false);
 	}
 
 	// public EnabledPeriod(SharedPreferences preferences)
@@ -109,6 +117,8 @@ public class EnabledPeriod {
 		_mobileData = true;
 		_wifi = true;
 		_bluetooth = true;
+		
+		_intervalConnect = false;
 	}
 
 	public void set_id(int id) {
@@ -198,6 +208,31 @@ public class EnabledPeriod {
 	public void set_bluetooth(boolean _bluetooth) {
 		this._bluetooth = _bluetooth;
 	}
+	
+	
+	
+	public boolean is_intervalConnect() {
+		return _intervalConnect;
+	}
+
+	public void set_intervalConnect(boolean _intervalConnect) {
+		this._intervalConnect = _intervalConnect;
+	}
+
+//	public boolean useIntervalConnect(SchedulerSettings settings)
+//	{
+//		if (is_mobileData() && settings.is_intervalConnectMobileData())
+//		{
+//			return true;
+//		}
+//		
+//		if (is_wifi() && settings.is_intervalConnectWifi())
+//		{
+//			return true;
+//		}
+//		
+//		return false;
+//	}
 
 	public void saveToPreferences(SharedPreferences.Editor editor,
 			String qualifier) {
@@ -221,7 +256,8 @@ public class EnabledPeriod {
 		for (int i = 0; i < 7; i++) {
 			editor.putBoolean(WEEK_DAYS + qualifier + "_" + i, _weekDays[i]);
 		}
-
+		
+		editor.putBoolean(INTERVAL_CONNECT + qualifier, _intervalConnect);
 	}
 
 	public void saveToBundle(Bundle bundle) {
@@ -243,5 +279,6 @@ public class EnabledPeriod {
 
 		bundle.putBooleanArray(WEEK_DAYS, _weekDays);
 
+		bundle.putBoolean(INTERVAL_CONNECT, _intervalConnect);
 	}
 }

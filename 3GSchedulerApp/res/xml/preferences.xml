@@ -48,6 +48,27 @@
             android:summary="@string/pref_summary_notify_each_action"
             android:title="@string/pref_title_notify_each_action"
             android:defaultValue="false"  />
+        
+        <CheckBoxPreference 
+            android:key="pref_key_interval_connect_wifi"
+            android:summary="@string/pref_summary_interval_connect_wifi"
+            android:title="@string/pref_title_interval_connect_wifi"
+            android:defaultValue="false"  />
+        
+        <CheckBoxPreference 
+            android:key="pref_key_interval_connect_mobiledata"
+            android:summary="@string/pref_summary_interval_connect_mobiledata"
+            android:title="@string/pref_title_interval_connect_mobiledata"
+            android:defaultValue="false"  />
+        
+        <EditTextPreference 
+            android:key="@string/pref_key_connect_interval"
+            android:summary="@string/pref_summary_connect_interval"
+            android:title="@string/pref_title_connect_interval"
+            android:numeric="integer"
+            android:defaultValue="15"
+            android:dialogTitle="@string/pref_dialog_title_connect_interval" />
+              
         <!-- 
     </PreferenceCategory
         android:title="@string/settings_title_intervals"

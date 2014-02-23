@@ -2,22 +2,15 @@ package com.manimahler.android.scheduler3g;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.content.Context;
-import android.graphics.Point;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 public class PeriodListAdapter extends ArrayAdapter<EnabledPeriod> {
@@ -189,6 +182,8 @@ public class PeriodListAdapter extends ArrayAdapter<EnabledPeriod> {
 
 			itemToUpdate.set_scheduleStart(item.is_scheduleStart());
 			itemToUpdate.set_scheduleStop(item.is_scheduleStop());
+			
+			itemToUpdate.set_intervalConnect(item.is_intervalConnect());
 
 			itemToUpdate.set_startTimeMillis(item.get_startTimeMillis());
 			itemToUpdate.set_endTimeMillis(item.get_endTimeMillis());
@@ -256,37 +251,4 @@ public class PeriodListAdapter extends ArrayAdapter<EnabledPeriod> {
 		
 		notifyDataSetChanged();
 	}
-	
-	
-	private int getAvailableScreenWitdh(Activity activity)
-	{
-		  
-		WindowManager w = activity.getWindowManager();
-		Display d = w.getDefaultDisplay();
-		DisplayMetrics metrics = new DisplayMetrics();
-		d.getMetrics(metrics);
-		// since SDK_INT = 1;
-		int widthPixels = metrics.widthPixels;
-		int heightPixels = metrics.heightPixels;
-		// includes window decorations (statusbar bar/menu bar)
-		if (Build.VERSION.SDK_INT >= 14 && Build.VERSION.SDK_INT < 17)
-		try {
-		    widthPixels = (Integer) Display.class.getMethod("getRawWidth").invoke(d);
-		    heightPixels = (Integer) Display.class.getMethod("getRawHeight").invoke(d);
-		} catch (Exception ignored) {
-		}
-		// includes window decorations (statusbar bar/menu bar)
-		if (Build.VERSION.SDK_INT >= 17)
-		try {
-		    Point realSize = new Point();
-		    Display.class.getMethod("getRealSize", Point.class).invoke(d, realSize);
-		    widthPixels = realSize.x;
-		    heightPixels = realSize.y;
-		} catch (Exception ignored) {
-		}
-		
-		return widthPixels;
-	}
-	
-
 }

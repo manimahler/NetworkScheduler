@@ -22,16 +22,9 @@ public class DelayStopBroadcastReceiver extends BroadcastReceiver {
 		Log.d("DelayStopBroadcastReceiver",
 				"Received delay broadcast for action " + action
 						+ " and period id " + periodId);
-
-		// check if really needed:
-		NotificationManager notificationManager = (NotificationManager) context
-				.getSystemService(Context.NOTIFICATION_SERVICE);
-		
-		notificationManager.cancel(periodId);
 		
 		NetworkScheduler scheduler = new NetworkScheduler();
-
-		scheduler.cancelSwitchOff(context, "OFF");
+		scheduler.cancelSwitchOff(context, periodId);
 		
 		if (action.equals("SKIP")) {
 			Toast.makeText(context,
@@ -43,6 +36,7 @@ public class DelayStopBroadcastReceiver extends BroadcastReceiver {
 
 		if (action.equals("DEACTIVATE")) {
 			try {
+				
 				scheduler.switchOffNow(context, periodId);
 				showSwitchOffToast(context);
 			} catch (Exception e) {

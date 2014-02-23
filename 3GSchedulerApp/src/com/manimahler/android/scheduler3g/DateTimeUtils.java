@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import android.content.Context;
-import android.os.SystemClock;
 import android.text.format.DateFormat;
 
 public class DateTimeUtils {

@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -67,6 +68,14 @@ public class ConnectionUtils {
 		return wifiEnabled;
 	}
 	
+	public static boolean isWifiConnected(Context context)
+	{
+	ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+	NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+	return (mWifi.isConnected()) ;
+	}
+	
 	public static boolean isMobileDataOn(Context context) {
 		
 		boolean mobileDataEnabled = false;
@@ -82,15 +91,16 @@ public class ConnectionUtils {
 		return mobileDataEnabled;
 	}
 
-	private static void toggleWifi(Context context, boolean enable) {
+	public static void toggleWifi(Context context, boolean enable) {
 		WifiManager wifiManager = (WifiManager) context
 				.getSystemService(Context.WIFI_SERVICE);
+		
+		Log.d("ConnectionUtils", "Switching WIFI ON status to " + enable);
+		
 		wifiManager.setWifiEnabled(enable);
-
-		// boolean wifiEnabled = wifiManager.isWifiEnabled();
 	}
 
-	private static void toggleBluetooth(Context context, boolean enable) {
+	public static void toggleBluetooth(Context context, boolean enable) {
 		BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
 
 		if (adapter != null) {
@@ -99,12 +109,14 @@ public class ConnectionUtils {
 				if (enable) {
 					Log.d("Bluetooth", "Bluetooth already enabled");
 				} else {
+					Log.d("ConnectionUtils", "Switching BT ON status to " + enable);
 					adapter.disable();
 				}
 
 			} else if (adapter.getState() == BluetoothAdapter.STATE_OFF) {
 
 				if (enable) {
+					Log.d("ConnectionUtils", "Switching BT ON status to " + enable);
 					adapter.enable();
 				} else {
 					Log.d("Bluetooth", "Bluetooth already disabled");
@@ -116,7 +128,7 @@ public class ConnectionUtils {
 	}
 
 	// found on the Internet and adapted slightly
-	private static void toggleMobileData(Context context, boolean enable)
+	public static void toggleMobileData(Context context, boolean enable)
 			throws ClassNotFoundException, NoSuchFieldException,
 			IllegalArgumentException, IllegalAccessException,
 			NoSuchMethodException, InvocationTargetException {
@@ -134,7 +146,7 @@ public class ConnectionUtils {
 		final Method setMobileDataEnabledMethod = iConnectivityManagerClass
 				.getDeclaredMethod("setMobileDataEnabled", Boolean.TYPE);
 
-		Log.d("StartStopBroadcastReceiver",
+		Log.d("ConnectionUtils",
 				"Switching mobile data ON status to " + enable);
 
 		setMobileDataEnabledMethod.setAccessible(true);

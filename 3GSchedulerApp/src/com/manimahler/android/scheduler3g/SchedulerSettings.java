@@ -11,7 +11,10 @@ public class SchedulerSettings {
 	private static final String AUTO_DELAY = "pref_key_notify_no_switchoff_unlocked";
 	private static final String WARN_DEACTIVATION = "pref_key_warn_switchoff";
 	private static final String NOTIFY_ALL_ACTIONS = "pref_key_notify_each_action";
-	private static final String CONNECT_INTERVAL = "ConnectInterval";
+	
+	private static final String INTERVAL_CONNECT_WIFI = "pref_key_interval_connect_wifi";
+	private static final String INTERVAL_CONNECT_MOBILEDATA = "pref_key_interval_connect_mobiledata";
+	private static final String CONNECT_INTERVAL = "pref_key_connect_interval";
 	
 	
 	private boolean _vibrate;
@@ -23,6 +26,14 @@ public class SchedulerSettings {
 	
 	private boolean _warnOnDeactivation;
 	private boolean _notifyEachAction;
+	
+	private boolean _intervalConnectWifi;
+	private boolean _intervalConnectMobileData;
+	
+	private boolean _keepWifiConnected;
+	
+//	private boolean _alwaysConnectWifiWhenScreenOn;
+//	private boolean _alwaysConnectMobileDataWhenSceenOn;
 	
 	private int _connectInterval;
 	
@@ -39,7 +50,9 @@ public class SchedulerSettings {
 		
 		_notifyEachAction = preferences.getBoolean(NOTIFY_ALL_ACTIONS, false);
 		
-		_connectInterval = preferences.getInt(CONNECT_INTERVAL, 15);
+		_intervalConnectWifi = preferences.getBoolean(INTERVAL_CONNECT_WIFI, false);
+		_intervalConnectMobileData = preferences.getBoolean(INTERVAL_CONNECT_MOBILEDATA, false);
+		_connectInterval = Integer.parseInt(preferences.getString(CONNECT_INTERVAL, "15"));
 	}
 	
 	public boolean is_warnOnlyWhenScreenOn() {
@@ -99,6 +112,30 @@ public class SchedulerSettings {
 		this._notifyEachAction = _notifyEachAction;
 	}
 
+	public boolean is_intervalConnectWifi() {
+		return _intervalConnectWifi;
+	}
+
+	public void set_intervalConnectWifi(boolean _intervalConnectWifi) {
+		this._intervalConnectWifi = _intervalConnectWifi;
+	}
+
+	public boolean is_intervalConnectMobileData() {
+		return _intervalConnectMobileData;
+	}
+
+	public void set_intervalConnectMobileData(boolean _intervalConnectMobileData) {
+		this._intervalConnectMobileData = _intervalConnectMobileData;
+	}
+
+	public boolean is_keepWifiConnected() {
+		return _keepWifiConnected;
+	}
+
+	public void set_keepWifiConnected(boolean _keepWifiConnected) {
+		this._keepWifiConnected = _keepWifiConnected;
+	}
+
 	public int get_connectInterval() {
 		return _connectInterval;
 	}
@@ -106,7 +143,4 @@ public class SchedulerSettings {
 	public void set_connectInterval(int _connectInterval) {
 		this._connectInterval = _connectInterval;
 	}
-
-	
-
 }

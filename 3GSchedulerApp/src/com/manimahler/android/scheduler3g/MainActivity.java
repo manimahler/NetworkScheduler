@@ -38,6 +38,7 @@ import android.widget.Toast;
  *  - weekday? -> Midnight issue?! Which day is 12.00pm? 0.00 am?
  *  - already off? already on?
  *  - skipped? (auto-)delayed?
+ *  - interval connect: why does it not start right away after a device reboot?
  */
 
 
@@ -387,7 +388,18 @@ public class MainActivity extends FragmentActivity implements
 
 	private void toggleNetworkState(EnabledPeriod selectedPeriod, boolean enable) {
 		try {
-			ConnectionUtils.toggleNetworkState(this, selectedPeriod, enable);
+			
+			NetworkScheduler scheduler = new NetworkScheduler();
+
+			if (! enable)
+			{
+				scheduler.switchOffNow(this, selectedPeriod.get_id());
+			}
+			else
+			{
+				scheduler.switchOnNow(this, selectedPeriod, _settings);
+			}
+			
 		} catch (Exception e) {
 			Toast.makeText(this, "Error (de-)activating selected profile",
 					Toast.LENGTH_SHORT).show();

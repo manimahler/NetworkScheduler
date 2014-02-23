@@ -19,38 +19,43 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 
 		try {
 			String action = intent.getAction();
-
+			
 			Bundle bundle = intent.getExtras();
-			long stopTime = bundle.getLong("StopAt");
+			long stopTime = bundle.getLong("StopAt", 0);
 
 			// TODO: magic number for default
 			int periodId = bundle.getInt(context.getString(R.string.period_id),
 					-2);
-			
-			Log.d("StartStopBroadcastReceiver", "Received broadcast action "
-					+ action + " for period id " + periodId);
 			
 			// cancel existing notifications
 			NotificationManager notificationManager = (NotificationManager) context
 					.getSystemService(Context.NOTIFICATION_SERVICE);
 			// before switching off, remove notification
 			notificationManager.cancel(periodId);
+			
+			NetworkScheduler scheduler = new NetworkScheduler();
+			SharedPreferences sharedPrefs = scheduler.getSchedulesPreferences(context);
 
+			EnabledPeriod referencedPeriod = PersistenceUtils.getPeriod(
+					sharedPrefs, periodId);
+			
+			Log.d("StartStopBroadcastReceiver", "Received broadcast action "
+					+ action + " for period id " + periodId + ": " + referencedPeriod.get_name());
+			
+			SchedulerSettings settings = PersistenceUtils.readSettings(context);
+			
 			// do not use == for string comparison in Java!
-			if (action.equals("OFF")) {
+			if (action.equals("INTERVAL_ON")){
+				scheduler.intervalSwitchOn(context, referencedPeriod, settings);
+			} else if (action.equals("INTERVAL_OFF")){
+				scheduler.intervalSwitchOff(context, referencedPeriod, settings);
+			} else if (action.equals("OFF")) {
 				trySwitchOffConnections(context, periodId, stopTime, false);
 			} else if (action.equals("OFF_DELAYED")) {
 				trySwitchOffConnections(context, periodId, stopTime, true);
 			} else {
 
 				// normal schedule: test weekday
-				NetworkScheduler scheduler = new NetworkScheduler();
-				SharedPreferences sharedPrefs = scheduler.getSchedulesPreferences(context);
-
-				EnabledPeriod referencedPeriod = PersistenceUtils.getPeriod(
-						sharedPrefs, periodId);
-				
-				SchedulerSettings settings = PersistenceUtils.readSettings(context);
 				
 				boolean on = bundle.getBoolean(context
 						.getString(R.string.action_3g_on));
@@ -65,7 +70,17 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 					
 					switchOff(context, referencedPeriod, settings);
 				} else {
-					ConnectionUtils.toggleNetworkState(context, referencedPeriod, on);
+					
+					scheduler.switchOnNow(context, referencedPeriod, settings);
+//					boolean useIntervalConnect = true;
+//					if (on && useIntervalConnect)
+//					{
+//						startIntervalConnect(context, referencedPeriod, settings);
+//					}
+//					else
+//					{
+//						ConnectionUtils.toggleNetworkState(context, referencedPeriod, on);
+//					}
 				}
 			}
 		} catch (Exception e) {
@@ -77,6 +92,37 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 		}
 	}
 	
+
+
+//	private void intervalSwitchOn(Context context, EnabledPeriod period) throws ClassNotFoundException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+//		
+//		NetworkScheduler scheduler = new NetworkScheduler();
+//		
+//		int connectTimeSec = 120;
+//		
+//		scheduler.scheduleIntervalSwitchOff(context, connectTimeSec, period.get_id());
+//		
+//		ConnectionUtils.toggleNetworkState(context, period, true);
+//	}
+
+//	private void startIntervalConnect(
+//			Context context, EnabledPeriod period, SchedulerSettings settings) throws ClassNotFoundException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+//		
+//		NetworkScheduler scheduler = new NetworkScheduler();
+//		
+//		int intervalMin = 15;
+//		
+//		scheduler.scheduleIntervalConnect(context, intervalMin, period.get_id());
+//		
+//		// do the first switch-on right now
+//		intervalSwitchOn(context, period);
+//		
+////		ConnectionUtils.toggleNetworkState(context, period, true);
+////		
+////		int connectTimeSec = 60;
+////		scheduler.scheduleIntervalSwitchOff(context, connectTimeSec, period.get_id());
+//	}
+
 	private boolean appliesToday(EnabledPeriod referencedPeriod, boolean enable) throws Exception {
 		
 		// do not use todays time but the official end time because the
@@ -118,10 +164,9 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 			return;
 		}
 		
-		boolean enableFalse = false;
 		if (! settings.is_warnOnDeactivation())
 		{
-			ConnectionUtils.toggleNetworkState(context, period, enableFalse);
+			switchOffNow(context, period);
 		}
 		
 		PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
@@ -129,7 +174,7 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
         
 		if (! isScreenOn && settings.is_warnOnlyWhenScreenOn())
 		{
-			ConnectionUtils.toggleNetworkState(context, period, enableFalse);
+			switchOffNow(context, period);
 		}
 		else
 		{
@@ -192,7 +237,7 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 				switchOff(context, referencedPeriod, settings);
 			} else {
 				
-				ConnectionUtils.toggleNetworkState(context, referencedPeriod, false);
+				switchOffNow(context, referencedPeriod);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -201,5 +246,14 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 			Toast.makeText(context, "Error changing 3g setting",
 					Toast.LENGTH_SHORT).show();
 		}
+	}
+	
+	private void switchOffNow(Context context, EnabledPeriod period) throws ClassNotFoundException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, InvocationTargetException
+	{
+		// cancel interval connect
+		NetworkScheduler scheduler = new NetworkScheduler();
+		scheduler.cancelIntervalConnect(context, period.get_id());
+		
+		ConnectionUtils.toggleNetworkState(context, period, false);
 	}
 }

@@ -2,12 +2,9 @@
 <resources>
     <string name="app_name">Network Scheduler</string>
     <string name="three_g_scheduler">Network\nScheduler</string>
-    <string name="dummy_button">3G scheduling ON</string>
-    <string name="dummy_button_disable">3G scheduling OFF</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="start_text">Start</string>
+    <string name="start_interval_text">Interval connect</string>
     <string name="stop_text">Stop</string>
-    <string name="otl_img_description">Blablablabal</string>
     
     <string name="modify">Edit</string>
     <string name="activate_now">Activate now</string>
@@ -23,16 +20,11 @@
     <string name="mobile_data">Mobile data</string>
     <string name="wifi">Wi-Fi</string>
     <string name="bluetooth">Bluetooth</string>
-    <string name="switch_off_all">Switching off Wi-Fi, Mobile Data and Bluetooth shortly</string>
-    <string name="switch_off_wifi_mobile">Switching off Wi-Fi and Mobile Data shortly</string>
-    <string name="switch_off_wifi_bluetooth">Switching off Wi-Fi and Bluetooth shortly</string>
-    <string name="switch_off_mobile_bluetooth">Switching off Mobile Data and Bluetooth shortly</string>
-    <string name="switch_off_wifi">Switching off Wi-Fi shortly</string>
-    <string name="switch_off_mobile">Switching off Mobile Data shortly</string>
-    <string name="switch_off_bluetooth">Switching off Bluetooth shortly</string>
+    <string name="switch_off_shortly">Switching off shortly: </string>
     
+    <string name="switch_off_auto_delayed">Switch-off auto-delayed</string>
     <string name="switch_off_delayed_until">Switch off delayed until %s</string>
-    <string name="switch_off_auto_delayed_until">Switch off delayed until %s  (auto-delay)</string>
+    <string name="switch_off_auto_delayed_until">Delayed until %s because device was in use</string>
     <string name="switch_off_skipped_today">Switch off skipped today</string>
     
     <string name="action_enable">Enabling 3G</string>
@@ -68,5 +60,15 @@
     <string name="pref_summary_notify_each_action">Show a notification each time a network connection was activated or deactivated</string>
     <string name="pref_title_no_switchoff_unlocked">Auto-delay if screen on</string>
     <string name="pref_summary_no_switchoff_unlocked">Automatically delay the switch-off if the screen is on</string>
+    
+    <string name="pref_title_interval_connect_wifi">Wi-Fi interval connect</string>
+    <string name="pref_summary_interval_connect_wifi">Switch on Wi-Fi only every %s minutes to fetch messages (only when active)</string>
+	<string name="pref_title_interval_connect_mobiledata">Mobile data interval connect</string>
+    <string name="pref_summary_interval_connect_mobiledata">Switch on mobile data only every %s minutes to fetch messages (only when active)</string>
+    
+    <string name="pref_key_connect_interval">pref_key_connect_interval</string>
+    <string name="pref_title_connect_interval">Connect interval</string>
+    <string name="pref_summary_connect_interval">Connect every %s minutes for a short while to fetch messages</string>
+    <string name="pref_dialog_title_connect_interval">Connect interval (minutes)</string>
     
 </resources>
