@@ -36,8 +36,7 @@ public class DelayStopBroadcastReceiver extends BroadcastReceiver {
 
 		if (action.equals("DEACTIVATE")) {
 			try {
-				
-				scheduler.switchOffNow(context, periodId);
+				scheduler.deactivate(periodId, context);
 				showSwitchOffToast(context);
 			} catch (Exception e) {
 				Log.e("DelayStopBroadcastReceiver",

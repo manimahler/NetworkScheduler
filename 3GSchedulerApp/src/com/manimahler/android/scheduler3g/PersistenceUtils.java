@@ -9,10 +9,11 @@ import android.util.Log;
 
 public class PersistenceUtils {
 
+	private static final String TAG = "PersistenceUtils";
+	
 	private static final String ARRAY_SIZE = "ARRAY_SIZE";
 	private static final String PREF_VERSION = "VERSION";
 	
-
 	public static void saveToPreferences(SharedPreferences preferences,
 			ArrayList<EnabledPeriod> periods) {
 		// Rough idea: EnabledPeriod could implement some interface
@@ -25,7 +26,7 @@ public class PersistenceUtils {
 		// For the moment:
 
 		try {
-
+			
 			SharedPreferences.Editor editor = preferences.edit();
 
 			// TODO: get rid of this:
@@ -45,17 +46,48 @@ public class PersistenceUtils {
 				period.saveToPreferences(editor, Integer.toString(i));
 			}
 			
-			
 			// Commit to storage
 			editor.commit();
 
 		} catch (Exception ex) {
-			Log.e("saveToPreferences",
-					"Error saving settings: " + ex.toString());
+			Log.e(TAG, "Error saving settings: " + ex.toString());
 
 			// throw ex;
 		}
 	}
+	
+	public static void saveToPreferences(SharedPreferences preferences,
+			EnabledPeriod period)
+	{
+		try {
+			
+			// Brute force. TODO: Sqlite
+			ArrayList<EnabledPeriod> savedPeriods = readFromPreferences(preferences);
+			
+			int idxToReplace = -1;
+			for (int i = 0; i < savedPeriods.size(); i++) {
+				if (savedPeriods.get(i).get_id() == period.get_id()){
+					idxToReplace = i;
+				}
+			}
+			
+			if (idxToReplace < 0)
+			{
+				throw new Exception("Error storing enabled-period");
+			}
+			
+			savedPeriods.set(idxToReplace, period);
+			
+			saveToPreferences(preferences, savedPeriods);
+
+		} catch (Exception ex) {
+			Log.e(TAG, "Error saving settings: " + ex.toString());
+
+			// throw ex;
+		}
+	}
+	
+	
 	
 //	public static void putSettings(SchedulerSettings settings, SharedPreferences.Editor editor)
 //	{
@@ -78,9 +110,8 @@ public class PersistenceUtils {
 	public static ArrayList<EnabledPeriod> readFromPreferences(
 			SharedPreferences preferences) {
 		preferences.getInt(PREF_VERSION, 0);
-
+		
 		// assertion...
-
 		int size = preferences.getInt(ARRAY_SIZE, 0);
 
 		ArrayList<EnabledPeriod> result = new ArrayList<EnabledPeriod>(size);
@@ -102,6 +133,8 @@ public class PersistenceUtils {
 				return enabledPeriod;
 			}
 		}
+		
+		Log.d(TAG, "Unable to find enabled period " + periodId);
 		return null;
 	}
 }

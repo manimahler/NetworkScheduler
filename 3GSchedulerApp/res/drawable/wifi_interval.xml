@@ -1,0 +1,4 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/ic_action_wifi" />
+    <item android:drawable="@drawable/ic_action_bluetooth1" />
+</layer-list>

@@ -50,7 +50,6 @@ public class AlarmUtils {
 		int intervalMillis = intervalSeconds * 1000;
 		
 		am.setInexactRepeating(AlarmManager.RTC_WAKEUP, firstTimeMillis, intervalMillis, pendingIntent);
-
 	}
 	
 }

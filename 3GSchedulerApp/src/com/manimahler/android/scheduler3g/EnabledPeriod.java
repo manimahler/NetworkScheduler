@@ -1,5 +1,7 @@
 package com.manimahler.android.scheduler3g;
 
+import java.util.Calendar;
+
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,7 +22,10 @@ public class EnabledPeriod {
 
 	private static final String WEEK_DAYS = "WeekDays";
 	
-	private static final String INTERVAL_CONNECT = "IntervalConnect";
+	private static final String INTERVAL_CONNECT_WIFI = "IntervalConnectWifi";
+	private static final String INTERVAL_CONNECT_MOB = "IntervalConnectMob";
+	
+	private static final String ACTIVE = "Active";
 
 	private int _id;
 	private String _name;
@@ -33,10 +38,13 @@ public class EnabledPeriod {
 	private boolean _mobileData;
 	private boolean _wifi;
 	private boolean _bluetooth;
+	
+	private boolean _intervalConnectWifi;
+	private boolean _intervalConnectMobData;
 
 	private boolean[] _weekDays;
 	
-	private boolean _intervalConnect;
+	private boolean _active;
 
 	public EnabledPeriod(Bundle bundle) {
 
@@ -61,7 +69,10 @@ public class EnabledPeriod {
 			_weekDays = new boolean[7];
 		}
 		
-		_intervalConnect = bundle.getBoolean(INTERVAL_CONNECT, false);
+		_intervalConnectWifi = bundle.getBoolean(INTERVAL_CONNECT_WIFI, false);
+		_intervalConnectMobData = bundle.getBoolean(INTERVAL_CONNECT_MOB, false);
+		
+		_active = bundle.getBoolean(ACTIVE, false);
 	}
 
 	public EnabledPeriod(SharedPreferences preferences, String qualifier) {
@@ -88,7 +99,10 @@ public class EnabledPeriod {
 					+ i, false);
 		}
 		
-		_intervalConnect = preferences.getBoolean(INTERVAL_CONNECT + qualifier, false);
+		_intervalConnectWifi = preferences.getBoolean(INTERVAL_CONNECT_WIFI + qualifier, false);
+		_intervalConnectMobData = preferences.getBoolean(INTERVAL_CONNECT_MOB + qualifier, false);
+		
+		_active = preferences.getBoolean(ACTIVE + qualifier, false);
 	}
 
 	// public EnabledPeriod(SharedPreferences preferences)
@@ -118,7 +132,16 @@ public class EnabledPeriod {
 		_wifi = true;
 		_bluetooth = true;
 		
-		_intervalConnect = false;
+		_intervalConnectWifi = false;
+		_intervalConnectMobData = false;
+		
+		// or calculate right here if within period?
+		try {
+			_active = isActiveNow();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void set_id(int id) {
@@ -210,29 +233,56 @@ public class EnabledPeriod {
 	}
 	
 	
-	
-	public boolean is_intervalConnect() {
+/*	public boolean is_intervalConnect() {
 		return _intervalConnect;
 	}
 
 	public void set_intervalConnect(boolean _intervalConnect) {
 		this._intervalConnect = _intervalConnect;
+	}*/
+
+	public boolean is_intervalConnectWifi() {
+		return _intervalConnectWifi;
 	}
 
-//	public boolean useIntervalConnect(SchedulerSettings settings)
-//	{
-//		if (is_mobileData() && settings.is_intervalConnectMobileData())
-//		{
-//			return true;
-//		}
-//		
-//		if (is_wifi() && settings.is_intervalConnectWifi())
-//		{
-//			return true;
-//		}
-//		
-//		return false;
-//	}
+	public void set_intervalConnectWifi(boolean _intervalConnectWifi) {
+		this._intervalConnectWifi = _intervalConnectWifi;
+	}
+
+	public boolean is_intervalConnectMobData() {
+		return _intervalConnectMobData;
+	}
+
+	public void set_intervalConnectMobData(boolean _intervalConnectMobData) {
+		this._intervalConnectMobData = _intervalConnectMobData;
+	}
+
+
+	public boolean is_active() {
+		return _active;
+	}
+
+	public void set_active(boolean _active) {
+		this._active = _active;
+	}
+	
+	
+	public boolean useIntervalConnect()
+	{
+		return useIntervalConnectWifi() || useIntervalConnectMobileData();
+	}
+	
+	public boolean useIntervalConnectWifi()
+	{
+		// TODO: additional check if within enabled period
+		return (is_wifi() && is_intervalConnectWifi() && is_active() && is_schedulingEnabled());
+	}
+	
+	public boolean useIntervalConnectMobileData()
+	{
+		// TODO: additional check if within enabled period
+		return (is_mobileData() && is_intervalConnectMobData() && is_active() && is_schedulingEnabled());
+	}
 
 	public void saveToPreferences(SharedPreferences.Editor editor,
 			String qualifier) {
@@ -257,7 +307,10 @@ public class EnabledPeriod {
 			editor.putBoolean(WEEK_DAYS + qualifier + "_" + i, _weekDays[i]);
 		}
 		
-		editor.putBoolean(INTERVAL_CONNECT + qualifier, _intervalConnect);
+		editor.putBoolean(INTERVAL_CONNECT_WIFI + qualifier, _intervalConnectWifi);
+		editor.putBoolean(INTERVAL_CONNECT_MOB + qualifier, _intervalConnectMobData);
+		
+		editor.putBoolean(ACTIVE + qualifier, _active);
 	}
 
 	public void saveToBundle(Bundle bundle) {
@@ -279,6 +332,104 @@ public class EnabledPeriod {
 
 		bundle.putBooleanArray(WEEK_DAYS, _weekDays);
 
-		bundle.putBoolean(INTERVAL_CONNECT, _intervalConnect);
+		bundle.putBoolean(INTERVAL_CONNECT_WIFI, _intervalConnectWifi);
+		bundle.putBoolean(INTERVAL_CONNECT_MOB, _intervalConnectMobData);
+		
+		bundle.putBoolean(ACTIVE, _active);
 	}
+
+	public boolean isActiveNow() throws Exception {
+		
+		return isActiveAt(System.currentTimeMillis());
+	}
+	
+	public boolean isActiveAt(long timeMillis) throws Exception
+	{
+		Calendar checkTime = Calendar.getInstance();
+		checkTime.setTimeInMillis(timeMillis);
+		
+		Calendar lastStart = getPreviousHourMinuteInMillis(timeMillis, get_startTimeMillis());
+		
+		// check if the previous start was applicable on the actual day it would have happened		
+		if (! isOnActiveWeekday(lastStart.getTimeInMillis()))
+		{
+			return false;
+		}
+		
+		// now the last start happened, check if it hasn't already stopped
+		Calendar lastStop = getPreviousHourMinuteInMillis(timeMillis, get_endTimeMillis());
+		
+		// case 1: last stop is after last start (but of course before the check time)
+		if (lastStop.after(lastStart))
+		{
+			// it has already stopped: false (if applicable)
+			return ! isOnActiveWeekday(lastStop.getTimeInMillis());
+		}
+		
+		// case 2: last stop is before the last start, i.e. after check time today
+		// -> still running
+		return true;
+	}
+
+	private Calendar getPreviousHourMinuteInMillis(long timeMillis, long hourMinuteMillis) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(hourMinuteMillis);
+
+		int startHour = calendar.get(Calendar.HOUR_OF_DAY);
+		int startMinute = calendar.get(Calendar.MINUTE);
+		
+		Calendar calendarAt = Calendar.getInstance();
+		calendarAt.setTimeInMillis(timeMillis);
+		
+		calendarAt.set(Calendar.HOUR_OF_DAY, startHour);
+		calendarAt.set(Calendar.MINUTE, startMinute);
+		calendarAt.set(Calendar.SECOND, 0);
+		
+		if (calendarAt.getTimeInMillis() > timeMillis)
+		{
+			// the previous occurrence is the day before
+			calendarAt.add(Calendar.HOUR, -24);
+		}
+		
+		return calendarAt;
+	}
+	
+	
+	private boolean isOnActiveWeekday(long timeInMillis) throws Exception {
+		
+		int weekdayIndex = DateTimeUtils.getWeekdayIndex(timeInMillis);
+		
+		return (get_weekDays()[weekdayIndex]);
+	}
+	
+	public boolean appliesToday(boolean enable) throws Exception {
+		
+		// do not use todays time but the official end time because the
+		// broadcast might arrive late (esp. with inexact repeating on kitkat)
+		
+		long alarmTime;
+		
+		Log.d("EnabledPeriod", "enable: " + enable);
+		
+		if (enable)
+		{
+			alarmTime = get_startTimeMillis();
+		}
+		else
+		{
+			alarmTime = get_endTimeMillis();
+		}
+		
+		// TODO: contains fuzziness regarding midnight - remove duplication with isOnActiveWeekday
+		long actualAlarmTime = DateTimeUtils.getPreviousTimeIn24hInMillis(alarmTime);
+		
+		Log.d("StartStopReceiver", "actualAlarmTime: " + actualAlarmTime);
+		
+		int weekdayIndex = DateTimeUtils.getWeekdayIndex(actualAlarmTime);
+		
+		Log.d("StartStopReceiver", "weekdayIndex: " + weekdayIndex);
+		
+		return (get_weekDays()[weekdayIndex]);
+	}
+	
 }

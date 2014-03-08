@@ -48,10 +48,10 @@ public class DateTimeUtils {
 
 		Calendar calendarNow = Calendar.getInstance();
 		calendarNow.setTimeInMillis(System.currentTimeMillis());
-
+		
 		Calendar calendar = setTime(hourOfDay, minute);
 		
-		// it seems that starting with 4.3 now is sometimes (a couple of millis) earlier than the set time!
+		// it seems that starting with 4.3 'now' is sometimes (a couple of millis) earlier than the set time!
 		// we just want to make sure a delayed alarm (on kitkat) is not skipped because the wrong
 		// day is taken
 		
@@ -62,11 +62,7 @@ public class DateTimeUtils {
 		
 		if (absDifference > maxDifferenceConsideredSameDay)
 		{
-
-		//if (!calendar.before(calendarNow)) {
-			
-			
-			// add 24 hours
+			// add -24 hours
 			calendar.add(Calendar.HOUR, -24);
 		}
 

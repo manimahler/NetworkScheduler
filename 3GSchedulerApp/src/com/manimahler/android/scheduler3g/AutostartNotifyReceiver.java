@@ -36,12 +36,8 @@ public class AutostartNotifyReceiver extends BroadcastReceiver {
 		ArrayList<EnabledPeriod> enabledPeriods = 
 			PersistenceUtils.readFromPreferences(prefs);
 		
-		for (EnabledPeriod enabledPeriod : enabledPeriods) {
-			alarmHandler.setAlarm(context, enabledPeriod);
-		}
+		SchedulerSettings settings = PersistenceUtils.readSettings(context);
 		
-//		ScheduleSettings settings = new ScheduleSettings(prefs);
-//		
-//		alarmHandler.setAlarm(context, settings);
+		alarmHandler.setAlarms(context, enabledPeriods, settings);
 	}
 }

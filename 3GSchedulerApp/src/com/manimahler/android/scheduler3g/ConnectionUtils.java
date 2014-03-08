@@ -97,7 +97,13 @@ public class ConnectionUtils {
 		
 		Log.d("ConnectionUtils", "Switching WIFI ON status to " + enable);
 		
-		wifiManager.setWifiEnabled(enable);
+		if (enable && ! wifiManager.isWifiEnabled()){
+			wifiManager.setWifiEnabled(enable);
+		}
+		
+		if (! enable && wifiManager.isWifiEnabled()){
+			wifiManager.setWifiEnabled(enable);
+		}
 	}
 
 	public static void toggleBluetooth(Context context, boolean enable) {

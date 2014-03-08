@@ -32,6 +32,8 @@
         android:contentDescription="@string/wifi"
         android:src="@drawable/ic_action_wifi" />
             
+
+            
                 <ImageView
         android:id="@+id/imageViewMobileData"
         android:layout_width="wrap_content"

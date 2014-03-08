@@ -1,5 +1,6 @@
 package com.manimahler.android.scheduler3g;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -338,6 +339,9 @@ public class MainActivity extends FragmentActivity implements
 //		getFragmentManager().beginTransaction()
 //        .add(android.R.id.content, settingsFragment)
 //        .commit();
+		
+		// check if interval connect was switched on / off
+		
 
 	}
 
@@ -356,7 +360,12 @@ public class MainActivity extends FragmentActivity implements
 			// cancel the alarm
 			selectedPeriod.set_schedulingEnabled(false);
 			NetworkScheduler scheduler = new NetworkScheduler();
-			scheduler.setAlarm(MainActivity.this, selectedPeriod);
+			try {
+				scheduler.setAlarm(MainActivity.this, selectedPeriod, _settings);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 			adapter.removeAt(info.position);
 			saveSettings();
@@ -393,11 +402,11 @@ public class MainActivity extends FragmentActivity implements
 
 			if (! enable)
 			{
-				scheduler.switchOffNow(this, selectedPeriod.get_id());
+				scheduler.deactivate(selectedPeriod, this);
 			}
 			else
 			{
-				scheduler.switchOnNow(this, selectedPeriod, _settings);
+				scheduler.activate(selectedPeriod, this, _settings);
 			}
 			
 		} catch (Exception e) {
@@ -470,20 +479,15 @@ public class MainActivity extends FragmentActivity implements
 		Log.d("saveSettings", "Saving to preferences...");
 		PersistenceUtils.saveToPreferences(preferences, _enabledPeriods);
 
-		setAlarm();
-		// _settings.saveToPreferences(preferences);
-	}
-
-
-	private void setAlarm() {
-
-		NetworkScheduler scheduler = new NetworkScheduler();
-
-		for (EnabledPeriod period : _enabledPeriods) {
-			scheduler.setAlarm(MainActivity.this, period);
+		try {
+			NetworkScheduler scheduler = new NetworkScheduler();
+			scheduler.setAlarms(this, _enabledPeriods, _settings);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
 	}
+
 
 	private SharedPreferences GetPreferences() {
 		NetworkScheduler alarmHandler = new NetworkScheduler();

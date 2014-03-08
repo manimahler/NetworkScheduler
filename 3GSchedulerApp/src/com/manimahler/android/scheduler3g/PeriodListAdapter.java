@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,11 +17,11 @@ import android.widget.TextView;
 public class PeriodListAdapter extends ArrayAdapter<EnabledPeriod> {
 	private final Context context;
 	private final ArrayList<EnabledPeriod> values;
-	
+
 	public PeriodListAdapter(Context context, ArrayList<EnabledPeriod> list) {
 		super(context, R.layout.enabled_period, list);
 		this.context = context;
-		this.values = list;	
+		this.values = list;
 	}
 
 	@Override
@@ -28,19 +29,19 @@ public class PeriodListAdapter extends ArrayAdapter<EnabledPeriod> {
 		LayoutInflater inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View rowView = inflater.inflate(R.layout.enabled_period, parent, false);
-		
+
 		EnabledPeriod period = values.get(position);
-		
+
 		if (period.get_name() != null && !period.get_name().isEmpty()) {
 			TextView name = (TextView) rowView.findViewById(R.id.TextViewName);
 			name.setText(period.get_name());
 		}
-		
+
 		TextView startView = (TextView) rowView
 				.findViewById(R.id.textViewStartTime);
 		TextView stopView = (TextView) rowView
 				.findViewById(R.id.TextViewStopTime);
-		
+
 		TextView onView = (TextView) rowView.findViewById(R.id.textViewOn);
 		TextView offView = (TextView) rowView.findViewById(R.id.textViewOff);
 
@@ -56,59 +57,81 @@ public class PeriodListAdapter extends ArrayAdapter<EnabledPeriod> {
 		Log.d("PeriodListAdapter.getView", "Week text: " + weekdayText);
 
 		weekDayView.setText(weekdayText);
-		
+
 		// tinting the icons
-		ImageView wifiImgView = (ImageView) rowView.findViewById(R.id.imageViewWifi);
-		tintViewIcon(wifiImgView, R.drawable.ic_action_wifi, !period.is_wifi());
-		
-		ImageView mobileDataView = (ImageView) rowView.findViewById(R.id.imageViewMobileData);
-		tintViewIcon(mobileDataView, R.drawable.ic_action_mobile_data, !period.is_mobileData());
-		
-		ImageView btView = (ImageView) rowView.findViewById(R.id.imageViewBluetooth);
-		tintViewIcon(btView, R.drawable.ic_action_bluetooth1, !period.is_bluetooth());
-//		
-//		mobileDataIcon.setImageDrawable(mobileDataIcon.getDrawable().mutate());
-//		if (!period.is_mobileData()) {
-//			mobileDataIcon.setColorFilter(tint);
-//		}
-//		else
-//		{
-//			mobileDataIcon.clearColorFilter();
-//		}
-//
-//		ImageView btIcon = (ImageView) rowView.findViewById(R.id.imageViewBluetooth);
-//		btIcon.setImageDrawable(btIcon.getDrawable().mutate());
-//		
-//		if (!period.is_bluetooth()) {
-//			
-//			btIcon.setColorFilter(tint);
-//		}
-//		else
-//		{
-//			btIcon.clearColorFilter();
-//		}
+		boolean intervalWifi = period.is_wifi()
+				&& period.is_intervalConnectWifi();
+		ImageView wifiImgView = (ImageView) rowView
+				.findViewById(R.id.imageViewWifi);
+		tintViewIcon(wifiImgView, R.drawable.ic_action_wifi, !period.is_wifi(),
+				intervalWifi);
+
+		boolean intervalMob = period.is_mobileData()
+				&& period.is_intervalConnectMobData();
+		ImageView mobileDataView = (ImageView) rowView
+				.findViewById(R.id.imageViewMobileData);
+		tintViewIcon(mobileDataView, R.drawable.ic_action_mobile_data,
+				!period.is_mobileData(), intervalMob);
+
+		ImageView btView = (ImageView) rowView
+				.findViewById(R.id.imageViewBluetooth);
+		tintViewIcon(btView, R.drawable.ic_action_bluetooth1,
+				!period.is_bluetooth(), false);
+		//
+		// mobileDataIcon.setImageDrawable(mobileDataIcon.getDrawable().mutate());
+		// if (!period.is_mobileData()) {
+		// mobileDataIcon.setColorFilter(tint);
+		// }
+		// else
+		// {
+		// mobileDataIcon.clearColorFilter();
+		// }
+		//
+		// ImageView btIcon = (ImageView)
+		// rowView.findViewById(R.id.imageViewBluetooth);
+		// btIcon.setImageDrawable(btIcon.getDrawable().mutate());
+		//
+		// if (!period.is_bluetooth()) {
+		//
+		// btIcon.setColorFilter(tint);
+		// }
+		// else
+		// {
+		// btIcon.clearColorFilter();
+		// }
 
 		return rowView;
 	}
 
-	private void tintViewIcon(ImageView imageView, int iconResourceId, boolean tintIt) {
-		
+	private void tintViewIcon(ImageView imageView, int iconResourceId,
+			boolean tintIt, boolean intervals) {
+
 		int tint = context.getResources().getColor(R.color.button_unchecked);
 
-		// re-reading the icon from the resource seems to be the only way to avoid tiniting
+		// re-reading the icon from the resource seems to be the only way to
+		// avoid tiniting
 		// ALL the images in the other rowViews!
 		// see http://www.curious-creature.org/2009/05/02/drawable-mutations/
-		Drawable wifiIcon = context.getResources().getDrawable(iconResourceId);
-		
+		Drawable icon = context.getResources().getDrawable(iconResourceId);
+
 		if (tintIt) {
-			wifiIcon.mutate().setColorFilter(tint, Mode.MULTIPLY);
+			icon.mutate().setColorFilter(tint, Mode.MULTIPLY);
+		} else {
+			icon.mutate().clearColorFilter();
 		}
-		else
-		{
-			wifiIcon.mutate().clearColorFilter();
+
+		if (!intervals) {
+			imageView.setImageDrawable(icon);
+		} else {
+
+			Drawable[] layers = new Drawable[2];
+			layers[0] = icon;
+			layers[1] = context.getResources()
+					.getDrawable(R.drawable.intervals);
+			LayerDrawable layerDrawable = new LayerDrawable(layers);
+			imageView.setImageDrawable(layerDrawable);
 		}
-		
-		imageView.setImageDrawable(wifiIcon);
+
 	}
 
 	private void setPeriodItemTimes(EnabledPeriod period, TextView startView,
@@ -182,8 +205,8 @@ public class PeriodListAdapter extends ArrayAdapter<EnabledPeriod> {
 
 			itemToUpdate.set_scheduleStart(item.is_scheduleStart());
 			itemToUpdate.set_scheduleStop(item.is_scheduleStop());
-			
-			itemToUpdate.set_intervalConnect(item.is_intervalConnect());
+
+			// itemToUpdate.set_intervalConnect(item.is_intervalConnect());
 
 			itemToUpdate.set_startTimeMillis(item.get_startTimeMillis());
 			itemToUpdate.set_endTimeMillis(item.get_endTimeMillis());
@@ -193,7 +216,17 @@ public class PeriodListAdapter extends ArrayAdapter<EnabledPeriod> {
 			itemToUpdate.set_wifi(item.is_wifi());
 			itemToUpdate.set_bluetooth(item.is_bluetooth());
 
-			
+			itemToUpdate.set_intervalConnectWifi(item.is_intervalConnectWifi());
+			itemToUpdate.set_intervalConnectMobData(item
+					.is_intervalConnectMobData());
+
+			try {
+				itemToUpdate.set_active(itemToUpdate.isActiveNow());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 			notifyDataSetChanged();
 		}
 	}
@@ -229,26 +262,24 @@ public class PeriodListAdapter extends ArrayAdapter<EnabledPeriod> {
 
 		notifyDataSetChanged();
 	}
-	
-	public void moveUp(int originalPosition)
-	{
+
+	public void moveUp(int originalPosition) {
 		EnabledPeriod period = values.get(originalPosition);
-		
+
 		values.remove(originalPosition);
-		
+
 		values.add(originalPosition - 1, period);
-		
+
 		notifyDataSetChanged();
 	}
-	
-	public void moveDown(int originalPosition)
-	{
+
+	public void moveDown(int originalPosition) {
 		EnabledPeriod period = values.get(originalPosition);
-		
+
 		values.remove(originalPosition);
-		
+
 		values.add(originalPosition + 1, period);
-		
+
 		notifyDataSetChanged();
 	}
 }

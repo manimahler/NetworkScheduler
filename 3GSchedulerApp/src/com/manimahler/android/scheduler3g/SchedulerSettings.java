@@ -13,8 +13,10 @@ public class SchedulerSettings {
 	private static final String NOTIFY_ALL_ACTIONS = "pref_key_notify_each_action";
 	
 	private static final String INTERVAL_CONNECT_WIFI = "pref_key_interval_connect_wifi";
+	private static final String INTERVAL_CONNECT_WIFI_KEEP = "pref_key_interval_connect_wifi_keep_connected";
 	private static final String INTERVAL_CONNECT_MOBILEDATA = "pref_key_interval_connect_mobiledata";
 	private static final String CONNECT_INTERVAL = "pref_key_connect_interval";
+	
 	
 	
 	private boolean _vibrate;
@@ -53,6 +55,8 @@ public class SchedulerSettings {
 		_intervalConnectWifi = preferences.getBoolean(INTERVAL_CONNECT_WIFI, false);
 		_intervalConnectMobileData = preferences.getBoolean(INTERVAL_CONNECT_MOBILEDATA, false);
 		_connectInterval = Integer.parseInt(preferences.getString(CONNECT_INTERVAL, "15"));
+		
+		_keepWifiConnected = preferences.getBoolean(INTERVAL_CONNECT_WIFI_KEEP, false);
 	}
 	
 	public boolean is_warnOnlyWhenScreenOn() {

@@ -20,7 +20,7 @@
     <string name="mobile_data">Mobile data</string>
     <string name="wifi">Wi-Fi</string>
     <string name="bluetooth">Bluetooth</string>
-    <string name="switch_off_shortly">Switching off shortly: </string>
+    <string name="switch_off_shortly">"Switching off shortly: "</string>
     
     <string name="switch_off_auto_delayed">Switch-off auto-delayed</string>
     <string name="switch_off_delayed_until">Switch off delayed until %s</string>
@@ -40,7 +40,8 @@
     <string name="settings">Settings</string>
     <string name="help">Help</string>
     
-    <string name="settings_title_notifications">Notifications</string>
+    <string name="settings_title_interval_connect">Interval Connect</string>
+    <string name="settings_title_notifications">Switch-Off Notification</string>
     
     <string name="pref_title_warn_switchoff">Switch-off warning</string>
     <string name="pref_summary_warn_switchoff">Show a notification before deactivating connections when the screen is on</string>
@@ -63,12 +64,14 @@
     
     <string name="pref_title_interval_connect_wifi">Wi-Fi interval connect</string>
     <string name="pref_summary_interval_connect_wifi">Switch on Wi-Fi only every %s minutes to fetch messages (only when active)</string>
-	<string name="pref_title_interval_connect_mobiledata">Mobile data interval connect</string>
+    <string name="pref_title_interval_connect_wifi_keep_connected">Keep Wi-Fi connected</string>
+    <string name="pref_summary_interval_connect_wifi_keep_connected">Interval connect will not switch-off Wi-Fi when connected to a hot-spot (e.g. at home)</string>
+ 	<string name="pref_title_interval_connect_mobiledata">Mobile data interval connect</string>
     <string name="pref_summary_interval_connect_mobiledata">Switch on mobile data only every %s minutes to fetch messages (only when active)</string>
     
     <string name="pref_key_connect_interval">pref_key_connect_interval</string>
     <string name="pref_title_connect_interval">Connect interval</string>
     <string name="pref_summary_connect_interval">Connect every %s minutes for a short while to fetch messages</string>
-    <string name="pref_dialog_title_connect_interval">Connect interval (minutes)</string>
+    <string name="pref_dialog_title_connect_interval">Interval (min)</string>
     
 </resources>

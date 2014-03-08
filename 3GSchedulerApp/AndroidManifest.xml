@@ -48,6 +48,13 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+        
+       <receiver android:name=".UserPresentBroadCastReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
+        
         <!-- Broadcast receiver -->
         <receiver android:name=".StartStopBroadcastReceiver" >
         </receiver>
