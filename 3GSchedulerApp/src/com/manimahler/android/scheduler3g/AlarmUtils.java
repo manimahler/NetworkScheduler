@@ -18,12 +18,17 @@ public class AlarmUtils {
 
 	public static void setAlarm(Context context, PendingIntent pendingIntent,
 			int secondsFromNow) {
-		
-		AlarmManager am = (AlarmManager) context
-				.getSystemService(android.content.Context.ALARM_SERVICE);
 
 		long wakeTime = DateTimeUtils.getTimeFromNowInMillis(secondsFromNow);
 
+		setAlarm(context, pendingIntent, wakeTime);
+	}
+
+	public static void setAlarm(Context context, PendingIntent pendingIntent,
+			long wakeTime) {
+		AlarmManager am = (AlarmManager) context
+				.getSystemService(android.content.Context.ALARM_SERVICE);
+		
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(wakeTime);
 

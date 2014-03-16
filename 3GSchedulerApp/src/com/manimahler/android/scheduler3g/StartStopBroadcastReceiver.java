@@ -59,6 +59,22 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 				
 				boolean on = bundle.getBoolean(context
 						.getString(R.string.action_3g_on));
+				if (referencedPeriod == null)
+				{
+					// assuming deleted -> no action, no re-scheduling
+					Log.w("StartStopBroadcastReceiver", "EnabledPeriod not found, assuming deleted. No action.");
+					return;
+				}
+				
+				// re-start 'repeating' alarm (not using repeating because it has become inexact on kitkat)
+				if (on)
+				{
+					scheduler.setNextAlarmStart(context, referencedPeriod, settings);
+				}
+				else
+				{
+					scheduler.setNextAlarmStop(context, referencedPeriod);
+				}
 				
 				if (! referencedPeriod.appliesToday(on))
 				{

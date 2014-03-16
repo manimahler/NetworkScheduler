@@ -31,34 +31,41 @@ public class NetworkScheduler {
 		return context.getSharedPreferences("SCHEDULER_PREFS",
 				Context.MODE_PRIVATE);
 	}
-	
+
+	public void deleteAlarms(Context context,
+			ArrayList<EnabledPeriod> enabledPeriods) {
+		for (EnabledPeriod enabledPeriod : enabledPeriods) {
+			deleteAlarm(context, enabledPeriod);
+		}
+	}
+
 	public void deleteAlarm(Context context, EnabledPeriod period) {
-		
-		SchedulerSettings settings = PersistenceUtils.readSettings(context);
-		
-		AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-		
+
+		AlarmManager am = (AlarmManager) context
+				.getSystemService(Context.ALARM_SERVICE);
+
+		Log.d("NetworkScheduler",
+				"Deleting alarms for period " + period.get_id());
+
 		PendingIntent pendingIntentOn = getPendingIntent(context, period, true);
 		PendingIntent pendingIntentOff = getPendingIntent(context, period,
 				false);
 
-		if (!period.is_schedulingEnabled()) {
-			// cancel both
-			am.cancel(pendingIntentOn);
-			am.cancel(pendingIntentOff);
-		}
-		
-		if (period.useIntervalConnect())
-		{
-			cancelIntervalConnect(context, period.get_id());
-		}
+		// cancel both
+		am.cancel(pendingIntentOn);
+		am.cancel(pendingIntentOff);
+
+		// if (period.useIntervalConnect())
+		// {
+		// cancelIntervalConnect(context, period.get_id());
+		// }
 	}
-	
-	public void setAlarms(Context context, ArrayList<EnabledPeriod> enabledPeriods, SchedulerSettings settings)
-	{
+
+	public void setAlarms(Context context,
+			ArrayList<EnabledPeriod> enabledPeriods, SchedulerSettings settings) {
 		// it will be re-set if necessary:
 		cancelIntervalConnect(context, -1);
-		
+
 		for (EnabledPeriod enabledPeriod : enabledPeriods) {
 			try {
 				setAlarm(context, enabledPeriod, settings);
@@ -69,20 +76,19 @@ public class NetworkScheduler {
 		}
 	}
 
-	public void setAlarm(Context context, EnabledPeriod period, SchedulerSettings settings) throws Exception {
+	public void setNextAlarmStart(Context context, EnabledPeriod period,
+			SchedulerSettings settings) throws ClassNotFoundException,
+			NoSuchFieldException, IllegalArgumentException,
+			IllegalAccessException, NoSuchMethodException,
+			InvocationTargetException {
 		AlarmManager am = (AlarmManager) context
 				.getSystemService(Context.ALARM_SERVICE);
 
-		long interval24h = 24 * 60 * 60 * 1000;
-
 		PendingIntent pendingIntentOn = getPendingIntent(context, period, true);
-		PendingIntent pendingIntentOff = getPendingIntent(context, period,
-				false);
 
 		if (!period.is_schedulingEnabled()) {
-			// cancel both
+			// cancel
 			am.cancel(pendingIntentOn);
-			am.cancel(pendingIntentOff);
 
 			return;
 		}
@@ -91,24 +97,96 @@ public class NetworkScheduler {
 			long startMillis = DateTimeUtils.getNextTimeIn24hInMillis(period
 					.get_startTimeMillis());
 
-			am.setRepeating(AlarmManager.RTC_WAKEUP, startMillis, interval24h,
-					pendingIntentOn);
+			AlarmUtils.setAlarm(context, pendingIntentOn, startMillis);
+
+			// am.setRepeating(AlarmManager.RTC_WAKEUP, startMillis,
+			// interval24h,
+			// pendingIntentOn);
 		} else {
 			am.cancel(pendingIntentOn);
+		}
+
+		if (period.is_active() && period.useIntervalConnect()) {
+			startIntervalConnect(context, period, settings);
+		}
+	}
+
+	public void setNextAlarmStop(Context context, EnabledPeriod period)
+			throws ClassNotFoundException, NoSuchFieldException,
+			IllegalArgumentException, IllegalAccessException,
+			NoSuchMethodException, InvocationTargetException {
+		AlarmManager am = (AlarmManager) context
+				.getSystemService(Context.ALARM_SERVICE);
+
+		PendingIntent pendingIntentOff = getPendingIntent(context, period,
+				false);
+
+		if (!period.is_schedulingEnabled()) {
+			// cancel
+			am.cancel(pendingIntentOff);
+
+			return;
 		}
 
 		if (period.is_scheduleStop()) {
 			long stopMillis = DateTimeUtils.getNextTimeIn24hInMillis(period
 					.get_endTimeMillis());
-			am.setRepeating(AlarmManager.RTC_WAKEUP, stopMillis, interval24h,
-					pendingIntentOff);
+
+			AlarmUtils.setAlarm(context, pendingIntentOff, stopMillis);
+			// am.setRepeating(AlarmManager.RTC_WAKEUP, stopMillis, interval24h,
+			// pendingIntentOff);
 		} else {
 			am.cancel(pendingIntentOff);
 		}
-		
-		if (period.is_active() && period.useIntervalConnect()) {
-			startIntervalConnect(context, period, settings);
-		}
+	}
+
+	public void setAlarm(Context context, EnabledPeriod period,
+			SchedulerSettings settings) throws Exception {
+
+		// TRIAL:
+		setNextAlarmStart(context, period, settings);
+		setNextAlarmStop(context, period);
+		//
+		// AlarmManager am = (AlarmManager) context
+		// .getSystemService(Context.ALARM_SERVICE);
+		//
+		// long interval24h = 24 * 60 * 60 * 1000;
+		//
+		// PendingIntent pendingIntentOn = getPendingIntent(context, period,
+		// true);
+		// PendingIntent pendingIntentOff = getPendingIntent(context, period,
+		// false);
+		//
+		// if (!period.is_schedulingEnabled()) {
+		// // cancel both
+		// am.cancel(pendingIntentOn);
+		// am.cancel(pendingIntentOff);
+		//
+		// return;
+		// }
+		//
+		// if (period.is_scheduleStart()) {
+		// long startMillis = DateTimeUtils.getNextTimeIn24hInMillis(period
+		// .get_startTimeMillis());
+		//
+		// am.setRepeating(AlarmManager.RTC_WAKEUP, startMillis, interval24h,
+		// pendingIntentOn);
+		// } else {
+		// am.cancel(pendingIntentOn);
+		// }
+		//
+		// if (period.is_scheduleStop()) {
+		// long stopMillis = DateTimeUtils.getNextTimeIn24hInMillis(period
+		// .get_endTimeMillis());
+		// am.setRepeating(AlarmManager.RTC_WAKEUP, stopMillis, interval24h,
+		// pendingIntentOff);
+		// } else {
+		// am.cancel(pendingIntentOff);
+		// }
+		//
+		// if (period.is_active() && period.useIntervalConnect()) {
+		// startIntervalConnect(context, period, settings);
+		// }
 	}
 
 	public boolean isSwitchOffRequired(Context context, EnabledPeriod period) {
