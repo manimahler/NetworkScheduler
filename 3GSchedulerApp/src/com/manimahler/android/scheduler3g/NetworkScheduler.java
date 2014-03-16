@@ -904,10 +904,16 @@ public class NetworkScheduler {
 
 		String action;
 
-		if (period.is_schedulingEnabled()) {
-			action = context.getString(R.string.action_enable);
+		// if (period.is_schedulingEnabled()) {
+		// action = context.getString(R.string.action_enable);
+		// } else {
+		// action = context.getString(R.string.action_disable);
+		// }
+
+		if (start) {
+			action = context.getString(R.string.action_start);
 		} else {
-			action = context.getString(R.string.action_disable);
+			action = context.getString(R.string.action_stop);
 		}
 
 		Intent intent = new Intent(context, StartStopBroadcastReceiver.class);
