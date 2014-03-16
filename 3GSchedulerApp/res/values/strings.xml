@@ -28,8 +28,8 @@
     <string name="switch_off_auto_delayed_until">Delayed until %s because device was in use</string>
     <string name="switch_off_skipped_today">Switch off skipped today</string>
     
-    <string name="action_enable">Enabling 3G</string>
-    <string name="action_disable">Disabling 3G</string>
+    <string name="action_start">START</string>
+    <string name="action_stop">STOP</string>
     <string name="everyday">Everyday</string>
     <string name="never">Never</string>
     <string name="on">on</string>
