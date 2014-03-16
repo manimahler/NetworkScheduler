@@ -19,6 +19,7 @@
     <string name="name_hint">Name (optional)</string>
     <string name="mobile_data">Mobile data</string>
     <string name="wifi">Wi-Fi</string>
+    <string name="volume_on">Sound</string>
     <string name="bluetooth">Bluetooth</string>
     <string name="switch_off_shortly">"Switching off shortly: "</string>
     

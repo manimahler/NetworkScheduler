@@ -195,6 +195,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 		});
 		updateCheckboxAppearance(toggleWifi, R.drawable.ic_action_wifi);
 
+		// bt
 		CheckBox toggleBluetooth = (CheckBox) view
 				.findViewById(R.id.checkBoxBluetooth);
 		toggleBluetooth.setChecked(_enabledPeriod.is_bluetooth());
@@ -204,12 +205,31 @@ public class SchedulePeriodFragment extends DialogFragment {
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView,
 							boolean isChecked) {
-						onToggleBluetoothClicked(buttonView);
+						boolean isChecked1 = ((CheckBox) buttonView).isChecked();
+						_enabledPeriod.set_bluetooth(isChecked1);
+						updateCheckboxAppearance((CheckBox) buttonView, R.drawable.ic_action_bluetooth1);
 					}
 				});
 
-		updateCheckboxAppearance(toggleBluetooth,
-				R.drawable.ic_action_bluetooth1);
+		updateCheckboxAppearance(toggleBluetooth, R.drawable.ic_action_bluetooth1);
+
+		// vol
+		CheckBox toggleVolume = (CheckBox) view
+				.findViewById(R.id.checkBoxVolume);
+		toggleVolume.setChecked(_enabledPeriod.is_volume());
+		toggleVolume.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				// boolean isChecked1 = ((CheckBox) buttonView).isChecked();
+				_enabledPeriod.set_volume(isChecked);
+				updateCheckboxAppearance((CheckBox) buttonView,
+						R.drawable.ic_action_volume_up);
+			}
+		});
+
+		updateCheckboxAppearance(toggleVolume, R.drawable.ic_action_volume_up);
 
 		// check box interval connect wifi
 		CheckBox checkBoxIntervalConnectWifi = (CheckBox) view
@@ -456,12 +476,6 @@ public class SchedulePeriodFragment extends DialogFragment {
 			updateCheckboxAppearance(checkBoxIntervalConnectWifi,
 					R.drawable.ic_action_interval, isChecked);
 		}
-	}
-
-	public void onToggleBluetoothClicked(View v) {
-		boolean isChecked = ((CheckBox) v).isChecked();
-		_enabledPeriod.set_bluetooth(isChecked);
-		updateCheckboxAppearance((CheckBox) v, R.drawable.ic_action_bluetooth1);
 	}
 
 	public void buttonStartClicked(View v) {

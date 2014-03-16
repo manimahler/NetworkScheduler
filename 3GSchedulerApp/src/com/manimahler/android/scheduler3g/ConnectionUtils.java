@@ -6,9 +6,11 @@ import java.lang.reflect.Method;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
@@ -31,8 +33,36 @@ public class ConnectionUtils {
 		if (enabledPeriod.is_bluetooth()) {
 			toggleBluetooth(context, enable);
 		}
+		
+		if (enabledPeriod.is_volume())
+		{
+			toggleVolume(context, enable);
+		}
 	}
 	
+
+	private static void toggleVolume(Context context, boolean enable) {
+		AudioManager audiomanager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+		
+		if (enable)
+		{
+			Log.d("ConnectionUtils", "Setting ringer mode to normal");
+			audiomanager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+		}
+		else
+		{
+			Log.d("ConnectionUtils", "Setting ringer mode to silent");
+			audiomanager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+		}
+	}
+	
+	public static boolean isRingerModeNormal(Context context)
+	{
+		AudioManager audiomanager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+		
+		return audiomanager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL;
+	}
+
 
 	public static boolean isBluetoothOn() {
 		

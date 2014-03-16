@@ -202,6 +202,10 @@ public class NetworkScheduler {
 			return true;
 		}
 
+		if (period.is_volume()) {
+			return true;
+		}
+
 		return false;
 	}
 

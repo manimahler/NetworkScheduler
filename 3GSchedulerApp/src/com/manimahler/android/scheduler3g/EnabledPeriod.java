@@ -19,6 +19,7 @@ public class EnabledPeriod {
 	private static final String BLUETOOTH = "BLUETOOTH";
 	private static final String WIFI = "WIFI";
 	private static final String MOBILE_DATA = "MOBILE_DATA";
+	private static final String VOLUME = "VOLUME";
 
 	private static final String WEEK_DAYS = "WeekDays";
 	
@@ -38,6 +39,7 @@ public class EnabledPeriod {
 	private boolean _mobileData;
 	private boolean _wifi;
 	private boolean _bluetooth;
+	private boolean _volume;
 	
 	private boolean _intervalConnectWifi;
 	private boolean _intervalConnectMobData;
@@ -62,6 +64,7 @@ public class EnabledPeriod {
 		_mobileData = bundle.getBoolean(MOBILE_DATA, true);
 		_wifi = bundle.getBoolean(WIFI, false);
 		_bluetooth = bundle.getBoolean(BLUETOOTH, false);
+		_volume = bundle.getBoolean(VOLUME, false);
 
 		_weekDays = bundle.getBooleanArray(WEEK_DAYS);
 
@@ -91,6 +94,7 @@ public class EnabledPeriod {
 		_mobileData = preferences.getBoolean(MOBILE_DATA + qualifier, true);
 		_wifi = preferences.getBoolean(WIFI + qualifier, false);
 		_bluetooth = preferences.getBoolean(BLUETOOTH + qualifier, false);
+		_volume = preferences.getBoolean(VOLUME + qualifier, false);
 
 		_weekDays = new boolean[7];
 
@@ -130,7 +134,8 @@ public class EnabledPeriod {
 
 		_mobileData = true;
 		_wifi = true;
-		_bluetooth = true;
+		_bluetooth = false;
+		_volume = false;
 		
 		_intervalConnectWifi = false;
 		_intervalConnectMobData = false;
@@ -231,15 +236,14 @@ public class EnabledPeriod {
 	public void set_bluetooth(boolean _bluetooth) {
 		this._bluetooth = _bluetooth;
 	}
-	
-	
-/*	public boolean is_intervalConnect() {
-		return _intervalConnect;
+
+	public boolean is_volume() {
+		return _volume;
 	}
 
-	public void set_intervalConnect(boolean _intervalConnect) {
-		this._intervalConnect = _intervalConnect;
-	}*/
+	public void set_volume(boolean _volume) {
+		this._volume = _volume;
+	}
 
 	public boolean is_intervalConnectWifi() {
 		return _intervalConnectWifi;
@@ -301,6 +305,7 @@ public class EnabledPeriod {
 		editor.putBoolean(MOBILE_DATA + qualifier, _mobileData);
 		editor.putBoolean(WIFI + qualifier, _wifi);
 		editor.putBoolean(BLUETOOTH + qualifier, _bluetooth);
+		editor.putBoolean(VOLUME + qualifier, _volume);
 
 		Log.d("saveToPreferences", "EnabledPeriod: Saving week days...");
 		for (int i = 0; i < 7; i++) {
@@ -329,6 +334,7 @@ public class EnabledPeriod {
 		bundle.putBoolean(MOBILE_DATA, _mobileData);
 		bundle.putBoolean(WIFI, _wifi);
 		bundle.putBoolean(BLUETOOTH, _bluetooth);
+		bundle.putBoolean(VOLUME, _volume);
 
 		bundle.putBooleanArray(WEEK_DAYS, _weekDays);
 
