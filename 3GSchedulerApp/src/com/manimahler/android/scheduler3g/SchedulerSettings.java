@@ -17,7 +17,9 @@ public class SchedulerSettings {
 	private static final String INTERVAL_CONNECT_MOBILEDATA = "pref_key_interval_connect_mobiledata";
 	private static final String CONNECT_INTERVAL = "pref_key_connect_interval";
 	
+	private static final String GLOBAL_ON = "pref_key_global_on";
 	
+	private boolean _globalOn;
 	
 	private boolean _vibrate;
 	private boolean _playSound;
@@ -41,6 +43,8 @@ public class SchedulerSettings {
 	
 	public SchedulerSettings(SharedPreferences preferences)
 	{
+		_globalOn = preferences.getBoolean(GLOBAL_ON, true);
+		
 		_vibrate = preferences.getBoolean(VIBRATE, true);
 		_playSound = preferences.getBoolean(PLAY_SOUND, true);
 		
@@ -57,6 +61,15 @@ public class SchedulerSettings {
 		_connectInterval = Integer.parseInt(preferences.getString(CONNECT_INTERVAL, "15"));
 		
 		_keepWifiConnected = preferences.getBoolean(INTERVAL_CONNECT_WIFI_KEEP, false);
+	}
+	
+	
+	public boolean is_globalOn() {
+		return _globalOn;
+	}
+	
+	public void set_globalOn(boolean _globalOn) {
+		this._globalOn = _globalOn;
 	}
 	
 	public boolean is_warnOnlyWhenScreenOn() {

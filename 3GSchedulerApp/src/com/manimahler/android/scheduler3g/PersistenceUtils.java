@@ -137,4 +137,20 @@ public class PersistenceUtils {
 		Log.d(TAG, "Unable to find enabled period " + periodId);
 		return null;
 	}
+	
+	
+	
+	public static void saveGlobalOnState(Context context, boolean value){
+
+		SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+		
+		SharedPreferences.Editor editor = sharedPrefs.edit();
+		
+		String GLOBAL_ON = "pref_key_global_on";
+		
+		editor.putBoolean(GLOBAL_ON, value);
+		
+		editor.commit();
+     }
+
 }

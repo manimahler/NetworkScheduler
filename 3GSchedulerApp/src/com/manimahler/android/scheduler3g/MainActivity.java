@@ -1,16 +1,17 @@
 package com.manimahler.android.scheduler3g;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.manimahler.android.scheduler3g.SchedulePeriodFragment.OnPeriodUpdatedListener;
 import com.manimahler.android.scheduler3g.R;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Point;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -19,18 +20,25 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 /**
  *  FAQ:
@@ -43,23 +51,15 @@ import android.widget.Toast;
  */
 
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- * 
- * @see SystemUiHider
- */
 public class MainActivity extends FragmentActivity implements
 		OnPeriodUpdatedListener {
 
-	SchedulerSettings _settings;
+	private SchedulerSettings _settings;
 
-	ArrayList<EnabledPeriod> _enabledPeriods;
-
-	private PeriodListAdapter adapter;
-
-	final static boolean DEBUG = true;
-
+	private ArrayList<EnabledPeriod> _enabledPeriods;
+	
+	private PeriodListAdapter _adapter;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -70,67 +70,74 @@ public class MainActivity extends FragmentActivity implements
 
 		_enabledPeriods = PersistenceUtils.readFromPreferences(schedulesPreferences);
 		_settings = PersistenceUtils.readSettings(this);
+		
+		
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+			ActionBar actionBar = getActionBar();
+			actionBar.setDisplayShowTitleEnabled(true);
+			LinearLayout globalSwitch = (LinearLayout) getLayoutInflater().inflate(R.layout.actionbar_switch, null);
 
+			ActionBar.LayoutParams lp = new ActionBar.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+			
+			actionBar.setCustomView(globalSwitch, lp);
+			
+			actionBar.setDisplayShowCustomEnabled(true);
+		}
+//		else
+//		{
+//			// add the switch (toggle button) somewhere else
+//			RelativeLayout bottomBar = (RelativeLayout) findViewById(R.id.bottom_bar);
+//			RelativeLayout globalSwitch = (RelativeLayout) getLayoutInflater().inflate(R.layout.actionbar_switch, null);
+//			
+//			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+//					RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+//			
+//			params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
+//			params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+//						
+//			globalSwitch.setLayoutParams(params);
+//			globalSwitch.setEnabled(false);
+//			
+//			bottomBar.addView(globalSwitch);
+//		}
+
+		CompoundButton globalSwitch = (CompoundButton)findViewById(R.id.globalSwitch);
+		
+		// currently not supported < SDK 14
+		if (globalSwitch != null)
+		{
+		globalSwitch.setChecked(_settings.is_globalOn());
+		
+		globalSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				onGlobalOnClicked(buttonView);
+			}
+		});
+		}
+		
 		final ListView listview = (ListView) findViewById(R.id.listview);
 
 		this.registerForContextMenu(listview);
 
-		adapter = new PeriodListAdapter(MainActivity.this, _enabledPeriods);
+		_adapter = new PeriodListAdapter(MainActivity.this, _enabledPeriods);
 
-		listview.setAdapter(adapter);
+		listview.setAdapter(_adapter);
 
-		listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> parent, final View view,
-					int position, long id) {
-
-				Log.d("MainActivity.AdapterView.OnItemClickListener",
-						"Item clicked at " + position);
-
-				EnabledPeriod item = adapter.getItem(position);
-
-				showPeriodDetails(item);
-
-				// ((Button)view.findViewById(android.R.id.button1)).setBackgroundResource(R.drawable.time_button);
-
-				// final String item = (String)
-				// parent.getItemAtPosition(position);
-				// view.animate().setDuration(2000).alpha(0)
-				// .withEndAction(new Runnable() {
-				// @Override
-				// public void run() {
-				// list.remove(item);
-				// adapter.notifyDataSetChanged();
-				// //view.setAlpha(1);
-				// }
-				// });
-			}
-		});
-
-		listview.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
-
-			// TODO: use contextual action bar once 2.x support is dropped
-			@Override
-			public void onCreateContextMenu(ContextMenu menu, View v,
-					ContextMenuInfo menuInfo) {
-
-				MenuInflater inflater = getMenuInflater();
-				inflater.inflate(R.menu.context_menu, menu);
-
-				AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-
-				if (info.position > 0) {
-					menu.add(0, R.integer.context_menu_id_up, 6,
-							R.string.move_up); //setIcon(android.R.drawable.arrow_up_float);
-				}
-
-				if (info.position < adapter.getCount() - 1) {
-					menu.add(0, R.integer.context_menu_id_down, 10,
-							R.string.move_down); //setIcon(android.R.drawable.arrow_down_float);
-				}
-			}
-		});
+		if (! _settings.is_globalOn())
+		{
+			// contains setAlpha, which is not supported on Gingerbread (always globalOn):
+			updateEnabledAppearance(false);
+		}
+		else
+		{
+			setItemPressListeners(listview, true);
+		}
+		
+		
+//		LinearLayout mainView = (LinearLayout) findViewById(R.id.mainview);
+//		disableEnableControls(_settings.is_globalOn(), mainView);
 
 		//
 		// listview.setOnItemLongClickListener(new
@@ -230,6 +237,7 @@ public class MainActivity extends FragmentActivity implements
 		// button.setChecked(_settings.is_schedulingEnabled());
 
 		View addBtn = findViewById(R.id.buttonAdd);
+		
 
 		Animation myFadeInAnimation = AnimationUtils.loadAnimation(
 				MainActivity.this, R.anim.fadein);
@@ -239,6 +247,57 @@ public class MainActivity extends FragmentActivity implements
 		// TransitionDrawable trans = (TransitionDrawable)
 		// layout.getBackground();
 		// trans.startTransition(2000);
+	}
+
+	private void setItemPressListeners(final ListView listview, boolean enabled) {
+		
+		
+		if (! enabled)
+		{
+			listview.setOnItemClickListener(null);
+			listview.setOnCreateContextMenuListener(null);
+			
+			return;
+		}
+		
+		listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, final View view,
+					int position, long id) {
+
+				Log.d("MainActivity.AdapterView.OnItemClickListener",
+						"Item clicked at " + position);
+
+				EnabledPeriod item = _adapter.getItem(position);
+
+				showPeriodDetails(item);
+			}
+		});
+
+		listview.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+
+			// TODO: use contextual action bar once 2.x support is dropped
+			@Override
+			public void onCreateContextMenu(ContextMenu menu, View v,
+					ContextMenuInfo menuInfo) {
+
+				MenuInflater inflater = getMenuInflater();
+				inflater.inflate(R.menu.context_menu, menu);
+
+				AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+
+				if (info.position > 0) {
+					menu.add(0, R.integer.context_menu_id_up, 6,
+							R.string.move_up); //setIcon(android.R.drawable.arrow_up_float);
+				}
+
+				if (info.position < _adapter.getCount() - 1) {
+					menu.add(0, R.integer.context_menu_id_down, 10,
+							R.string.move_down); //setIcon(android.R.drawable.arrow_down_float);
+				}
+			}
+		});
 	}
 
 	@Override
@@ -271,7 +330,7 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onPeriodUpdated(EnabledPeriod period) {
 
-		adapter.updateItem(period);
+		_adapter.updateItem(period);
 
 		saveSettings();
 
@@ -288,6 +347,8 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	public void onAddClicked(View view) {
+		
+		
 		long start = DateTimeUtils.getNextTimeIn24hInMillis(6, 30);
 		long end = DateTimeUtils.getNextTimeIn24hInMillis(23, 30);
 
@@ -299,9 +360,48 @@ public class MainActivity extends FragmentActivity implements
 		showPeriodDetails(newPeriod);
 	}
 	
+	public void onGlobalOnClicked(CompoundButton buttonView){
+		
+		PersistenceUtils.saveGlobalOnState(this, buttonView.isChecked());
+		
+		String toastText;
+		
+		NetworkScheduler scheduler = new NetworkScheduler();
+		
+		
+		if (buttonView.isChecked())
+		{
+			scheduler.setAlarms(this, _enabledPeriods, _settings);
+			toastText = "Network Scheduler is enabled";
+		}
+		else
+		{
+			scheduler.deleteAlarms(this, _enabledPeriods);
+			toastText = "Network Scheduler completely disabled";
+		}
+		
+		updateEnabledAppearance(buttonView.isChecked());
+		
+		Toast.makeText(this, toastText, Toast.LENGTH_SHORT).show();
+	}
+	
+	
+	private void updateEnabledAppearance(boolean enabled)
+	{
+		ListView listview = (ListView) findViewById(R.id.listview);
+		setItemPressListeners(listview, enabled);
+		
+		RelativeLayout mainView = (RelativeLayout) findViewById(R.id.mainview);
+		ViewUtils.setControlsEnabled(enabled, mainView);
+		
+		_adapter.setItemsEnabled(enabled);
+		_adapter.notifyDataSetChanged();
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
+		
 		
 	    MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.menu.options_menu, menu);
@@ -315,6 +415,12 @@ public class MainActivity extends FragmentActivity implements
 		switch (item.getItemId()) {
 		case R.id.settings:
 			showSettingsScreen();
+			return true;
+		case R.id.help:
+			String url = "https://sites.google.com/site/networkscheduler/home";
+			Intent i = new Intent(Intent.ACTION_VIEW);
+			i.setData(Uri.parse(url));
+			startActivity(i);
 			return true;
 		}
 		
@@ -347,49 +453,57 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
+	
 
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 				.getMenuInfo();
 
-		EnabledPeriod selectedPeriod = adapter.getItem(info.position);
+		EnabledPeriod selectedPeriod = _adapter.getItem(info.position);
+		
+		boolean result;
 
 		switch (item.getItemId()) {
 		case R.id.delete:
 			Log.d("MainActivity.onContextItemSelected", "Delete pressed");
 
-			// cancel the alarm
-			selectedPeriod.set_schedulingEnabled(false);
+			// cancel the alarm;
 			NetworkScheduler scheduler = new NetworkScheduler();
 			try {
-				scheduler.setAlarm(MainActivity.this, selectedPeriod, _settings);
+				scheduler.deleteAlarm(this, selectedPeriod);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
-			adapter.removeAt(info.position);
+			_adapter.removeAt(info.position);
 			saveSettings();
+			
+			_adapter.notifyDataSetChanged();
 
 			return true;
 		case R.id.modify:
 
 			Log.d("MainActivity.onContextItemSelected", "Edit pressed");
 
-			EnabledPeriod period = adapter.getItem(info.position);
+			EnabledPeriod period = _adapter.getItem(info.position);
 
 			showPeriodDetails(period);
 			return true;
 		case R.id.activate_now:
 			toggleNetworkState(selectedPeriod, true);
+			_adapter.notifyDataSetChanged();
 			return true;
 		case R.id.deactivate_now:
 			toggleNetworkState(selectedPeriod, false);
+			_adapter.notifyDataSetChanged();
 			return true;
 		case R.integer.context_menu_id_up:
-			adapter.moveUp(info.position);
+			_adapter.moveUp(info.position);
+			_adapter.notifyDataSetChanged();
 			return true;
 		case R.integer.context_menu_id_down:
-			adapter.moveDown(info.position);
+			_adapter.moveDown(info.position);
+			_adapter.notifyDataSetChanged();
 		default:
 			return super.onContextItemSelected(item);
 		}

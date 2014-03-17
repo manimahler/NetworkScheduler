@@ -512,16 +512,21 @@ public class SchedulePeriodFragment extends DialogFragment {
 		} else {
 			tintColorId = R.color.button_unchecked;
 		}
-
-		int tint = getResources().getColor(tintColorId);
-
-		Drawable icon = getActivity().getResources()
-				.getDrawable(iconResourceId);
-		if (!checkBoxEnabled || !isChecked) {
-			icon.mutate().setColorFilter(tint, Mode.MULTIPLY);
-		} else {
-			icon.mutate().clearColorFilter();
-		}
+		
+		Drawable icon = ViewUtils.getTintedIcon(getActivity(), 
+				!checkBoxEnabled || !isChecked, tintColorId, iconResourceId);
+		
+//		
+//
+//		int tint = getResources().getColor(tintColorId);
+//
+//		Drawable icon = getActivity().getResources()
+//				.getDrawable(iconResourceId);
+//		if (!checkBoxEnabled || !isChecked) {
+//			icon.mutate().setColorFilter(tint, Mode.MULTIPLY);
+//		} else {
+//			icon.mutate().clearColorFilter();
+//		}
 
 		v.setButtonDrawable(icon);
 		
