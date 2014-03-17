@@ -108,17 +108,40 @@ public class ConnectionUtils {
 	
 	public static boolean isMobileDataOn(Context context) {
 		
-		boolean mobileDataEnabled = false;
-		
-		TelephonyManager telephonyManager = (TelephonyManager) context
-				.getSystemService(Context.TELEPHONY_SERVICE);
+		// From http://stackoverflow.com/questions/12806709/android-how-to-tell-if-mobile-network-data-is-enabled-or-disabled-even-when
+	    boolean mobileDataEnabled = false; // Assume disabled
+	    ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+	    try {
+	        Class<?> cmClass = Class.forName(cm.getClass().getName());
+	        Method method = cmClass.getDeclaredMethod("getMobileDataEnabled");
+	        method.setAccessible(true); // Make the method callable
+	        // get the setting for "mobile data"
+	        mobileDataEnabled = (Boolean)method.invoke(cm);
+	    } catch (Exception e) {
+	        // Some problem accessible private API
+	        // TODO do whatever error handling you want here
+	    	Log.e("ConnectionUtils", "Error getting mobile data state");
+	    	e.printStackTrace();
+	    }
 
-		if (telephonyManager.getDataState() == TelephonyManager.DATA_CONNECTED) {
-			mobileDataEnabled = true;
-			// sensors = context.getString(R.string.mobile_data);
-		}
-		
-		return mobileDataEnabled;
+	    return mobileDataEnabled;
+
+	    // This does not return the correct answer when WiFi is connected
+//		boolean mobileDataEnabled = false;
+//		
+//		TelephonyManager telephonyManager = (TelephonyManager) context
+//				.getSystemService(Context.TELEPHONY_SERVICE);
+//
+//		int dataState = telephonyManager.getDataState();
+//		
+//		Log.d("ConnectionUtils", "Data state is " + dataState);
+//		
+//		if (dataState == TelephonyManager.DATA_CONNECTED) {
+//			mobileDataEnabled = true;
+//			// sensors = context.getString(R.string.mobile_data);
+//		}
+//		
+//		return mobileDataEnabled;
 	}
 
 	public static void toggleWifi(Context context, boolean enable) {
@@ -168,6 +191,10 @@ public class ConnectionUtils {
 			{
 				Log.w("ConnectionUtils", "Cannot disconnect from WiFi. Not switching off!");
 			}
+		}
+		else
+		{
+			Log.d("ConnectionUtils", "Wifi state is not enabled, not disabling!");
 		}
 	}
 
