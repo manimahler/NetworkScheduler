@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.PowerManager;
-import android.util.Config;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -52,13 +51,25 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 			} else if (action.equals("OFF_DELAYED")) {
 				trySwitchOffConnections(context, periodId, stopTime, true);
 			} else {
+				
+				boolean on;
+				
+				if (action.equals(context.getString(R.string.action_start)))
+				{
+					on = true;
+				}else if (action.equals(context.getString(R.string.action_stop))){
+					on = false;
+				}
+				else
+				{
+					Log.e("StartStopBroadcastReceiver", "Unknown action " + action);
+					return;
+				}
 
 				// normal schedule: test weekday
 				EnabledPeriod referencedPeriod = PersistenceUtils.getPeriod(
 						sharedPrefs, periodId);
 				
-				boolean on = bundle.getBoolean(context
-						.getString(R.string.action_3g_on));
 				if (referencedPeriod == null)
 				{
 					// assuming deleted -> no action, no re-scheduling
@@ -98,7 +109,7 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 					Toast.LENGTH_SHORT).show();
 		}
 	}
-	
+
 	private void switchOff(Context context, EnabledPeriod period, SchedulerSettings settings) throws ClassNotFoundException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 		
 		NetworkScheduler scheduler = new NetworkScheduler();
@@ -118,12 +129,12 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 		PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         boolean isScreenOn = powerManager.isScreenOn();
         
+        
+        
 		if (! isScreenOn && settings.is_warnOnlyWhenScreenOn())
 		{
-			// cancel interval connect
-			NetworkScheduler scheduler1 = new NetworkScheduler();
-			
-			scheduler1.deactivate(period, context);
+			// cancel interval connect		
+			scheduler.deactivate(period, context);
 		}
 		else
 		{
