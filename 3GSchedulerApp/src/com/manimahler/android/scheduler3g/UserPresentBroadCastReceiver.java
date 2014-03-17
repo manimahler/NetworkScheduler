@@ -41,17 +41,11 @@ public class UserPresentBroadCastReceiver extends BroadcastReceiver {
 
 		ArrayList<EnabledPeriod> enabledPeriods = PersistenceUtils
 				.readFromPreferences(prefs);
+		
+		boolean wifiOn = false;
+		boolean mobDataOn = false;
 
 		for (EnabledPeriod enabledPeriod : enabledPeriods) {
-
-			if (enabledPeriod.useIntervalConnectMobileData()) {
-				// just toggle on, it will be switched off automatically by the
-				// interval alarm
-				Log.d(TAG, "Switching on mobile data for active period "
-						+ enabledPeriod.get_name());
-
-				ConnectionUtils.toggleMobileData(context, true);
-			}
 
 			if (enabledPeriod.useIntervalConnectWifi()) {
 				// just toggle on, it will be switched off automatically by the
@@ -59,9 +53,30 @@ public class UserPresentBroadCastReceiver extends BroadcastReceiver {
 				Log.d(TAG, "Switching on wifi for active period "
 						+ enabledPeriod.get_name());
 
-				ConnectionUtils.toggleWifi(context, true);
+				wifiOn = true;
+			}
+			
+			if (enabledPeriod.useIntervalConnectMobileData()) {
+				// just toggle on, it will be switched off automatically by the
+				// interval alarm
+				Log.d(TAG, "Switching on mobile data for active period "
+						+ enabledPeriod.get_name());
+
+				mobDataOn = true;
 			}
 		}
+		
+		if (wifiOn)
+		{
+			ConnectionUtils.toggleWifi(context, true);
+			
+			// NOTE: It would be possible to wait here too for a little while to avoid 
+			// 		 connecting mobile data first but the user might not want to wait as long as it takes...
+		}
 
+		if (mobDataOn)
+		{
+			ConnectionUtils.toggleMobileData(context, true);
+		}
 	}
 }
