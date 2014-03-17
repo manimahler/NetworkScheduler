@@ -113,4 +113,19 @@
         android:textColor="@android:color/white"
         android:textSize="12sp" />
 
+        <Button
+        android:id="@+id/buttonOn"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/bottomLine"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/textViewOff"
+        android:focusable="false"
+        android:maxHeight="18dip"
+        android:maxWidth="18dip"
+        android:minHeight="18dip"
+        android:minWidth="18dip" />
+        
 </RelativeLayout>

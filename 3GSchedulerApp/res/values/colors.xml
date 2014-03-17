@@ -13,4 +13,6 @@
 	<color name="transparent">#00FFFFFF</color>
 	<color name="grey_transparent">#80FFFFFF</color>
 	<color name="weak_grey_transparent">#20FFFFFF</color>
+	<color name="weak_blue_transparent">#40000000</color>
+	<color name="red">#90DB0000</color>
 </resources>

@@ -7,9 +7,6 @@
         android:angle="45"
         android:dither="true"
         />
-    <padding android:left="15dp"
-        android:top="15dp"
-        android:right="15dp"
-        android:bottom="15dp" />
+
     
 </shape>
