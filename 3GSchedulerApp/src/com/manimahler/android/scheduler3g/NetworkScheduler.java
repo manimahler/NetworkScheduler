@@ -269,7 +269,7 @@ public class NetworkScheduler {
 				.setContentTitle(title)
 				.setContentText(text)
 				.setTicker(text)
-				.setPriority(NotificationCompat.PRIORITY_HIGH)
+				.setPriority(NotificationCompat.PRIORITY_MAX) // otherwise the buttons are not shown
 				.addAction(R.drawable.clock_notification,
 						context.getString(R.string.switch_off_now),
 						deactivateNowIntentPending)
@@ -349,7 +349,7 @@ public class NetworkScheduler {
 				.setContentTitle("Switching off network")
 				.setContentText(tickerText)
 				.setTicker(tickerText)
-				.setPriority(NotificationCompat.PRIORITY_HIGH)
+				.setPriority(NotificationCompat.PRIORITY_MAX) // increases the chance to see the buttons
 				.addAction(R.drawable.clock_notification, delayText,
 						delayIntentPending)
 				.addAction(R.drawable.clock_notification,
