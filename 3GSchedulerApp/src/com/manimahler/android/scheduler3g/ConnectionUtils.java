@@ -15,7 +15,6 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 
 public class ConnectionUtils {
-	
 
 	public static void toggleNetworkState(Context context,
 			ScheduledPeriod enabledPeriod, boolean enable)
@@ -34,47 +33,43 @@ public class ConnectionUtils {
 		if (enabledPeriod.is_bluetooth()) {
 			toggleBluetooth(context, enable);
 		}
-		
-		if (enabledPeriod.is_volume())
-		{
+
+		if (enabledPeriod.is_volume()) {
 			toggleVolume(context, enable);
 		}
 	}
-	
 
 	private static void toggleVolume(Context context, boolean enable) {
-		AudioManager audiomanager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-		
-		if (enable)
-		{
+		AudioManager audiomanager = (AudioManager) context
+				.getSystemService(Context.AUDIO_SERVICE);
+
+		if (enable) {
 			Log.d("ConnectionUtils", "Setting ringer mode to normal");
 			audiomanager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-		}
-		else
-		{
+		} else {
 			Log.d("ConnectionUtils", "Setting ringer mode to silent");
 			audiomanager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
 		}
 	}
-	
-	public static boolean isRingerModeNormal(Context context)
-	{
-		AudioManager audiomanager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-		
+
+	public static boolean isRingerModeNormal(Context context) {
+		AudioManager audiomanager = (AudioManager) context
+				.getSystemService(Context.AUDIO_SERVICE);
+
 		return audiomanager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL;
 	}
 
-
 	public static boolean isBluetoothOn() {
-		
+
 		boolean isBluetoothEnabled = false;
-		
+
 		BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
 
 		if (adapter != null) {
 			if (adapter.getState() == BluetoothAdapter.STATE_ON) {
-				
-				Log.d("ConnectionUtils", "bluetooth state: " + adapter.getState());
+
+				Log.d("ConnectionUtils",
+						"bluetooth state: " + adapter.getState());
 
 				isBluetoothEnabled = true;
 				// TODO: differentiate between STATE_ON and STATE_CONNECTED,
@@ -86,116 +81,110 @@ public class ConnectionUtils {
 				// sensors += context.getString(R.string.bluetooth);
 			}
 		}
-		
+
 		return isBluetoothEnabled;
 	}
-	
+
 	public static boolean isWifiOn(Context context) {
-		
+
 		WifiManager wifiManager = (WifiManager) context
 				.getSystemService(Context.WIFI_SERVICE);
 		boolean wifiEnabled = wifiManager.isWifiEnabled();
 
 		return wifiEnabled;
 	}
-	
-	public static boolean isWifiConnected(Context context)
-	{
-	ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-	NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-	return (mWifi.isConnected()) ;
+	public static boolean isWifiConnected(Context context) {
+		ConnectivityManager connManager = (ConnectivityManager) context
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo mWifi = connManager
+				.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+		return (mWifi.isConnected());
 	}
-	
+
 	public static boolean isMobileDataOn(Context context) {
-		
-		// From http://stackoverflow.com/questions/12806709/android-how-to-tell-if-mobile-network-data-is-enabled-or-disabled-even-when
-	    boolean mobileDataEnabled = false; // Assume disabled
-	    ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-	    try {
-	        Class<?> cmClass = Class.forName(cm.getClass().getName());
-	        Method method = cmClass.getDeclaredMethod("getMobileDataEnabled");
-	        method.setAccessible(true); // Make the method callable
-	        // get the setting for "mobile data"
-	        mobileDataEnabled = (Boolean)method.invoke(cm);
-	    } catch (Exception e) {
-	        // Some problem accessible private API
-	        // TODO do whatever error handling you want here
-	    	Log.e("ConnectionUtils", "Error getting mobile data state");
-	    	e.printStackTrace();
-	    }
 
-	    return mobileDataEnabled;
+		// From
+		// http://stackoverflow.com/questions/12806709/android-how-to-tell-if-mobile-network-data-is-enabled-or-disabled-even-when
+		boolean mobileDataEnabled = false; // Assume disabled
+		ConnectivityManager cm = (ConnectivityManager) context
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
+		try {
+			Class<?> cmClass = Class.forName(cm.getClass().getName());
+			Method method = cmClass.getDeclaredMethod("getMobileDataEnabled");
+			method.setAccessible(true); // Make the method callable
+			// get the setting for "mobile data"
+			mobileDataEnabled = (Boolean) method.invoke(cm);
+		} catch (Exception e) {
+			// Some problem accessible private API
+			// TODO do whatever error handling you want here
+			Log.e("ConnectionUtils", "Error getting mobile data state");
+			e.printStackTrace();
+		}
 
-	    // This does not return the correct answer when WiFi is connected
-//		boolean mobileDataEnabled = false;
-//		
-//		TelephonyManager telephonyManager = (TelephonyManager) context
-//				.getSystemService(Context.TELEPHONY_SERVICE);
-//
-//		int dataState = telephonyManager.getDataState();
-//		
-//		Log.d("ConnectionUtils", "Data state is " + dataState);
-//		
-//		if (dataState == TelephonyManager.DATA_CONNECTED) {
-//			mobileDataEnabled = true;
-//			// sensors = context.getString(R.string.mobile_data);
-//		}
-//		
-//		return mobileDataEnabled;
+		return mobileDataEnabled;
+
+		// This does not return the correct answer when WiFi is connected
+		// boolean mobileDataEnabled = false;
+		//
+		// TelephonyManager telephonyManager = (TelephonyManager) context
+		// .getSystemService(Context.TELEPHONY_SERVICE);
+		//
+		// int dataState = telephonyManager.getDataState();
+		//
+		// Log.d("ConnectionUtils", "Data state is " + dataState);
+		//
+		// if (dataState == TelephonyManager.DATA_CONNECTED) {
+		// mobileDataEnabled = true;
+		// // sensors = context.getString(R.string.mobile_data);
+		// }
+		//
+		// return mobileDataEnabled;
 	}
 
 	public static void toggleWifi(Context context, boolean enable) {
 		WifiManager wifiManager = (WifiManager) context
 				.getSystemService(Context.WIFI_SERVICE);
-		
+
 		Log.d("ConnectionUtils", "Switching WIFI ON status to " + enable);
-		
-		 int wifiState = wifiManager.getWifiState();
-		 
-		 Log.d("ConnectionUtils", "Current Wi-Fi state is " + wifiState);
-		
-		if (enable && ! wifiManager.isWifiEnabled()){
-			
-			if (wifiState == WifiManager.WIFI_STATE_DISABLED)
-			{
+
+		int wifiState = wifiManager.getWifiState();
+
+		Log.d("ConnectionUtils", "Current Wi-Fi state is " + wifiState);
+
+		if (enable && !wifiManager.isWifiEnabled()) {
+
+			if (wifiState == WifiManager.WIFI_STATE_DISABLED) {
 				wifiManager.setWifiEnabled(enable);
-			}
-			else if (wifiState == WifiManager.WIFI_STATE_UNKNOWN)
-			{
-				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
-				{
-					// observed once on SGS3: Wifi stayed in in unknown state for quite a while (but toggling worked)
+			} else if (wifiState == WifiManager.WIFI_STATE_UNKNOWN) {
+				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+					// observed once on SGS3: Wifi stayed in in unknown state
+					// for quite a while (but toggling worked)
 					Log.w("ConnectionUtils",
 							"Wifi state is WIFI_STATE_UNKNOWN, trying to enable...");
 					wifiManager.setWifiEnabled(enable);
-				}
-				else
-				{
+				} else {
 					// take extra care not to trigger the Wifi-Bug on KitKat
 					Log.w("ConnectionUtils",
-					"Wifi state is WIFI_STATE_UNKNOWN, doing nothing...");
+							"Wifi state is WIFI_STATE_UNKNOWN, doing nothing...");
 				}
-			}
-			else
-			{
-				Log.d("ConnectionUtils", "Wifi state is not disabled, not enabling!");
+			} else {
+				Log.d("ConnectionUtils",
+						"Wifi state is not disabled, not enabling!");
 			}
 		}
-		
-		if (! enable && wifiManager.isWifiEnabled()){
-			if (! isWifiConnected(context) || wifiManager.disconnect())
-			{
+
+		if (!enable && wifiManager.isWifiEnabled()) {
+			if (!isWifiConnected(context) || wifiManager.disconnect()) {
 				wifiManager.setWifiEnabled(enable);
+			} else {
+				Log.w("ConnectionUtils",
+						"Cannot disconnect from WiFi. Not switching off!");
 			}
-			else
-			{
-				Log.w("ConnectionUtils", "Cannot disconnect from WiFi. Not switching off!");
-			}
-		}
-		else
-		{
-			Log.d("ConnectionUtils", "Wifi state is not enabled, not disabling!");
+		} else {
+			Log.d("ConnectionUtils",
+					"Wifi state is not enabled, not disabling!");
 		}
 	}
 
@@ -208,14 +197,16 @@ public class ConnectionUtils {
 				if (enable) {
 					Log.d("Bluetooth", "Bluetooth already enabled");
 				} else {
-					Log.d("ConnectionUtils", "Switching BT ON status to " + enable);
+					Log.d("ConnectionUtils", "Switching BT ON status to "
+							+ enable);
 					adapter.disable();
 				}
 
 			} else if (adapter.getState() == BluetoothAdapter.STATE_OFF) {
 
 				if (enable) {
-					Log.d("ConnectionUtils", "Switching BT ON status to " + enable);
+					Log.d("ConnectionUtils", "Switching BT ON status to "
+							+ enable);
 					adapter.enable();
 				} else {
 					Log.d("Bluetooth", "Bluetooth already disabled");
@@ -245,8 +236,7 @@ public class ConnectionUtils {
 		final Method setMobileDataEnabledMethod = iConnectivityManagerClass
 				.getDeclaredMethod("setMobileDataEnabled", Boolean.TYPE);
 
-		Log.d("ConnectionUtils",
-				"Switching mobile data ON status to " + enable);
+		Log.d("ConnectionUtils", "Switching mobile data ON status to " + enable);
 
 		setMobileDataEnabledMethod.setAccessible(true);
 		setMobileDataEnabledMethod.invoke(iConnectivityManager, enable);
