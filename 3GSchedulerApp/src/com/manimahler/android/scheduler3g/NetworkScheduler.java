@@ -31,13 +31,13 @@ public class NetworkScheduler {
 	}
 
 	public void deleteAlarms(Context context,
-			ArrayList<EnabledPeriod> enabledPeriods) {
-		for (EnabledPeriod enabledPeriod : enabledPeriods) {
+			ArrayList<ScheduledPeriod> enabledPeriods) {
+		for (ScheduledPeriod enabledPeriod : enabledPeriods) {
 			deleteAlarm(context, enabledPeriod);
 		}
 	}
 
-	public void deleteAlarm(Context context, EnabledPeriod period) {
+	public void deleteAlarm(Context context, ScheduledPeriod period) {
 
 		AlarmManager am = (AlarmManager) context
 				.getSystemService(Context.ALARM_SERVICE);
@@ -60,11 +60,11 @@ public class NetworkScheduler {
 	}
 
 	public void setAlarms(Context context,
-			ArrayList<EnabledPeriod> enabledPeriods, SchedulerSettings settings) {
+			ArrayList<ScheduledPeriod> enabledPeriods, SchedulerSettings settings) {
 		// it will be re-set if necessary:
 		cancelIntervalConnect(context, -1);
 
-		for (EnabledPeriod enabledPeriod : enabledPeriods) {
+		for (ScheduledPeriod enabledPeriod : enabledPeriods) {
 			try {
 				setAlarm(context, enabledPeriod, settings);
 			} catch (Exception e) {
@@ -74,7 +74,7 @@ public class NetworkScheduler {
 		}
 	}
 
-	public void setNextAlarmStart(Context context, EnabledPeriod period,
+	public void setNextAlarmStart(Context context, ScheduledPeriod period,
 			SchedulerSettings settings) throws ClassNotFoundException,
 			NoSuchFieldException, IllegalArgumentException,
 			IllegalAccessException, NoSuchMethodException,
@@ -109,7 +109,7 @@ public class NetworkScheduler {
 		}
 	}
 
-	public void setNextAlarmStop(Context context, EnabledPeriod period)
+	public void setNextAlarmStop(Context context, ScheduledPeriod period)
 			throws ClassNotFoundException, NoSuchFieldException,
 			IllegalArgumentException, IllegalAccessException,
 			NoSuchMethodException, InvocationTargetException {
@@ -138,7 +138,7 @@ public class NetworkScheduler {
 		}
 	}
 
-	public void setAlarm(Context context, EnabledPeriod period,
+	public void setAlarm(Context context, ScheduledPeriod period,
 			SchedulerSettings settings) throws Exception {
 
 		// TRIAL:
@@ -187,7 +187,7 @@ public class NetworkScheduler {
 		// }
 	}
 
-	public boolean isSwitchOffRequired(Context context, EnabledPeriod period) {
+	public boolean isSwitchOffRequired(Context context, ScheduledPeriod period) {
 		if (period.is_mobileData() && ConnectionUtils.isMobileDataOn(context)) {
 			return true;
 		}
@@ -208,7 +208,7 @@ public class NetworkScheduler {
 	}
 
 	public void makeAutoDelayNotification(Context context,
-			EnabledPeriod period, SchedulerSettings settings) {
+			ScheduledPeriod period, SchedulerSettings settings) {
 
 		ArrayList<String> sensorsToSwitchOff = getConnectionSwitchOffList(
 				period, context);
@@ -292,7 +292,7 @@ public class NetworkScheduler {
 		notificationManager.notify(period.get_id(), builder.build());
 	}
 
-	public void makeDisableNotification(Context context, EnabledPeriod period,
+	public void makeDisableNotification(Context context, ScheduledPeriod period,
 			SchedulerSettings settings) {
 
 		String tickerText = getTickerText(period, context);
@@ -382,7 +382,7 @@ public class NetworkScheduler {
 		notificationManager.notify(period.get_id(), builder.build());
 	}
 
-	private ArrayList<String> getConnectionSwitchOffList(EnabledPeriod period,
+	private ArrayList<String> getConnectionSwitchOffList(ScheduledPeriod period,
 			Context context) {
 		ArrayList<String> result = new ArrayList<String>(3);
 
@@ -418,7 +418,7 @@ public class NetworkScheduler {
 		return sb.toString();
 	}
 
-	private String getTickerText(EnabledPeriod period, Context context) {
+	private String getTickerText(ScheduledPeriod period, Context context) {
 
 		ArrayList<String> sensorsToSwitchOff = getConnectionSwitchOffList(
 				period, context);
@@ -433,7 +433,7 @@ public class NetworkScheduler {
 		return tickerText;
 	}
 
-	public void activate(EnabledPeriod period, Context context,
+	public void activate(ScheduledPeriod period, Context context,
 			SchedulerSettings settings) throws ClassNotFoundException,
 			NoSuchFieldException, IllegalArgumentException,
 			IllegalAccessException, NoSuchMethodException,
@@ -459,13 +459,13 @@ public class NetworkScheduler {
 			NoSuchMethodException, InvocationTargetException {
 		SharedPreferences sharedPrefs = getSchedulesPreferences(context);
 
-		EnabledPeriod period = PersistenceUtils
+		ScheduledPeriod period = PersistenceUtils
 				.getPeriod(sharedPrefs, periodId);
 
 		deactivate(period, context);
 	}
 
-	public void deactivate(EnabledPeriod period, Context context)
+	public void deactivate(ScheduledPeriod period, Context context)
 			throws ClassNotFoundException, NoSuchFieldException,
 			IllegalArgumentException, IllegalAccessException,
 			NoSuchMethodException, InvocationTargetException {
@@ -528,7 +528,7 @@ public class NetworkScheduler {
 
 		SharedPreferences sharedPrefs = getSchedulesPreferences(context);
 
-		EnabledPeriod period = PersistenceUtils
+		ScheduledPeriod period = PersistenceUtils
 				.getPeriod(sharedPrefs, periodId);
 
 		if (period == null) {
@@ -540,7 +540,7 @@ public class NetworkScheduler {
 	}
 
 	public void scheduleSwitchOff(Context context, int seconds,
-			String actionName, EnabledPeriod period) {
+			String actionName, ScheduledPeriod period) {
 
 		// AlarmManager am = (AlarmManager) context
 		// .getSystemService(android.content.Context.ALARM_SERVICE);
@@ -635,7 +635,7 @@ public class NetworkScheduler {
 	// }
 	// }
 
-	private void startIntervalConnect(Context context, EnabledPeriod period,
+	private void startIntervalConnect(Context context, ScheduledPeriod period,
 			SchedulerSettings settings) throws ClassNotFoundException,
 			NoSuchFieldException, IllegalArgumentException,
 			IllegalAccessException, NoSuchMethodException,
@@ -740,10 +740,10 @@ public class NetworkScheduler {
 	// }
 
 	private boolean anyPeriodUsesIntervalConnect(Context context) {
-		ArrayList<EnabledPeriod> allPeriods = PersistenceUtils
+		ArrayList<ScheduledPeriod> allPeriods = PersistenceUtils
 				.readFromPreferences(getSchedulesPreferences(context));
 
-		for (EnabledPeriod enabledPeriod : allPeriods) {
+		for (ScheduledPeriod enabledPeriod : allPeriods) {
 			if (enabledPeriod.useIntervalConnect()) {
 				return true;
 			}
@@ -760,7 +760,7 @@ public class NetworkScheduler {
 		// TODO: get rid of period id being stored in alarm
 
 		// any period could be active and require interval connect
-		ArrayList<EnabledPeriod> allPeriods = PersistenceUtils
+		ArrayList<ScheduledPeriod> allPeriods = PersistenceUtils
 				.readFromPreferences(getSchedulesPreferences(context));
 
 		boolean intervalMobData = false;
@@ -769,7 +769,7 @@ public class NetworkScheduler {
 		boolean mobDataActive = false;
 		boolean wifiActive = false;
 
-		for (EnabledPeriod enabledPeriod : allPeriods) {
+		for (ScheduledPeriod enabledPeriod : allPeriods) {
 			if (enabledPeriod.useIntervalConnectMobileData()) {
 				intervalMobData = true;
 			}
@@ -940,13 +940,13 @@ public class NetworkScheduler {
 			return;
 		}
 
-		ArrayList<EnabledPeriod> allPeriods = PersistenceUtils
+		ArrayList<ScheduledPeriod> allPeriods = PersistenceUtils
 				.readFromPreferences(getSchedulesPreferences(context));
 
 		boolean intervalMobData = false;
 		boolean intervalWifi = false;
 
-		for (EnabledPeriod enabledPeriod : allPeriods) {
+		for (ScheduledPeriod enabledPeriod : allPeriods) {
 			if (enabledPeriod.useIntervalConnectMobileData()) {
 				intervalMobData = true;
 			}
@@ -984,7 +984,7 @@ public class NetworkScheduler {
 	}
 
 	private PendingIntent getPendingIntent(Context context,
-			EnabledPeriod period, boolean start) {
+			ScheduledPeriod period, boolean start) {
 
 		String action;
 
@@ -1028,7 +1028,7 @@ public class NetworkScheduler {
 	}
 
 	private PendingIntent getSwitchOffIntent(Context context,
-			EnabledPeriod period, String actionName) {
+			ScheduledPeriod period, String actionName) {
 
 		return getSwitchOffIntent(context, period.get_id(),
 				period.get_endTimeMillis(), actionName);

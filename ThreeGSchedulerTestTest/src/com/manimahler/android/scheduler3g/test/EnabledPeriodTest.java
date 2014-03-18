@@ -3,7 +3,7 @@ package com.manimahler.android.scheduler3g.test;
 import java.util.Calendar;
 
 import com.manimahler.android.scheduler3g.DateTimeUtils;
-import com.manimahler.android.scheduler3g.EnabledPeriod;
+import com.manimahler.android.scheduler3g.ScheduledPeriod;
 
 import junit.framework.TestCase;
 
@@ -30,7 +30,7 @@ public class EnabledPeriodTest extends TestCase {
 		boolean[] days = new boolean[7];
 		days[1] = true;
 		
-		EnabledPeriod period = new EnabledPeriod(true, start, stop, days);
+		ScheduledPeriod period = new ScheduledPeriod(true, start, stop, days);
 		
 		// current time: before start:
 		calendar.set(Calendar.HOUR_OF_DAY, 4);
@@ -91,7 +91,7 @@ public class EnabledPeriodTest extends TestCase {
 		boolean[] days = new boolean[7];
 		days[1] = true;
 		
-		EnabledPeriod period = new EnabledPeriod(true, start, stop, days);
+		ScheduledPeriod period = new ScheduledPeriod(true, start, stop, days);
 		
 		// current time: after start, 26.th:
 		calendar.set(Calendar.HOUR_OF_DAY, 4);

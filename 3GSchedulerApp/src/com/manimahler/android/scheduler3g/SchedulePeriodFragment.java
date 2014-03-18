@@ -34,16 +34,16 @@ public class SchedulePeriodFragment extends DialogFragment {
 
 	// Container Activity must implement this interface
 	public interface OnPeriodUpdatedListener {
-		public void onPeriodUpdated(EnabledPeriod period);
+		public void onPeriodUpdated(ScheduledPeriod period);
 	}
 
-	EnabledPeriod _enabledPeriod;
+	ScheduledPeriod _enabledPeriod;
 	OnPeriodUpdatedListener _listener;
 
 	View _view;
 
 	// Factory method
-	public static SchedulePeriodFragment newInstance(EnabledPeriod enabledPeriod) {
+	public static SchedulePeriodFragment newInstance(ScheduledPeriod enabledPeriod) {
 
 		SchedulePeriodFragment f = new SchedulePeriodFragment();
 
@@ -89,7 +89,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 			savedData = getArguments();
 		}
 
-		_enabledPeriod = new EnabledPeriod(savedData);
+		_enabledPeriod = new ScheduledPeriod(savedData);
 
 		// name
 		EditText editTextName = (EditText) view.findViewById(R.id.editTextName);

@@ -15,7 +15,7 @@ public class PersistenceUtils {
 	private static final String PREF_VERSION = "VERSION";
 	
 	public static void saveToPreferences(SharedPreferences preferences,
-			ArrayList<EnabledPeriod> periods) {
+			ArrayList<ScheduledPeriod> periods) {
 		// Rough idea: EnabledPeriod could implement some interface
 		// 'IKeyValuePersistable'
 		// that has a Save(Writer writer) method. A Writer has the common
@@ -41,7 +41,7 @@ public class PersistenceUtils {
 			for (int i = 0; i < size; i++) {
 
 				Log.d("saveToPreferences", "Saving period : " + i);
-				EnabledPeriod period = periods.get(i);
+				ScheduledPeriod period = periods.get(i);
 
 				period.saveToPreferences(editor, Integer.toString(i));
 			}
@@ -57,12 +57,12 @@ public class PersistenceUtils {
 	}
 	
 	public static void saveToPreferences(SharedPreferences preferences,
-			EnabledPeriod period)
+			ScheduledPeriod period)
 	{
 		try {
 			
 			// Brute force. TODO: Sqlite
-			ArrayList<EnabledPeriod> savedPeriods = readFromPreferences(preferences);
+			ArrayList<ScheduledPeriod> savedPeriods = readFromPreferences(preferences);
 			
 			int idxToReplace = -1;
 			for (int i = 0; i < savedPeriods.size(); i++) {
@@ -107,28 +107,28 @@ public class PersistenceUtils {
 		return new SchedulerSettings(sharedPrefs);		
 	}
 
-	public static ArrayList<EnabledPeriod> readFromPreferences(
+	public static ArrayList<ScheduledPeriod> readFromPreferences(
 			SharedPreferences preferences) {
 		preferences.getInt(PREF_VERSION, 0);
 		
 		// assertion...
 		int size = preferences.getInt(ARRAY_SIZE, 0);
 
-		ArrayList<EnabledPeriod> result = new ArrayList<EnabledPeriod>(size);
+		ArrayList<ScheduledPeriod> result = new ArrayList<ScheduledPeriod>(size);
 
 		for (int i = 0; i < size; i++) {
-			result.add(new EnabledPeriod(preferences, Integer.toString(i)));
+			result.add(new ScheduledPeriod(preferences, Integer.toString(i)));
 		}
 
 		return result;
 	}
 
-	public static EnabledPeriod getPeriod(SharedPreferences preferences,
+	public static ScheduledPeriod getPeriod(SharedPreferences preferences,
 			int periodId) {
-		ArrayList<EnabledPeriod> enabledPeriods = PersistenceUtils
+		ArrayList<ScheduledPeriod> enabledPeriods = PersistenceUtils
 				.readFromPreferences(preferences);
 
-		for (EnabledPeriod enabledPeriod : enabledPeriods) {
+		for (ScheduledPeriod enabledPeriod : enabledPeriods) {
 			if (periodId == enabledPeriod.get_id()) {
 				return enabledPeriod;
 			}

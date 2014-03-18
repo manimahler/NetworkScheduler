@@ -16,13 +16,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class PeriodListAdapter extends ArrayAdapter<EnabledPeriod> {
+public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 	private final Context context;
-	private final ArrayList<EnabledPeriod> values;
+	private final ArrayList<ScheduledPeriod> values;
 
 	boolean _enabled;
 
-	public PeriodListAdapter(Context context, ArrayList<EnabledPeriod> list) {
+	public PeriodListAdapter(Context context, ArrayList<ScheduledPeriod> list) {
 		super(context, R.layout.enabled_period, list);
 		this.context = context;
 		this.values = list;
@@ -36,7 +36,7 @@ public class PeriodListAdapter extends ArrayAdapter<EnabledPeriod> {
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View rowView = inflater.inflate(R.layout.enabled_period, parent, false);
 
-		EnabledPeriod period = values.get(position);
+		ScheduledPeriod period = values.get(position);
 
 		View button = rowView.findViewById(R.id.buttonOn);
 		if (period.is_scheduleStart() && period.is_scheduleStop()
@@ -141,7 +141,7 @@ public class PeriodListAdapter extends ArrayAdapter<EnabledPeriod> {
 
 	}
 
-	private void setPeriodItemTimes(EnabledPeriod period, TextView startView,
+	private void setPeriodItemTimes(ScheduledPeriod period, TextView startView,
 			TextView stopView, TextView onView, TextView offView) {
 
 		int tint = R.color.weak_grey_transparent;
@@ -191,7 +191,7 @@ public class PeriodListAdapter extends ArrayAdapter<EnabledPeriod> {
 		}
 	}
 
-	public void updateItem(EnabledPeriod item) {
+	public void updateItem(ScheduledPeriod item) {
 		if (item.get_id() < 0) {
 
 			item.set_id(this.getMaxId() + 1);
@@ -200,7 +200,7 @@ public class PeriodListAdapter extends ArrayAdapter<EnabledPeriod> {
 
 			notifyDataSetChanged();
 		} else {
-			EnabledPeriod itemToUpdate = findItem(item.get_id());
+			ScheduledPeriod itemToUpdate = findItem(item.get_id());
 
 			if (itemToUpdate == null) {
 				Log.e("PeriodListAdapter.updateItem",
@@ -239,10 +239,10 @@ public class PeriodListAdapter extends ArrayAdapter<EnabledPeriod> {
 		}
 	}
 
-	private EnabledPeriod findItem(int id) {
+	private ScheduledPeriod findItem(int id) {
 
 		for (int i = 0; i < this.getCount(); i++) {
-			EnabledPeriod current = this.getItem(i);
+			ScheduledPeriod current = this.getItem(i);
 			if (current.get_id() == id) {
 				return current;
 			}
@@ -264,7 +264,7 @@ public class PeriodListAdapter extends ArrayAdapter<EnabledPeriod> {
 	}
 
 	public void removeAt(int position) {
-		EnabledPeriod itemToRemove = this.getItem(position);
+		ScheduledPeriod itemToRemove = this.getItem(position);
 
 		this.remove(itemToRemove);
 
@@ -272,7 +272,7 @@ public class PeriodListAdapter extends ArrayAdapter<EnabledPeriod> {
 	}
 
 	public void moveUp(int originalPosition) {
-		EnabledPeriod period = values.get(originalPosition);
+		ScheduledPeriod period = values.get(originalPosition);
 
 		values.remove(originalPosition);
 
@@ -282,7 +282,7 @@ public class PeriodListAdapter extends ArrayAdapter<EnabledPeriod> {
 	}
 
 	public void moveDown(int originalPosition) {
-		EnabledPeriod period = values.get(originalPosition);
+		ScheduledPeriod period = values.get(originalPosition);
 
 		values.remove(originalPosition);
 

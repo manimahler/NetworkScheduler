@@ -16,8 +16,9 @@ import android.util.Log;
 
 public class ConnectionUtils {
 	
+
 	public static void toggleNetworkState(Context context,
-			EnabledPeriod enabledPeriod, boolean enable)
+			ScheduledPeriod enabledPeriod, boolean enable)
 			throws ClassNotFoundException, NoSuchFieldException,
 			IllegalArgumentException, IllegalAccessException,
 			NoSuchMethodException, InvocationTargetException {

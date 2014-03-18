@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
-public class EnabledPeriod {
+public class ScheduledPeriod {
 
 	private static final String PERIOD_ID = "ID";
 	private static final String NAME = "NAME";
@@ -48,7 +48,7 @@ public class EnabledPeriod {
 	
 	private boolean _active;
 
-	public EnabledPeriod(Bundle bundle) {
+	public ScheduledPeriod(Bundle bundle) {
 
 		_id = bundle.getInt(PERIOD_ID);
 
@@ -78,7 +78,7 @@ public class EnabledPeriod {
 		_active = bundle.getBoolean(ACTIVE, false);
 	}
 
-	public EnabledPeriod(SharedPreferences preferences, String qualifier) {
+	public ScheduledPeriod(SharedPreferences preferences, String qualifier) {
 		_id = preferences.getInt(PERIOD_ID + qualifier, -1);
 
 		_name = preferences.getString(NAME + qualifier, "");
@@ -117,7 +117,7 @@ public class EnabledPeriod {
 	// _endTimeMillis = preferences.getLong(END_TIME, 0);
 	// }
 
-	public EnabledPeriod(boolean schedulingEnabled, long startTimeMillis,
+	public ScheduledPeriod(boolean schedulingEnabled, long startTimeMillis,
 			long endTimeMillis, boolean[] weekDays) {
 		_id = -1;
 

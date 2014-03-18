@@ -56,7 +56,7 @@ public class MainActivity extends FragmentActivity implements
 
 	private SchedulerSettings _settings;
 
-	private ArrayList<EnabledPeriod> _enabledPeriods;
+	private ArrayList<ScheduledPeriod> _enabledPeriods;
 	
 	private PeriodListAdapter _adapter;
 	
@@ -269,7 +269,7 @@ public class MainActivity extends FragmentActivity implements
 				Log.d("MainActivity.AdapterView.OnItemClickListener",
 						"Item clicked at " + position);
 
-				EnabledPeriod item = _adapter.getItem(position);
+				ScheduledPeriod item = _adapter.getItem(position);
 
 				showPeriodDetails(item);
 			}
@@ -328,7 +328,7 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	@Override
-	public void onPeriodUpdated(EnabledPeriod period) {
+	public void onPeriodUpdated(ScheduledPeriod period) {
 
 		_adapter.updateItem(period);
 
@@ -355,7 +355,7 @@ public class MainActivity extends FragmentActivity implements
 		boolean[] weekDays = new boolean[7];
 		Arrays.fill(weekDays, true);
 
-		EnabledPeriod newPeriod = new EnabledPeriod(true, start, end, weekDays);
+		ScheduledPeriod newPeriod = new ScheduledPeriod(true, start, end, weekDays);
 
 		showPeriodDetails(newPeriod);
 	}
@@ -458,7 +458,7 @@ public class MainActivity extends FragmentActivity implements
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 				.getMenuInfo();
 
-		EnabledPeriod selectedPeriod = _adapter.getItem(info.position);
+		ScheduledPeriod selectedPeriod = _adapter.getItem(info.position);
 		
 		boolean result;
 
@@ -485,7 +485,7 @@ public class MainActivity extends FragmentActivity implements
 
 			Log.d("MainActivity.onContextItemSelected", "Edit pressed");
 
-			EnabledPeriod period = _adapter.getItem(info.position);
+			ScheduledPeriod period = _adapter.getItem(info.position);
 
 			showPeriodDetails(period);
 			return true;
@@ -509,7 +509,7 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 
-	private void toggleNetworkState(EnabledPeriod selectedPeriod, boolean enable) {
+	private void toggleNetworkState(ScheduledPeriod selectedPeriod, boolean enable) {
 		try {
 			
 			NetworkScheduler scheduler = new NetworkScheduler();
@@ -609,7 +609,7 @@ public class MainActivity extends FragmentActivity implements
 		return alarmHandler.getSchedulesPreferences(MainActivity.this);
 	}
 
-	public void showPeriodDetails(EnabledPeriod item) {
+	public void showPeriodDetails(ScheduledPeriod item) {
 		FragmentManager fm = getSupportFragmentManager();
 		SchedulePeriodFragment schedulePeriodFragment = SchedulePeriodFragment
 				.newInstance(item);

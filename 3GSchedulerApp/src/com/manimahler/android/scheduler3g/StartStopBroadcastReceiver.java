@@ -67,7 +67,7 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 				}
 
 				// normal schedule: test weekday
-				EnabledPeriod referencedPeriod = PersistenceUtils.getPeriod(
+				ScheduledPeriod referencedPeriod = PersistenceUtils.getPeriod(
 						sharedPrefs, periodId);
 				
 				if (referencedPeriod == null)
@@ -110,7 +110,7 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 		}
 	}
 
-	private void switchOff(Context context, EnabledPeriod period, SchedulerSettings settings) throws ClassNotFoundException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+	private void switchOff(Context context, ScheduledPeriod period, SchedulerSettings settings) throws ClassNotFoundException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 		
 		NetworkScheduler scheduler = new NetworkScheduler();
 		
@@ -164,7 +164,7 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 		NetworkScheduler scheduler = new NetworkScheduler();
 		SharedPreferences sharedPrefs = scheduler.getSchedulesPreferences(context);
 
-		EnabledPeriod referencedPeriod = PersistenceUtils.getPeriod(
+		ScheduledPeriod referencedPeriod = PersistenceUtils.getPeriod(
 				sharedPrefs, periodId);
 		
 		SchedulerSettings settings = PersistenceUtils.readSettings(context);

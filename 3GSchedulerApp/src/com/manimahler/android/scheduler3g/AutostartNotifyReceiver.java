@@ -33,7 +33,7 @@ public class AutostartNotifyReceiver extends BroadcastReceiver {
 		
 		SharedPreferences prefs = alarmHandler.getSchedulesPreferences(context);
 		
-		ArrayList<EnabledPeriod> enabledPeriods = 
+		ArrayList<ScheduledPeriod> enabledPeriods = 
 			PersistenceUtils.readFromPreferences(prefs);
 		
 		SchedulerSettings settings = PersistenceUtils.readSettings(context);

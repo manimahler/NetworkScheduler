@@ -39,13 +39,13 @@ public class UserPresentBroadCastReceiver extends BroadcastReceiver {
 
 		SharedPreferences prefs = alarmHandler.getSchedulesPreferences(context);
 
-		ArrayList<EnabledPeriod> enabledPeriods = PersistenceUtils
+		ArrayList<ScheduledPeriod> enabledPeriods = PersistenceUtils
 				.readFromPreferences(prefs);
 		
 		boolean wifiOn = false;
 		boolean mobDataOn = false;
 
-		for (EnabledPeriod enabledPeriod : enabledPeriods) {
+		for (ScheduledPeriod enabledPeriod : enabledPeriods) {
 
 			if (enabledPeriod.useIntervalConnectWifi()) {
 				// just toggle on, it will be switched off automatically by the
