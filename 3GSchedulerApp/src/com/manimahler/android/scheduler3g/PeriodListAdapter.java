@@ -193,12 +193,10 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 
 	public void updateItem(ScheduledPeriod item) {
 		if (item.get_id() < 0) {
-
 			item.set_id(this.getMaxId() + 1);
-
 			this.add(item);
-
-			notifyDataSetChanged();
+			
+			updateActiveProperty(item);
 		} else {
 			ScheduledPeriod itemToUpdate = findItem(item.get_id());
 
@@ -207,36 +205,47 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 						"Item to update not found");
 			}
 
-			itemToUpdate.set_id(item.get_id());
-			itemToUpdate.set_name(item.get_name());
-
-			itemToUpdate.set_scheduleStart(item.is_scheduleStart());
-			itemToUpdate.set_scheduleStop(item.is_scheduleStop());
-
-			// itemToUpdate.set_intervalConnect(item.is_intervalConnect());
-
-			itemToUpdate.set_startTimeMillis(item.get_startTimeMillis());
-			itemToUpdate.set_endTimeMillis(item.get_endTimeMillis());
-			itemToUpdate.set_weekDays(item.get_weekDays());
-
-			itemToUpdate.set_mobileData(item.is_mobileData());
-			itemToUpdate.set_wifi(item.is_wifi());
-			itemToUpdate.set_bluetooth(item.is_bluetooth());
-			itemToUpdate.set_volume(item.is_volume());
-
-			itemToUpdate.set_intervalConnectWifi(item.is_intervalConnectWifi());
-			itemToUpdate.set_intervalConnectMobData(item
-					.is_intervalConnectMobData());
-
-			try {
-				itemToUpdate.set_active(itemToUpdate.isActiveNow());
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			notifyDataSetChanged();
+			copyProperties(itemToUpdate, item);
+			
+			updateActiveProperty(itemToUpdate);
 		}
+		notifyDataSetChanged();
+	}
+	
+	private void updateActiveProperty(ScheduledPeriod period) {
+		try {
+			period.set_active(period.isActiveNow());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+
+	private void copyProperties(ScheduledPeriod itemToUpdate,
+			ScheduledPeriod fromItem) {
+		itemToUpdate.set_id(fromItem.get_id());
+		itemToUpdate.set_name(fromItem.get_name());
+
+		itemToUpdate.set_scheduleStart(fromItem.is_scheduleStart());
+		itemToUpdate.set_scheduleStop(fromItem.is_scheduleStop());
+
+		itemToUpdate.set_startTimeMillis(fromItem.get_startTimeMillis());
+		itemToUpdate.set_endTimeMillis(fromItem.get_endTimeMillis());
+		itemToUpdate.set_weekDays(fromItem.get_weekDays());
+
+		itemToUpdate.set_mobileData(fromItem.is_mobileData());
+		itemToUpdate.set_wifi(fromItem.is_wifi());
+		itemToUpdate.set_bluetooth(fromItem.is_bluetooth());
+		itemToUpdate.set_volume(fromItem.is_volume());
+
+		itemToUpdate.set_intervalConnectWifi(fromItem.is_intervalConnectWifi());
+		itemToUpdate.set_intervalConnectMobData(fromItem
+				.is_intervalConnectMobData());
+		
+		itemToUpdate.set_skipped(fromItem.is_skipped());
+		
+		// re-set the userOverride flag (the user just pressed ok to these settings)!
 	}
 
 	private ScheduledPeriod findItem(int id) {

@@ -285,15 +285,41 @@ public class MainActivity extends FragmentActivity implements
 				MenuInflater inflater = getMenuInflater();
 				inflater.inflate(R.menu.context_menu, menu);
 
-				AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+				// Get the list
+			    ListView list = (ListView)v;
 
+			    // Get the list item position
+			    AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+			    
+			    ScheduledPeriod selectedPeriod = _adapter.getItem(info.position);
+				
+			    MenuItem skipItem = menu.findItem(R.id.skip_next);
+			    skipItem.setChecked(selectedPeriod.is_skipped());
+			    
+			    // NOTE: listening to the user-made changes in the system only works for WiFi, but
+			    // not for mobile data -> add specific context menu entries
+			    
+			    if (selectedPeriod.is_active() && selectedPeriod.is_intervalConnectWifi())
+			    {
+			    	MenuItem wifiItem = menu.add(0, R.integer.context_menu_id_interval_wifi, 4, R.string.context_menu_interval_wifi);
+			    	wifiItem.setCheckable(true);
+			    	wifiItem.setChecked(! selectedPeriod.is_overrideIntervalWifi());
+			    }
+			    
+			    if (selectedPeriod.is_active() && selectedPeriod.is_intervalConnectMobData())
+			    {
+			    	MenuItem mobItem = menu.add(0, R.integer.context_menu_id_interval_mob, 5, R.string.context_menu_interval_mob);
+			    	mobItem.setCheckable(true);
+			    	mobItem.setChecked(! selectedPeriod.is_overrideIntervalMob());
+			    }
+			    
 				if (info.position > 0) {
-					menu.add(0, R.integer.context_menu_id_up, 6,
+					menu.add(0, R.integer.context_menu_id_up, 8,
 							R.string.move_up); //setIcon(android.R.drawable.arrow_up_float);
 				}
 
 				if (info.position < _adapter.getCount() - 1) {
-					menu.add(0, R.integer.context_menu_id_down, 10,
+					menu.add(0, R.integer.context_menu_id_down, 12,
 							R.string.move_down); //setIcon(android.R.drawable.arrow_down_float);
 				}
 			}
@@ -402,9 +428,9 @@ public class MainActivity extends FragmentActivity implements
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		
-		
 	    MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.menu.options_menu, menu);
+	    
 	    return true;
 	}
 	
@@ -439,16 +465,6 @@ public class MainActivity extends FragmentActivity implements
 		Intent intent = new Intent(this, SettingsActivity.class);
 		
 		startActivity(intent);
-
-		
-//		fm.
-//		getFragmentManager().beginTransaction()
-//        .add(android.R.id.content, settingsFragment)
-//        .commit();
-		
-		// check if interval connect was switched on / off
-		
-
 	}
 
 	@Override
@@ -459,8 +475,6 @@ public class MainActivity extends FragmentActivity implements
 				.getMenuInfo();
 
 		ScheduledPeriod selectedPeriod = _adapter.getItem(info.position);
-		
-		boolean result;
 
 		switch (item.getItemId()) {
 		case R.id.delete:
@@ -485,9 +499,9 @@ public class MainActivity extends FragmentActivity implements
 
 			Log.d("MainActivity.onContextItemSelected", "Edit pressed");
 
-			ScheduledPeriod period = _adapter.getItem(info.position);
+			ScheduledPeriod periodToEdit = _adapter.getItem(info.position);
 
-			showPeriodDetails(period);
+			showPeriodDetails(periodToEdit);
 			return true;
 		case R.id.activate_now:
 			toggleNetworkState(selectedPeriod, true);
@@ -496,6 +510,17 @@ public class MainActivity extends FragmentActivity implements
 		case R.id.deactivate_now:
 			toggleNetworkState(selectedPeriod, false);
 			_adapter.notifyDataSetChanged();
+			return true;
+		case R.id.skip_next:
+			ScheduledPeriod periodToSkip = _adapter.getItem(info.position);
+			periodToSkip.set_skipped(! periodToSkip.is_skipped());
+			onPeriodUpdated(periodToSkip);
+			return true;
+		case R.integer.context_menu_id_interval_wifi:
+			toggleCurrentIntervalWifi(_adapter.getItem(info.position));
+			return true;
+		case R.integer.context_menu_id_interval_mob:
+			toggleCurrentIntervalMobData(_adapter.getItem(info.position));
 			return true;
 		case R.integer.context_menu_id_up:
 			_adapter.moveUp(info.position);
@@ -508,6 +533,29 @@ public class MainActivity extends FragmentActivity implements
 			return super.onContextItemSelected(item);
 		}
 	}
+
+	private void toggleCurrentIntervalWifi(ScheduledPeriod periodWifi) {
+		periodWifi.set_overrideIntervalWifi(!periodWifi.is_overrideIntervalWifi());
+		saveSettings();
+		
+		NetworkScheduler scheduler = new NetworkScheduler();
+		scheduler.setupIntervalConnect(this, _settings);
+		
+		_adapter.notifyDataSetChanged();
+	}
+	
+	private void toggleCurrentIntervalMobData(ScheduledPeriod periodMobData) {
+		periodMobData.set_overrideIntervalMob(!periodMobData.is_overrideIntervalMob());
+		//onPeriodUpdated(periodMobData);
+		
+		saveSettings();
+		
+		NetworkScheduler scheduler = new NetworkScheduler();
+		scheduler.setupIntervalConnect(this, _settings);
+		
+		_adapter.notifyDataSetChanged();
+	}
+	
 
 	private void toggleNetworkState(ScheduledPeriod selectedPeriod, boolean enable) {
 		try {

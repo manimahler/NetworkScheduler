@@ -3,6 +3,7 @@ package com.manimahler.android.scheduler3g;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
@@ -156,14 +157,14 @@ public class ConnectionUtils {
 		if (enable && !wifiManager.isWifiEnabled()) {
 
 			if (wifiState == WifiManager.WIFI_STATE_DISABLED) {
-				wifiManager.setWifiEnabled(enable);
+				setWifiEnabled(wifiManager, enable);
 			} else if (wifiState == WifiManager.WIFI_STATE_UNKNOWN) {
 				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
 					// observed once on SGS3: Wifi stayed in in unknown state
 					// for quite a while (but toggling worked)
 					Log.w("ConnectionUtils",
 							"Wifi state is WIFI_STATE_UNKNOWN, trying to enable...");
-					wifiManager.setWifiEnabled(enable);
+					setWifiEnabled(wifiManager, enable);
 				} else {
 					// take extra care not to trigger the Wifi-Bug on KitKat
 					Log.w("ConnectionUtils",
@@ -177,15 +178,29 @@ public class ConnectionUtils {
 
 		if (!enable && wifiManager.isWifiEnabled()) {
 			if (!isWifiConnected(context) || wifiManager.disconnect()) {
-				wifiManager.setWifiEnabled(enable);
+				setWifiEnabled(wifiManager, enable);
 			} else {
 				Log.w("ConnectionUtils",
 						"Cannot disconnect from WiFi. Not switching off!");
 			}
-		} else {
+		} else if (! enable) {
 			Log.d("ConnectionUtils",
 					"Wifi state is not enabled, not disabling!");
 		}
+	}
+
+	private static void setWifiEnabled(WifiManager wifiManager, boolean enable) {
+
+		
+			Log.d("ConnectionUtils", "Setting Wifi state change flag");
+			
+			// NOTE: setWifiEnabled returns long before the broadcast from the system
+			// is received. So there is no point re-setting the flag in the finally clause here.
+			WifiStateBroadcastReceiver.ChangingWifiState.set(true);
+			boolean success = wifiManager.setWifiEnabled(enable);
+			
+			Log.d("ConnectionUtils", "Wifi toggle success: " + success);
+		
 	}
 
 	public static void toggleBluetooth(Context context, boolean enable) {

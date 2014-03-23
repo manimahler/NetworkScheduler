@@ -15,6 +15,11 @@
         android:id="@+id/deactivate_now"
         android:title="@string/deactivate_now">
     </item>
+    <item
+        android:id="@+id/skip_next"
+        android:title="@string/skip_next_occurrence" 
+        android:checkable="true" >
+    </item>
     <!-- android:icon="@android:drawable/ic_menu_revert" -->
     <item
         android:id="@+id/delete"

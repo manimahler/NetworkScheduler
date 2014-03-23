@@ -20,13 +20,17 @@ public class ScheduledPeriod {
 	private static final String WIFI = "WIFI";
 	private static final String MOBILE_DATA = "MOBILE_DATA";
 	private static final String VOLUME = "VOLUME";
-
+	
 	private static final String WEEK_DAYS = "WeekDays";
 	
 	private static final String INTERVAL_CONNECT_WIFI = "IntervalConnectWifi";
 	private static final String INTERVAL_CONNECT_MOB = "IntervalConnectMob";
 	
 	private static final String ACTIVE = "Active";
+	
+	private static final String SKIPPED = "Skipped";
+	private static final String OVERRIDE_WIFI = "OverrideIntervalWifi";
+	private static final String OVERRIDE_MOB = "OverrideIntervalMobData";
 
 	private int _id;
 	private String _name;
@@ -47,6 +51,10 @@ public class ScheduledPeriod {
 	private boolean[] _weekDays;
 	
 	private boolean _active;
+	
+	private boolean _skipped;
+	private boolean _overrideIntervalWifi;
+	private boolean _overrideIntervalMob;
 
 	public ScheduledPeriod(Bundle bundle) {
 
@@ -76,6 +84,10 @@ public class ScheduledPeriod {
 		_intervalConnectMobData = bundle.getBoolean(INTERVAL_CONNECT_MOB, false);
 		
 		_active = bundle.getBoolean(ACTIVE, false);
+		
+		_skipped = bundle.getBoolean(SKIPPED, false);
+		_overrideIntervalWifi = bundle.getBoolean(OVERRIDE_WIFI, false);
+		_overrideIntervalMob = bundle.getBoolean(OVERRIDE_MOB, false);
 	}
 
 	public ScheduledPeriod(SharedPreferences preferences, String qualifier) {
@@ -107,15 +119,11 @@ public class ScheduledPeriod {
 		_intervalConnectMobData = preferences.getBoolean(INTERVAL_CONNECT_MOB + qualifier, false);
 		
 		_active = preferences.getBoolean(ACTIVE + qualifier, false);
+		
+		_skipped = preferences.getBoolean(SKIPPED + qualifier, false);
+		_overrideIntervalWifi = preferences.getBoolean(OVERRIDE_WIFI + qualifier, false);
+		_overrideIntervalMob = preferences.getBoolean(OVERRIDE_MOB + qualifier, false);
 	}
-
-	// public EnabledPeriod(SharedPreferences preferences)
-	// {
-	// _schedulingEnabled = preferences.getBoolean(SCHEDULING_ENABLED, false);
-	//
-	// _startTimeMillis = preferences.getLong(START_TIME, 0);
-	// _endTimeMillis = preferences.getLong(END_TIME, 0);
-	// }
 
 	public ScheduledPeriod(boolean schedulingEnabled, long startTimeMillis,
 			long endTimeMillis, boolean[] weekDays) {
@@ -270,19 +278,54 @@ public class ScheduledPeriod {
 		this._active = _active;
 	}
 	
+	public boolean is_skipped() {
+		return _skipped;
+	}
+
+	public void set_skipped(boolean _skipped) {
+		this._skipped = _skipped;
+	}
+
+	public boolean is_overrideIntervalWifi() {
+		return _overrideIntervalWifi;
+	}
+
+	public void set_overrideIntervalWifi(boolean _userOverride) {
+		this._overrideIntervalWifi = _userOverride;
+	}
+	
+	public boolean is_overrideIntervalMob() {
+		return _overrideIntervalMob;
+	}
+
+	public void set_overrideIntervalMob(boolean _overrideIntervalMob) {
+		this._overrideIntervalMob = _overrideIntervalMob;
+	}
+
+	
+	
+	public long getActivationTimeMillis()
+	{
+		if (activeIsEnabled()) {
+			return _startTimeMillis;
+		} else {
+			return _endTimeMillis;
+		}
+			
+	}
 	
 	public boolean useIntervalConnect()
 	{
-		return useIntervalConnectWifi() || useIntervalConnectMobileData();
+		return isIntervalConnectingWifi() || isIntervalConnectingMobileData();
 	}
 	
-	public boolean useIntervalConnectWifi()
+	public boolean isIntervalConnectingWifi()
 	{
 		// TODO: additional check if within enabled period
 		return (is_wifi() && is_intervalConnectWifi() && is_active() && is_schedulingEnabled());
 	}
 	
-	public boolean useIntervalConnectMobileData()
+	public boolean isIntervalConnectingMobileData()
 	{
 		// TODO: additional check if within enabled period
 		return (is_mobileData() && is_intervalConnectMobData() && is_active() && is_schedulingEnabled());
@@ -316,6 +359,10 @@ public class ScheduledPeriod {
 		editor.putBoolean(INTERVAL_CONNECT_MOB + qualifier, _intervalConnectMobData);
 		
 		editor.putBoolean(ACTIVE + qualifier, _active);
+		
+		editor.putBoolean(SKIPPED + qualifier, _skipped);
+		editor.putBoolean(OVERRIDE_WIFI + qualifier, _overrideIntervalWifi);
+		editor.putBoolean(OVERRIDE_MOB + qualifier, _overrideIntervalMob);
 	}
 
 	public void saveToBundle(Bundle bundle) {
@@ -342,6 +389,10 @@ public class ScheduledPeriod {
 		bundle.putBoolean(INTERVAL_CONNECT_MOB, _intervalConnectMobData);
 		
 		bundle.putBoolean(ACTIVE, _active);
+		
+		bundle.putBoolean(SKIPPED, _skipped);
+		bundle.putBoolean(OVERRIDE_WIFI, _overrideIntervalWifi);
+		bundle.putBoolean(OVERRIDE_MOB, _overrideIntervalMob);
 	}
 
 	public boolean isActiveNow() throws Exception {
@@ -354,27 +405,79 @@ public class ScheduledPeriod {
 		Calendar checkTime = Calendar.getInstance();
 		checkTime.setTimeInMillis(timeMillis);
 		
-		Calendar lastStart = getPreviousHourMinuteInMillis(timeMillis, get_startTimeMillis());
+		Calendar lastActivation = getPreviousActivation(timeMillis);
+		
+		if (lastActivation == null)	{
+			return false; // never activated
+		}
 		
 		// check if the previous start was applicable on the actual day it would have happened		
-		if (! isOnActiveWeekday(lastStart.getTimeInMillis()))
+		if (! isOnActiveWeekday(lastActivation.getTimeInMillis()))
 		{
 			return false;
 		}
 		
 		// now the last start happened, check if it hasn't already stopped
-		Calendar lastStop = getPreviousHourMinuteInMillis(timeMillis, get_endTimeMillis());
+		Calendar lastDeactivation;
+		if (activeIsEnabled()){
+			lastDeactivation = getPreviousHourMinuteInMillis(timeMillis, get_endTimeMillis());
+		} else{
+			lastDeactivation = getPreviousHourMinuteInMillis(timeMillis, get_startTimeMillis());
+		}
 		
 		// case 1: last stop is after last start (but of course before the check time)
-		if (lastStop.after(lastStart))
+		if (lastDeactivation.after(lastActivation))
 		{
 			// it has already stopped: false (if applicable)
-			return ! isOnActiveWeekday(lastStop.getTimeInMillis());
+			return ! isOnActiveWeekday(lastDeactivation.getTimeInMillis());
 		}
 		
 		// case 2: last stop is before the last start, i.e. after check time today
 		// -> still running
 		return true;
+	}
+	
+	public Calendar getLastScheduledActivationTime() {
+		
+		long now = System.currentTimeMillis();
+		
+		Calendar lastActivation = getPreviousActivation(now);
+		
+		return lastActivation;
+	}
+
+	private Calendar getPreviousActivation(long beforeTimeMillis) {
+		Calendar lastActivation;
+		if (activeIsEnabled()){
+			
+			if (! is_scheduleStart()) {
+				lastActivation = null;
+			} else {
+				lastActivation = getPreviousHourMinuteInMillis(beforeTimeMillis, get_startTimeMillis());
+			}
+		} else{
+			
+			if (! is_scheduleStop()) {
+				lastActivation = null;
+			} else {
+				lastActivation = getPreviousHourMinuteInMillis(beforeTimeMillis, get_endTimeMillis());
+			}
+		}
+		
+		return lastActivation;
+	}
+	
+	public boolean activeIsEnabled()
+	{
+		boolean result;
+		
+		if (is_scheduleStart() && is_scheduleStop()){
+			result = DateTimeUtils.isEarlierInTheDay(_startTimeMillis, _endTimeMillis);
+		} else {
+			result = is_scheduleStart();
+		}
+		
+		return result;
 	}
 
 	private Calendar getPreviousHourMinuteInMillis(long timeMillis, long hourMinuteMillis) {
@@ -436,6 +539,10 @@ public class ScheduledPeriod {
 		Log.d("StartStopReceiver", "weekdayIndex: " + weekdayIndex);
 		
 		return (get_weekDays()[weekdayIndex]);
+	}
+
+	public boolean hasStartAndStopTime() {
+		return _scheduleStart && _scheduleStop;
 	}
 	
 }

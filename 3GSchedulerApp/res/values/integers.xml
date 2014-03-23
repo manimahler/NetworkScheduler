@@ -3,4 +3,6 @@
     <integer name="grid_timeperiod_columns">2</integer>
     <integer name="context_menu_id_up">10</integer>
     <integer name="context_menu_id_down">20</integer>
+    <integer name="context_menu_id_interval_wifi">30</integer>
+    <integer name="context_menu_id_interval_mob">40</integer>
 </resources>

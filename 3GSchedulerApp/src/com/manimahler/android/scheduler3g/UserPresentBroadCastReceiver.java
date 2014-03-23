@@ -39,15 +39,15 @@ public class UserPresentBroadCastReceiver extends BroadcastReceiver {
 
 		SharedPreferences prefs = alarmHandler.getSchedulesPreferences(context);
 
-		ArrayList<ScheduledPeriod> enabledPeriods = PersistenceUtils
+		ArrayList<ScheduledPeriod> periods = PersistenceUtils
 				.readFromPreferences(prefs);
 		
 		boolean wifiOn = false;
 		boolean mobDataOn = false;
 
-		for (ScheduledPeriod enabledPeriod : enabledPeriods) {
+		for (ScheduledPeriod enabledPeriod : periods) {
 
-			if (enabledPeriod.useIntervalConnectWifi()) {
+			if (enabledPeriod.isIntervalConnectingWifi()) {
 				// just toggle on, it will be switched off automatically by the
 				// interval alarm
 				Log.d(TAG, "Switching on wifi for active period "
@@ -56,7 +56,7 @@ public class UserPresentBroadCastReceiver extends BroadcastReceiver {
 				wifiOn = true;
 			}
 			
-			if (enabledPeriod.useIntervalConnectMobileData()) {
+			if (enabledPeriod.isIntervalConnectingMobileData()) {
 				// just toggle on, it will be switched off automatically by the
 				// interval alarm
 				Log.d(TAG, "Switching on mobile data for active period "

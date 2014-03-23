@@ -635,13 +635,23 @@ public class NetworkScheduler {
 	// }
 	// }
 
-	private void startIntervalConnect(Context context, ScheduledPeriod period,
+	public void setupIntervalConnect(Context context, SchedulerSettings settings)
+	{
+		try {
+			startIntervalConnect(context, settings);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void startIntervalConnect(Context context,
 			SchedulerSettings settings) throws ClassNotFoundException,
 			NoSuchFieldException, IllegalArgumentException,
 			IllegalAccessException, NoSuchMethodException,
 			InvocationTargetException {
 
-		scheduleIntervalConnect(context, period.get_id(), settings);
+		scheduleIntervalConnect(context, settings);
 
 		// do the first switch-on right now
 		intervalSwitchOn(context, settings);

@@ -125,10 +125,10 @@ public class PersistenceUtils {
 
 	public static ScheduledPeriod getPeriod(SharedPreferences preferences,
 			int periodId) {
-		ArrayList<ScheduledPeriod> enabledPeriods = PersistenceUtils
+		ArrayList<ScheduledPeriod> periods = PersistenceUtils
 				.readFromPreferences(preferences);
 
-		for (ScheduledPeriod enabledPeriod : enabledPeriods) {
+		for (ScheduledPeriod enabledPeriod : periods) {
 			if (periodId == enabledPeriod.get_id()) {
 				return enabledPeriod;
 			}
