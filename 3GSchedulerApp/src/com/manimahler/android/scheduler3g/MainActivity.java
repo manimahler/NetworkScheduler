@@ -564,11 +564,11 @@ public class MainActivity extends FragmentActivity implements
 
 			if (! enable)
 			{
-				scheduler.deactivate(selectedPeriod, this);
+				scheduler.stop(selectedPeriod, this);
 			}
 			else
 			{
-				scheduler.activate(selectedPeriod, this, _settings);
+				scheduler.start(selectedPeriod, this, _settings);
 			}
 			
 		} catch (Exception e) {
@@ -633,6 +633,15 @@ public class MainActivity extends FragmentActivity implements
 
 		// saveSettings();
 
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		// use the opportunity to refresh the (potentially updated _active state) periods
+		// otherwise we'd need some kind of polling or auto-refresh.
+		_adapter.notifyDataSetChanged();
 	}
 
 	private void saveSettings() {

@@ -10,7 +10,7 @@
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />  // check if wifi is connected
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -48,19 +48,21 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        
-       <receiver android:name=".UserPresentBroadCastReceiver" >
+        <receiver android:name=".UserPresentBroadCastReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
         </receiver>
-        
+        <receiver android:name=".WifiStateBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
         <!-- Broadcast receiver -->
         <receiver android:name=".StartStopBroadcastReceiver" >
         </receiver>
         <receiver android:name=".DelayStopBroadcastReceiver" >
         </receiver>
-
     </application>
 
 </manifest>

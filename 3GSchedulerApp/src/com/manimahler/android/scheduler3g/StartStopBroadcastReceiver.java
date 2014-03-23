@@ -45,7 +45,7 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 			if (action.equals("INTERVAL_ON")){
 				scheduler.intervalSwitchOn(context, settings);
 			} else if (action.equals("INTERVAL_OFF")){
-				scheduler.intervalSwitchOff(context, settings);
+				scheduler.intervalSwitchOff(context, settings, bundle);
 			} else if (action.equals("OFF")) {
 				trySwitchOffConnections(context, periodId, stopTime, false);
 			} else if (action.equals("OFF_DELAYED")) {
@@ -95,10 +95,10 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 				
 				if (!on) {
 					
-					switchOff(context, referencedPeriod, settings);
+					scheduler.stopApproved(context, referencedPeriod, settings);
 				} else {
 					
-					scheduler.activate(referencedPeriod, context, settings);
+					scheduler.start(referencedPeriod, context, settings);
 				}
 			}
 		} catch (Exception e) {
@@ -110,53 +110,6 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 		}
 	}
 
-	private void switchOff(Context context, ScheduledPeriod period, SchedulerSettings settings) throws ClassNotFoundException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-		
-		NetworkScheduler scheduler = new NetworkScheduler();
-		
-		if (! scheduler.isSwitchOffRequired(context, period))
-		{
-			Log.d("StartStopReceiver", "No action required.");
-			
-			return;
-		}
-		
-		if (! settings.is_warnOnDeactivation())
-		{
-			scheduler.deactivate(period, context);
-		}
-		
-		PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-        boolean isScreenOn = powerManager.isScreenOn();
-        
-        
-        
-		if (! isScreenOn && settings.is_warnOnlyWhenScreenOn())
-		{
-			// cancel interval connect		
-			scheduler.deactivate(period, context);
-		}
-		else
-		{
-			if (settings.is_autoDelay())
-			{
-				Log.d("StartStopReceiver", "Screen is on: auto-delay.");
-				
-				int delayInSec = settings.get_delay() * 60;
-				
-				scheduler.makeAutoDelayNotification(context, period, settings);
-				scheduler.scheduleSwitchOff(context, delayInSec, "OFF_DELAYED", period);
-			}
-			else
-			{
-				Log.d("StartStopReceiver", "Screen is on: notification.");
-				scheduler.makeDisableNotification(context, period, settings);
-				
-				int fewMomentsInSec = 45;
-				scheduler.scheduleSwitchOff(context, fewMomentsInSec, "OFF", period);
-			}
-		}
-	}
 	
 	private void trySwitchOffConnections(Context context, int periodId,
 			long expectedStopTime, boolean reWarn) {
@@ -194,11 +147,11 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 				//       not already 'switched on' again by another period and we should drop the switch-off
 				
 				// add notification
-				switchOff(context, referencedPeriod, settings);
+				scheduler.stopApproved(context, referencedPeriod, settings);
 			} else {
 				
 				// cancel interval connect
-				scheduler.deactivate(referencedPeriod, context);
+				scheduler.stop(referencedPeriod, context);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

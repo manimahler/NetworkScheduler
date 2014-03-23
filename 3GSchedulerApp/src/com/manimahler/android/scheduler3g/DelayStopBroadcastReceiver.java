@@ -2,7 +2,6 @@ package com.manimahler.android.scheduler3g;
 
 import java.util.Date;
 
-import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -36,7 +35,7 @@ public class DelayStopBroadcastReceiver extends BroadcastReceiver {
 
 		if (action.equals("DEACTIVATE")) {
 			try {
-				scheduler.deactivate(periodId, context);
+				scheduler.stop(periodId, context);
 				showSwitchOffToast(context);
 			} catch (Exception e) {
 				Log.e("DelayStopBroadcastReceiver",
@@ -47,7 +46,7 @@ public class DelayStopBroadcastReceiver extends BroadcastReceiver {
 			}
 			return;
 		}
-
+		
 		if (action.equals("DELAY")) {
 			try {
 				SchedulerSettings settings = PersistenceUtils

@@ -40,7 +40,7 @@ public class ConnectionUtils {
 		}
 	}
 
-	private static void toggleVolume(Context context, boolean enable) {
+	public static void toggleVolume(Context context, boolean enable) {
 		AudioManager audiomanager = (AudioManager) context
 				.getSystemService(Context.AUDIO_SERVICE);
 
@@ -51,6 +51,15 @@ public class ConnectionUtils {
 			Log.d("ConnectionUtils", "Setting ringer mode to silent");
 			audiomanager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
 		}
+	}
+	
+
+	public static boolean isVolumeOn(Context context) {
+		AudioManager audiomanager = (AudioManager) context
+		.getSystemService(Context.AUDIO_SERVICE);
+
+		return audiomanager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL;
+
 	}
 
 	public static boolean isRingerModeNormal(Context context) {
