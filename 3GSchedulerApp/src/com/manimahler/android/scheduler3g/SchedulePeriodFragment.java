@@ -26,6 +26,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.manimahler.android.scheduler3g.FlowLayout.LayoutParams;
@@ -43,7 +44,8 @@ public class SchedulePeriodFragment extends DialogFragment {
 	View _view;
 
 	// Factory method
-	public static SchedulePeriodFragment newInstance(ScheduledPeriod enabledPeriod) {
+	public static SchedulePeriodFragment newInstance(
+			ScheduledPeriod enabledPeriod) {
 
 		SchedulePeriodFragment f = new SchedulePeriodFragment();
 
@@ -205,13 +207,16 @@ public class SchedulePeriodFragment extends DialogFragment {
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView,
 							boolean isChecked) {
-						boolean isChecked1 = ((CheckBox) buttonView).isChecked();
+						boolean isChecked1 = ((CheckBox) buttonView)
+								.isChecked();
 						_enabledPeriod.set_bluetooth(isChecked1);
-						updateCheckboxAppearance((CheckBox) buttonView, R.drawable.ic_action_bluetooth1);
+						updateCheckboxAppearance((CheckBox) buttonView,
+								R.drawable.ic_action_bluetooth1);
 					}
 				});
 
-		updateCheckboxAppearance(toggleBluetooth, R.drawable.ic_action_bluetooth1);
+		updateCheckboxAppearance(toggleBluetooth,
+				R.drawable.ic_action_bluetooth1);
 
 		// vol
 		CheckBox toggleVolume = (CheckBox) view
@@ -241,21 +246,24 @@ public class SchedulePeriodFragment extends DialogFragment {
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView,
 							boolean isChecked) {
-						
-						if (! _enabledPeriod.is_wifi())
-						{
+
+						if (!_enabledPeriod.is_wifi()) {
 							// disabled, ignore
 							return;
 						}
-						
+
 						_enabledPeriod.set_intervalConnectWifi(isChecked);
-						updateCheckboxAppearance((CheckBox) buttonView,
+						updateCheckboxAppearance(
+								(CheckBox) buttonView,
 								R.drawable.ic_action_interval,
-								_enabledPeriod.is_wifi());
+								_enabledPeriod.is_wifi()
+										&& _enabledPeriod.activeIsEnabled(),
+								false);
 					}
 				});
 		updateCheckboxAppearance(checkBoxIntervalConnectWifi,
-				R.drawable.ic_action_interval);
+				R.drawable.ic_action_interval,
+				_enabledPeriod.activeIsEnabled(), false);
 
 		// check box interval connect mob data
 		CheckBox checkBoxIntervalConnectMobData = (CheckBox) view
@@ -267,21 +275,23 @@ public class SchedulePeriodFragment extends DialogFragment {
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView,
 							boolean isChecked) {
-						
-						if (! _enabledPeriod.is_mobileData())
-						{
+
+						if (!_enabledPeriod.is_mobileData()) {
 							// disabled, ignore
 							return;
 						}
-						
+
 						_enabledPeriod.set_intervalConnectMobData(isChecked);
 						updateCheckboxAppearance((CheckBox) buttonView,
 								R.drawable.ic_action_interval,
-								_enabledPeriod.is_mobileData());
+								_enabledPeriod.is_mobileData()
+										&& _enabledPeriod.activeIsEnabled(),
+								false);
 					}
 				});
 		updateCheckboxAppearance(checkBoxIntervalConnectMobData,
-				R.drawable.ic_action_interval);
+				R.drawable.ic_action_interval,
+				_enabledPeriod.activeIsEnabled(), false);
 
 		AlertDialog dialog = builder.create();
 
@@ -441,40 +451,40 @@ public class SchedulePeriodFragment extends DialogFragment {
 	}
 
 	public void onToggleMobileDataClicked(View v) {
-		
+
 		boolean isChecked = ((CheckBox) v).isChecked();
-		
+
 		_enabledPeriod.set_mobileData(isChecked);
-		
+
 		updateCheckboxAppearance((CheckBox) v, R.drawable.ic_action_mobile_data);
-		
+
 		Dialog dialog = getDialog();
 
 		if (dialog != null) {
 			CheckBox checkBoxIntervalConnectMob = (CheckBox) dialog
 					.findViewById(R.id.checkBoxScheduleIntervalMob);
-			
+
 			updateCheckboxAppearance(checkBoxIntervalConnectMob,
-					R.drawable.ic_action_interval, isChecked);
+					R.drawable.ic_action_interval, isChecked, false);
 		}
 	}
 
 	public void onToggleWifiClicked(View v) {
-		
+
 		boolean isChecked = ((CheckBox) v).isChecked();
-		
+
 		_enabledPeriod.set_wifi(isChecked);
-		
+
 		updateCheckboxAppearance((CheckBox) v, R.drawable.ic_action_wifi);
-		
+
 		Dialog dialog = getDialog();
 
 		if (dialog != null) {
 			CheckBox checkBoxIntervalConnectWifi = (CheckBox) dialog
 					.findViewById(R.id.checkBoxScheduleIntervalWifi);
-			
+
 			updateCheckboxAppearance(checkBoxIntervalConnectWifi,
-					R.drawable.ic_action_interval, isChecked);
+					R.drawable.ic_action_interval, isChecked, false);
 		}
 	}
 
@@ -497,50 +507,49 @@ public class SchedulePeriodFragment extends DialogFragment {
 
 	private void updateCheckboxAppearance(CheckBox v, int iconResourceId) {
 		boolean checkBoxEnabled = true;
-		updateCheckboxAppearance(v, iconResourceId, checkBoxEnabled);
+		boolean strikeThrough = !_enabledPeriod.activeIsEnabled();
+		updateCheckboxAppearance(v, iconResourceId, checkBoxEnabled,
+				strikeThrough);
 	}
 
 	private void updateCheckboxAppearance(CheckBox v, int iconResourceId,
-			boolean checkBoxEnabled) {
+			boolean checkBoxEnabled, boolean strikeThrough) {
 
 		int tintColorId;
 
 		boolean isChecked = v.isChecked();
-		
+
 		if (!checkBoxEnabled && isChecked) {
 			tintColorId = R.color.weak_grey_transparent;
 		} else {
 			tintColorId = R.color.button_unchecked;
 		}
-		
-		Drawable icon = ViewUtils.getTintedIcon(getActivity(), 
-				!checkBoxEnabled || !isChecked, tintColorId, iconResourceId);
-		
-//		
-//
-//		int tint = getResources().getColor(tintColorId);
-//
-//		Drawable icon = getActivity().getResources()
-//				.getDrawable(iconResourceId);
-//		if (!checkBoxEnabled || !isChecked) {
-//			icon.mutate().setColorFilter(tint, Mode.MULTIPLY);
-//		} else {
-//			icon.mutate().clearColorFilter();
-//		}
+
+		Drawable icon = ViewUtils.getTintedIcon(getActivity(), !checkBoxEnabled
+				|| !isChecked, tintColorId, iconResourceId);
+
+		if (strikeThrough) {
+			Drawable strike = ViewUtils.getTintedIcon(getActivity(),
+					!checkBoxEnabled || !isChecked, tintColorId,
+					R.drawable.ic_strikethrough);
+
+			Drawable[] layers = new Drawable[2];
+			layers[0] = icon;
+			layers[1] = strike;
+
+			icon = new LayerDrawable(layers);
+		}
 
 		v.setButtonDrawable(icon);
-		
-		if (!checkBoxEnabled)
-		{
-			v.setTextColor(getResources().getColor(R.color.weak_grey_transparent));
-		}
-		else if (isChecked)
-		{
+
+		if (!checkBoxEnabled) {
+			v.setTextColor(getResources().getColor(
+					R.color.weak_grey_transparent));
+		} else if (isChecked) {
 			v.setTextColor(getResources().getColor(android.R.color.white));
-		}
-		else
-		{
-			v.setTextColor(getResources().getColor(R.color.toggle_button_unchecked));
+		} else {
+			v.setTextColor(getResources().getColor(
+					R.color.toggle_button_unchecked));
 		}
 	}
 
@@ -552,9 +561,57 @@ public class SchedulePeriodFragment extends DialogFragment {
 		long nextStartTimeInMillis = DateTimeUtils.getNextTimeIn24hInMillis(
 				hourOfDay, minute);
 
+		boolean activeIsEnabledBefore = DateTimeUtils.isEarlierInTheDay(
+				_enabledPeriod.get_startTimeMillis(),
+				_enabledPeriod.get_endTimeMillis());
+
+		boolean activeIsEnabledAfter = DateTimeUtils.isEarlierInTheDay(
+				nextStartTimeInMillis, _enabledPeriod.get_endTimeMillis());
+
 		_enabledPeriod.set_startTimeMillis(nextStartTimeInMillis);
 
 		setButtonTime(nextStartTimeInMillis, R.id.buttonTimeStart);
+
+		updateCheckBoxesOnTimeChange(activeIsEnabledBefore,
+				activeIsEnabledAfter);
+	}
+
+	private void updateCheckBoxesOnTimeChange(boolean activeIsEnabledBefore,
+			boolean activeIsEnabledAfter) {
+
+		if (activeIsEnabledBefore != activeIsEnabledAfter) {
+			String message;
+			if (activeIsEnabledAfter) {
+				message = "Start is before stop. Scheduled period starts networks";
+			} else {
+				message = "Stop is before start. Scheduled period disables networks";
+			}
+
+			Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+
+			CheckBox wifi = (CheckBox) _view.findViewById(R.id.checkBoxWifi);
+			updateCheckboxAppearance(wifi, R.drawable.ic_action_wifi);
+
+			CheckBox mob = (CheckBox) _view
+					.findViewById(R.id.checkBoxMobileData);
+			updateCheckboxAppearance(mob, R.drawable.ic_action_mobile_data);
+
+			CheckBox bt = (CheckBox) _view.findViewById(R.id.checkBoxBluetooth);
+			updateCheckboxAppearance(bt, R.drawable.ic_action_bluetooth1);
+
+			CheckBox vol = (CheckBox) _view.findViewById(R.id.checkBoxVolume);
+			updateCheckboxAppearance(vol, R.drawable.ic_action_volume_up);
+
+			CheckBox intervalConnectWifi = (CheckBox) _view
+					.findViewById(R.id.checkBoxScheduleIntervalWifi);
+			updateCheckboxAppearance(intervalConnectWifi,
+					R.drawable.ic_action_interval, activeIsEnabledAfter, false);
+
+			CheckBox intervalConnectMob = (CheckBox) _view
+					.findViewById(R.id.checkBoxScheduleIntervalMob);
+			updateCheckboxAppearance(intervalConnectMob,
+					R.drawable.ic_action_interval, activeIsEnabledAfter, false);
+		}
 	}
 
 	public void buttonStopClicked(View v) {
@@ -581,9 +638,19 @@ public class SchedulePeriodFragment extends DialogFragment {
 		long nextEndTimeInMillis = DateTimeUtils.getNextTimeIn24hInMillis(
 				hourOfDay, minute);
 
+		boolean activeIsEnabledBefore = DateTimeUtils.isEarlierInTheDay(
+				_enabledPeriod.get_startTimeMillis(),
+				_enabledPeriod.get_endTimeMillis());
+
+		boolean activeIsEnabledAfter = DateTimeUtils.isEarlierInTheDay(
+				_enabledPeriod.get_startTimeMillis(), nextEndTimeInMillis);
+
 		_enabledPeriod.set_endTimeMillis(nextEndTimeInMillis);
 
 		setButtonTime(nextEndTimeInMillis, R.id.buttonTimeStop);
+
+		updateCheckBoxesOnTimeChange(activeIsEnabledBefore,
+				activeIsEnabledAfter);
 	}
 
 	private void setButtonTime(long timeInMillis, int buttonId) {

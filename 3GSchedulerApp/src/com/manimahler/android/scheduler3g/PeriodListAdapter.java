@@ -82,24 +82,24 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 		ImageView wifiImgView = (ImageView) rowView
 				.findViewById(R.id.imageViewWifi);
 		tintViewIcon(wifiImgView, R.drawable.ic_action_wifi, !period.is_wifi(),
-				intervalWifi);
+				intervalWifi, ! period.activeIsEnabled());
 
 		boolean intervalMob = period.is_mobileData()
 				&& period.is_intervalConnectMobData();
 		ImageView mobileDataView = (ImageView) rowView
 				.findViewById(R.id.imageViewMobileData);
 		tintViewIcon(mobileDataView, R.drawable.ic_action_mobile_data,
-				!period.is_mobileData(), intervalMob);
+				!period.is_mobileData(), intervalMob, ! period.activeIsEnabled());
 
 		ImageView btView = (ImageView) rowView
 				.findViewById(R.id.imageViewBluetooth);
 		tintViewIcon(btView, R.drawable.ic_action_bluetooth1,
-				!period.is_bluetooth(), false);
+				!period.is_bluetooth(), false, ! period.activeIsEnabled());
 
 		ImageView volView = (ImageView) rowView
 				.findViewById(R.id.imageViewVolume);
 		tintViewIcon(volView, R.drawable.ic_action_volume_up,
-				!period.is_volume(), false);
+				!period.is_volume(), false, ! period.activeIsEnabled());
 
 		if (!_enabled) {
 			ViewUtils.setControlsEnabled(_enabled, (ViewGroup) rowView);
@@ -108,37 +108,48 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 	}
 
 	private void tintViewIcon(ImageView imageView, int iconResourceId,
-			boolean tintIt, boolean intervals) {
+			boolean tintIt, boolean intervals, boolean strikeThrough) {
 
 		Drawable icon = ViewUtils.getTintedIcon(context, tintIt,
 				R.color.button_unchecked, iconResourceId);
-		//
-		// int tint = context.getResources().getColor(R.color.button_unchecked);
-		//
-		// // re-reading the icon from the resource seems to be the only way to
-		// // avoid tiniting
-		// // ALL the images in the other rowViews!
-		// // see http://www.curious-creature.org/2009/05/02/drawable-mutations/
-		// Drawable icon = context.getResources().getDrawable(iconResourceId);
-		//
-		// if (tintIt) {
-		// icon.mutate().setColorFilter(tint, Mode.MULTIPLY);
-		// } else {
-		// icon.mutate().clearColorFilter();
-		// }
 
-		if (!intervals) {
-			imageView.setImageDrawable(icon);
-		} else {
-
-			Drawable[] layers = new Drawable[2];
-			layers[0] = icon;
-			layers[1] = context.getResources()
-					.getDrawable(R.drawable.intervals);
-			LayerDrawable layerDrawable = new LayerDrawable(layers);
-			imageView.setImageDrawable(layerDrawable);
+		ArrayList<Drawable> iconList = new ArrayList<Drawable>(3);
+		
+		iconList.add(icon);
+		
+		if (intervals) {
+			iconList.add(context.getResources().getDrawable(R.drawable.intervals));
 		}
-
+		
+		if (! tintIt && strikeThrough)
+		{
+			Drawable strike = context.getResources().getDrawable(R.drawable.ic_strikethrough);
+			
+			iconList.add(strike);
+		}
+		
+		Drawable[] layers = iconList.toArray(new Drawable[iconList.size()]);
+//		if (!intervals) {
+//			imageView.setImageDrawable(icon);
+//		} else {
+//
+//			
+//			layers[0] = icon;
+//			layers[1] = context.getResources()
+//					.getDrawable(R.drawable.intervals);
+//			layers[2] = context.getResources().getDrawable(R.drawable.strikethrough);
+//			
+//			LayerDrawable layerDrawable = new LayerDrawable(layers);
+//			imageView.setImageDrawable(layerDrawable);
+//		}
+		
+		LayerDrawable layerDrawable = new LayerDrawable(layers);
+//		if (layerDrawable.getNumberOfLayers() == 3)
+//		{
+//			layerDrawable.setLayerInset(2, 0, 0, 0, 17);
+//		}
+		
+		imageView.setImageDrawable(layerDrawable);
 	}
 
 	private void setPeriodItemTimes(ScheduledPeriod period, TextView startView,
