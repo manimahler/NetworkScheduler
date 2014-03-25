@@ -82,24 +82,24 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 		ImageView wifiImgView = (ImageView) rowView
 				.findViewById(R.id.imageViewWifi);
 		tintViewIcon(wifiImgView, R.drawable.ic_action_wifi, !period.is_wifi(),
-				intervalWifi, ! period.activeIsEnabled());
+				intervalWifi, period.is_overrideIntervalWifi(), ! period.activeIsEnabled());
 
 		boolean intervalMob = period.is_mobileData()
 				&& period.is_intervalConnectMobData();
 		ImageView mobileDataView = (ImageView) rowView
 				.findViewById(R.id.imageViewMobileData);
 		tintViewIcon(mobileDataView, R.drawable.ic_action_mobile_data,
-				!period.is_mobileData(), intervalMob, ! period.activeIsEnabled());
+				!period.is_mobileData(), intervalMob, period.is_overrideIntervalMob(), ! period.activeIsEnabled());
 
 		ImageView btView = (ImageView) rowView
 				.findViewById(R.id.imageViewBluetooth);
 		tintViewIcon(btView, R.drawable.ic_action_bluetooth1,
-				!period.is_bluetooth(), false, ! period.activeIsEnabled());
+				!period.is_bluetooth(), false, false, ! period.activeIsEnabled());
 
 		ImageView volView = (ImageView) rowView
 				.findViewById(R.id.imageViewVolume);
 		tintViewIcon(volView, R.drawable.ic_action_volume_up,
-				!period.is_volume(), false, ! period.activeIsEnabled());
+				!period.is_volume(), false, false, ! period.activeIsEnabled());
 
 		if (!_enabled) {
 			ViewUtils.setControlsEnabled(_enabled, (ViewGroup) rowView);
@@ -108,7 +108,7 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 	}
 
 	private void tintViewIcon(ImageView imageView, int iconResourceId,
-			boolean tintIt, boolean intervals, boolean strikeThrough) {
+			boolean tintIt, boolean intervals, boolean overrideIntervals, boolean strikeThrough) {
 
 		Drawable icon = ViewUtils.getTintedIcon(context, tintIt,
 				R.color.button_unchecked, iconResourceId);
@@ -118,7 +118,12 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 		iconList.add(icon);
 		
 		if (intervals) {
-			iconList.add(context.getResources().getDrawable(R.drawable.intervals));
+			Drawable intervalDrawable = 
+				ViewUtils.getTintedIcon(context, overrideIntervals, R.color.black, R.drawable.intervals);
+			
+			// if override intervals...
+			
+			iconList.add(intervalDrawable);
 		}
 		
 		if (! tintIt && strikeThrough)

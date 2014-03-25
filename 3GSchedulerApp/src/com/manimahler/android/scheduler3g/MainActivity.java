@@ -296,25 +296,33 @@ public class MainActivity extends FragmentActivity implements
 			    MenuItem skipItem = menu.findItem(R.id.skip_next);
 			    skipItem.setChecked(selectedPeriod.is_skipped());
 			    
+			    if (!selectedPeriod.activeIsEnabled()) {
+			    	MenuItem activateItem = menu.findItem(R.id.activate_now);
+			    	activateItem.setTitle(R.string.activate_now_off);
+			    	
+			    	MenuItem deactivateItem = menu.findItem(R.id.deactivate_now);
+			    	deactivateItem.setTitle(R.string.deactivate_now_on);
+			    }
+			    
 			    // NOTE: listening to the user-made changes in the system only works for WiFi, but
 			    // not for mobile data -> add specific context menu entries
 			    
 			    if (selectedPeriod.is_active() && selectedPeriod.is_intervalConnectWifi())
 			    {
-			    	MenuItem wifiItem = menu.add(0, R.integer.context_menu_id_interval_wifi, 4, R.string.context_menu_interval_wifi);
+			    	MenuItem wifiItem = menu.add(0, R.integer.context_menu_id_interval_wifi, 3, R.string.context_menu_interval_wifi);
 			    	wifiItem.setCheckable(true);
 			    	wifiItem.setChecked(! selectedPeriod.is_overrideIntervalWifi());
 			    }
 			    
 			    if (selectedPeriod.is_active() && selectedPeriod.is_intervalConnectMobData())
 			    {
-			    	MenuItem mobItem = menu.add(0, R.integer.context_menu_id_interval_mob, 5, R.string.context_menu_interval_mob);
+			    	MenuItem mobItem = menu.add(0, R.integer.context_menu_id_interval_mob, 4, R.string.context_menu_interval_mob);
 			    	mobItem.setCheckable(true);
 			    	mobItem.setChecked(! selectedPeriod.is_overrideIntervalMob());
 			    }
 			    
 				if (info.position > 0) {
-					menu.add(0, R.integer.context_menu_id_up, 8,
+					menu.add(0, R.integer.context_menu_id_up, 10,
 							R.string.move_up); //setIcon(android.R.drawable.arrow_up_float);
 				}
 
@@ -476,6 +484,8 @@ public class MainActivity extends FragmentActivity implements
 
 		ScheduledPeriod selectedPeriod = _adapter.getItem(info.position);
 
+		String msg;
+		
 		switch (item.getItemId()) {
 		case R.id.delete:
 			Log.d("MainActivity.onContextItemSelected", "Delete pressed");
@@ -499,9 +509,7 @@ public class MainActivity extends FragmentActivity implements
 
 			Log.d("MainActivity.onContextItemSelected", "Edit pressed");
 
-			ScheduledPeriod periodToEdit = _adapter.getItem(info.position);
-
-			showPeriodDetails(periodToEdit);
+			showPeriodDetails(selectedPeriod);
 			return true;
 		case R.id.activate_now:
 			toggleNetworkState(selectedPeriod, true);
@@ -512,15 +520,39 @@ public class MainActivity extends FragmentActivity implements
 			_adapter.notifyDataSetChanged();
 			return true;
 		case R.id.skip_next:
-			ScheduledPeriod periodToSkip = _adapter.getItem(info.position);
-			periodToSkip.set_skipped(! periodToSkip.is_skipped());
-			onPeriodUpdated(periodToSkip);
+			selectedPeriod.set_skipped(! selectedPeriod.is_skipped());
+			onPeriodUpdated(selectedPeriod);
+			
+			if (selectedPeriod.is_skipped()){
+				msg = getResources().getString(R.string.skipped_period);
+			} else {
+				msg = getResources().getString(R.string.unskipped_period);
+			}
+			Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+			
 			return true;
 		case R.integer.context_menu_id_interval_wifi:
-			toggleCurrentIntervalWifi(_adapter.getItem(info.position));
+			toggleCurrentIntervalWifi(selectedPeriod);
+			
+			if (selectedPeriod.is_overrideIntervalWifi()){
+				msg = getResources().getString(R.string.overridden_wifi_interval);
+			} else {
+				msg = getResources().getString(R.string.unoverridden_wifi_interval);
+			}
+			
+			Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+			
 			return true;
 		case R.integer.context_menu_id_interval_mob:
-			toggleCurrentIntervalMobData(_adapter.getItem(info.position));
+			toggleCurrentIntervalMobData(selectedPeriod);
+			
+			if (selectedPeriod.is_overrideIntervalMob()){
+				msg = getResources().getString(R.string.overridden_mob_interval);
+			} else {
+				msg = getResources().getString(R.string.unoverridden_mob_interval);
+			}
+			Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+			
 			return true;
 		case R.integer.context_menu_id_up:
 			_adapter.moveUp(info.position);

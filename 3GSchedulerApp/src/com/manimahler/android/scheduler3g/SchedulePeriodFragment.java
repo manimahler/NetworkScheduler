@@ -587,7 +587,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 				message = "Stop is before start. Scheduled period disables networks";
 			}
 
-			Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+			Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
 
 			CheckBox wifi = (CheckBox) _view.findViewById(R.id.checkBoxWifi);
 			updateCheckboxAppearance(wifi, R.drawable.ic_action_wifi);
