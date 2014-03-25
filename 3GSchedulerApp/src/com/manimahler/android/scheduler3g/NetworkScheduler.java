@@ -455,11 +455,12 @@ public class NetworkScheduler {
 		period.set_active(isPeriodActivation);
 
 		boolean skip = period.is_skipped();
-		if (skip) {
-			if (!isPeriodActivation) {
-				// reset at the end of the period
-				period.set_skipped(false);
-			}
+
+		if (!isPeriodActivation) {
+			// reset at the end of the period
+			period.set_skipped(false);
+			period.set_overrideIntervalMob(false);
+			period.set_overrideIntervalWifi(false);
 		}
 
 		// must be saved straight away because re-read in startIntervalConnect
@@ -671,11 +672,13 @@ public class NetworkScheduler {
 
 		period.set_overrideIntervalWifi(false);
 		period.set_overrideIntervalMob(false);
-		
+
 		boolean skip = period.is_skipped();
-		if (!isPeriodActivation && skip) {
+		if (!isPeriodActivation) {
 			// reset at the end of the period
 			period.set_skipped(false);
+			period.set_overrideIntervalMob(false);
+			period.set_overrideIntervalWifi(false);
 		}
 
 		PersistenceUtils.saveToPreferences(getSchedulesPreferences(context),
