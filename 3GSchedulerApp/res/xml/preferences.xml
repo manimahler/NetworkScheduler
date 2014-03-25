@@ -1,96 +1,46 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
     <PreferenceCategory android:title="@string/settings_title_interval_connect" />
 
-        <EditTextPreference 
-            android:key="@string/pref_key_connect_interval"
-            android:summary="@string/pref_summary_connect_interval"
-            android:title="@string/pref_title_connect_interval"
-            android:numeric="integer"
-            android:defaultValue="15"
-            android:dialogTitle="@string/pref_dialog_title_connect_interval" />
-        
-        <CheckBoxPreference 
-            android:key="pref_key_interval_connect_wifi_keep_connected"
-            android:summary="@string/pref_summary_interval_connect_wifi_keep_connected"
-            android:title="@string/pref_title_interval_connect_wifi_keep_connected"
-            android:defaultValue="false"  />
-        
-    <PreferenceCategory 
-        android:title="@string/settings_title_notifications"        />
- 
-    
-       <!-- 
-        <CheckBoxPreference
-            android:key="pref_key_warn_switchoff"
-            android:summary="@string/pref_summary_warn_switchoff"
-            android:title="@string/pref_title_warn_switchoff"
-            android:defaultValue="true" />
-        
-       	<CheckBoxPreference 
-            android:key="pref_key_warn_only_screen_on"
-            android:dependency="pref_key_warn_switchoff"
-            android:summary="@string/pref_summary_warn_only_screen_on"
-            android:title="@string/pref_title_warn_only_screen_on" 
-            android:defaultValue="true" />
-       	         -->
- 
-       	<CheckBoxPreference 
-            android:key="pref_key_warn_vibrate"
-            android:summary="@string/pref_summary_warn_vibrate"
-            android:title="@string/pref_title_warn_vibrate" 
-            android:defaultValue="false" />
-       		
-       <CheckBoxPreference 
-            android:key="pref_key_warn_sound"
-            android:summary="@string/pref_summary_warn_sound"
-            android:title="@string/pref_title_warn_sound"
-            android:defaultValue="true"  />
-       
-      <EditTextPreference 
-            android:key="@string/pref_key_delay_min"
-            android:summary="@string/pref_summary_delay_min"
-            android:title="@string/pref_title_delay_min"
-            android:numeric="integer"
-            android:defaultValue="60"
-            android:dialogTitle="@string/pref_dialog_title_delay_min" />
-      
-       	<CheckBoxPreference 
-            android:key="pref_key_notify_no_switchoff_unlocked"
-            android:summary="@string/pref_summary_no_switchoff_unlocked"
-            android:title="@string/pref_title_no_switchoff_unlocked"
-            android:defaultValue="false"  />
-        
-        <CheckBoxPreference 
-            android:key="pref_key_notify_each_action"
-            android:summary="@string/pref_summary_notify_each_action"
-            android:title="@string/pref_title_notify_each_action"
-            android:defaultValue="false"  />
-        
-        <!-- 
-        <CheckBoxPreference 
-            android:key="pref_key_interval_connect_wifi"
-            android:summary="@string/pref_summary_interval_connect_wifi"
-            android:title="@string/pref_title_interval_connect_wifi"
-            android:defaultValue="false"  />
+    <EditTextPreference
+        android:defaultValue="15"
+        android:dialogTitle="@string/pref_dialog_title_connect_interval"
+        android:key="@string/pref_key_connect_interval"
+        android:numeric="integer"
+        android:summary="@string/pref_summary_connect_interval"
+        android:title="@string/pref_title_connect_interval" />
 
-        
-        <CheckBoxPreference 
-            android:key="pref_key_interval_connect_mobiledata"
-            android:summary="@string/pref_summary_interval_connect_mobiledata"
-            android:title="@string/pref_title_interval_connect_mobiledata"
-            android:defaultValue="false"  />
-        -->
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="pref_key_interval_connect_wifi_keep_connected"
+        android:summary="@string/pref_summary_interval_connect_wifi_keep_connected"
+        android:title="@string/pref_title_interval_connect_wifi_keep_connected" />
 
-              
-        <!-- 
-    </PreferenceCategory
-        android:title="@string/settings_title_intervals"
+    <PreferenceCategory android:title="@string/settings_title_notifications" />
 
-    <ListPreference
-        android:key="pref_key_wifi_interval"
-        android:title="@string/pref_title_wifi_interval"
-        android:dialogTitle="@string/pref_title_wifi_interval"
-        android:entries="@array/pref_wifi_interval_entries"
-        android:entryValues="@array/pref_wifi_interval_values" />
-         -->
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="pref_key_warn_vibrate"
+        android:summary="@string/pref_summary_warn_vibrate"
+        android:title="@string/pref_title_warn_vibrate" />
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="pref_key_warn_sound"
+        android:summary="@string/pref_summary_warn_sound"
+        android:title="@string/pref_title_warn_sound" />
+
+    <EditTextPreference
+        android:defaultValue="60"
+        android:dialogTitle="@string/pref_dialog_title_delay_min"
+        android:key="@string/pref_key_delay_min"
+        android:numeric="integer"
+        android:summary="@string/pref_summary_delay_min"
+        android:title="@string/pref_title_delay_min" />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="pref_key_notify_no_switchoff_unlocked"
+        android:summary="@string/pref_summary_no_switchoff_unlocked"
+        android:title="@string/pref_title_no_switchoff_unlocked" />
+
 </PreferenceScreen>

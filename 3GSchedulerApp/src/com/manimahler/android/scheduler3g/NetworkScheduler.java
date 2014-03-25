@@ -487,13 +487,15 @@ public class NetworkScheduler {
 			} else {
 				endToggleSensors(context, period, settings, enable);
 			}
-		}
-		else {
+		} else {
 			String name = period.get_name();
-			if (name == null) name = "<no name>";
-			Log.i("NetworkScheduler", "Period is skipped, not starting sensors for " + period.get_name());
+			if (name == null)
+				name = "<no name>";
+			Log.i("NetworkScheduler",
+					"Period is skipped, not starting sensors for "
+							+ period.get_name());
 		}
-			
+
 	}
 
 	private void endToggleSensors(Context context, ScheduledPeriod period,
@@ -598,47 +600,43 @@ public class NetworkScheduler {
 		// // for the sensors which have not interval-connect activated
 		// ConnectionUtils.toggleNetworkState(context, period, true);
 	}
-	
 
-	public void stopApproved(Context context, ScheduledPeriod period, SchedulerSettings settings) throws ClassNotFoundException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-		
-		if (! isChangeRequired(context, period))
-		{
+	public void stopApproved(Context context, ScheduledPeriod period,
+			SchedulerSettings settings) throws ClassNotFoundException,
+			NoSuchFieldException, IllegalArgumentException,
+			IllegalAccessException, NoSuchMethodException,
+			InvocationTargetException {
+
+		if (!isChangeRequired(context, period)) {
 			Log.d("StartStopReceiver", "No action required.");
-			
+
 			// still cancel interval connect
 			stop(period, context);
 		}
-		
-		if (! settings.is_warnOnDeactivation())
-		{
+
+		if (!settings.is_warnOnDeactivation()) {
 			stop(period, context);
 		}
-		
-		PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-        boolean isScreenOn = powerManager.isScreenOn();
-        
-        if (! isScreenOn && settings.is_warnOnlyWhenScreenOn())
-		{
-			// cancel interval connect		
+
+		PowerManager powerManager = (PowerManager) context
+				.getSystemService(Context.POWER_SERVICE);
+		boolean isScreenOn = powerManager.isScreenOn();
+
+		if (!isScreenOn && settings.is_warnOnlyWhenScreenOn()) {
+			// cancel interval connect
 			stop(period, context);
-		}
-		else
-		{
-			if (settings.is_autoDelay())
-			{
+		} else {
+			if (settings.is_autoDelay()) {
 				Log.d("StartStopReceiver", "Screen is on: auto-delay.");
-				
+
 				int delayInSec = settings.get_delay() * 60;
-				
+
 				makeAutoDelayNotification(context, period, settings);
 				scheduleSwitchOff(context, delayInSec, "OFF_DELAYED", period);
-			}
-			else
-			{
+			} else {
 				Log.d("StartStopReceiver", "Screen is on: notification.");
 				makeDisableNotification(context, period, settings);
-				
+
 				int fewMomentsInSec = 45;
 				scheduleSwitchOff(context, fewMomentsInSec, "OFF", period);
 			}
@@ -848,8 +846,7 @@ public class NetworkScheduler {
 	// }
 	// }
 
-	public void setupIntervalConnect(Context context, SchedulerSettings settings)
-	{
+	public void setupIntervalConnect(Context context, SchedulerSettings settings) {
 		try {
 			startIntervalConnect(context, settings);
 		} catch (Exception e) {
@@ -857,7 +854,7 @@ public class NetworkScheduler {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void startIntervalConnect(Context context,
 			SchedulerSettings settings) throws ClassNotFoundException,
 			NoSuchFieldException, IllegalArgumentException,
@@ -1082,12 +1079,12 @@ public class NetworkScheduler {
 		boolean intervalWifi = lastActivatedWifiPeriod != null
 				&& lastActivatedWifiPeriod.activeIsEnabled()
 				&& lastActivatedWifiPeriod.is_intervalConnectWifi()
-				&& ! lastActivatedWifiPeriod.is_overrideIntervalWifi();
+				&& !lastActivatedWifiPeriod.is_overrideIntervalWifi();
 
 		boolean intervalMobData = lastActivatedMobDataPeriod != null
 				&& lastActivatedMobDataPeriod.activeIsEnabled()
 				&& lastActivatedMobDataPeriod.is_intervalConnectMobData()
-				&& ! lastActivatedMobDataPeriod.is_overrideIntervalMob();
+				&& !lastActivatedMobDataPeriod.is_overrideIntervalMob();
 
 		if (!intervalWifi && !intervalMobData) {
 			// no relevant active interval-connect period at all
@@ -1151,7 +1148,8 @@ public class NetworkScheduler {
 		}
 
 		boolean intervalWifi = bundle == null || bundle.getBoolean(WIFI);
-		boolean intervalMobData = bundle == null || bundle.getBoolean(MOBILEDATA);
+		boolean intervalMobData = bundle == null
+				|| bundle.getBoolean(MOBILEDATA);
 
 		if (intervalMobData) {
 			ConnectionUtils.toggleMobileData(context, false);
