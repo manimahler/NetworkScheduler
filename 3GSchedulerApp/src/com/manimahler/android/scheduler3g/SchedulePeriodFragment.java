@@ -263,7 +263,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 				});
 		updateCheckboxAppearance(checkBoxIntervalConnectWifi,
 				R.drawable.ic_action_interval,
-				_enabledPeriod.activeIsEnabled(), false);
+				_enabledPeriod.activeIsEnabled() && _enabledPeriod.is_wifi(), false);
 
 		// check box interval connect mob data
 		CheckBox checkBoxIntervalConnectMobData = (CheckBox) view
@@ -291,7 +291,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 				});
 		updateCheckboxAppearance(checkBoxIntervalConnectMobData,
 				R.drawable.ic_action_interval,
-				_enabledPeriod.activeIsEnabled(), false);
+				_enabledPeriod.activeIsEnabled() && _enabledPeriod.is_mobileData(), false);
 
 		AlertDialog dialog = builder.create();
 
@@ -555,7 +555,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 
 	private void startTimePicked(int hourOfDay, int minute) {
 
-		Log.d("SchedulePeriodFragment", "Picked end time " + hourOfDay + ":"
+		Log.d("SchedulePeriodFragment", "Picked start time " + hourOfDay + ":"
 				+ minute);
 
 		long nextStartTimeInMillis = DateTimeUtils.getNextTimeIn24hInMillis(
