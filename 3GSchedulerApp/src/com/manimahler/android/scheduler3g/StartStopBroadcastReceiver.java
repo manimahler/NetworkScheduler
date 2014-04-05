@@ -1,19 +1,18 @@
 package com.manimahler.android.scheduler3g;
 
-import java.lang.reflect.InvocationTargetException;
-
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.PowerManager;
 import android.util.Log;
 import android.widget.Toast;
 
 public class StartStopBroadcastReceiver extends BroadcastReceiver {
-
+	
+	private static final String TAG = StartStopBroadcastReceiver.class.getSimpleName();
+	
 	@Override
 	public void onReceive(Context context, Intent intent) {
 
@@ -36,7 +35,7 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 			NetworkScheduler scheduler = new NetworkScheduler();
 			SharedPreferences sharedPrefs = scheduler.getSchedulesPreferences(context);
 			
-			Log.d("StartStopBroadcastReceiver", "Received broadcast action "
+			Log.d(TAG, "Received broadcast action "
 					+ action + " for period id " + periodId);
 			
 			SchedulerSettings settings = PersistenceUtils.readSettings(context);
@@ -62,43 +61,42 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 				}
 				else
 				{
-					Log.e("StartStopBroadcastReceiver", "Unknown action " + action);
+					Log.e(TAG, "Unknown action " + action);
 					return;
 				}
 
 				// normal schedule: test weekday
-				ScheduledPeriod referencedPeriod = PersistenceUtils.getPeriod(
+				ScheduledPeriod period = PersistenceUtils.getPeriod(
 						sharedPrefs, periodId);
 				
-				if (referencedPeriod == null)
-				{
+				if (period == null) {
 					// assuming deleted -> no action, no re-scheduling
-					Log.w("StartStopBroadcastReceiver", "EnabledPeriod not found, assuming deleted. No action.");
+					Log.w(TAG, "Scheduled period not found, assuming deleted. No action.");
 					return;
 				}
 				
 				// re-start 'repeating' alarm (not using repeating because it has become inexact on kitkat)
 				if (on)
 				{
-					scheduler.setNextAlarmStart(context, referencedPeriod, settings);
+					scheduler.setNextAlarmStart(context, period, settings);
 				}
 				else
 				{
-					scheduler.setNextAlarmStop(context, referencedPeriod);
+					scheduler.setNextAlarmStop(context, period);
 				}
 				
-				if (! referencedPeriod.appliesToday(on))
+				if (! period.appliesToday(on))
 				{
-					Log.d("StartStopBroadcastReceiver", "action does not apply today ");
+					Log.i(TAG, "Scheduled action " + action + " for scheduled period " + period.toString() + " does not apply today ");
 					return;
 				}
 				
 				if (!on) {
 					
-					scheduler.stopApproved(context, referencedPeriod, settings);
+					scheduler.stopApproved(context, period, settings);
 				} else {
-					
-					scheduler.start(referencedPeriod, context, settings);
+					boolean manualActivation = false;
+					scheduler.start(period, context, settings, manualActivation);
 				}
 			}
 		} catch (Exception e) {
@@ -124,19 +122,19 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 
 		if (referencedPeriod == null) {
 			// it might have been deleted? Test!
-			Log.d("SwitchOff", "Referenced period not found. Not stopping.");
+			Log.d(TAG, "Referenced period not found. Not stopping.");
 
 			return;
 		}
 
 		if (referencedPeriod.get_endTimeMillis() != expectedStopTime) {
-			Log.d("SwitchOff", "Expected stop time has changed. Not stopping.");
+			Log.d(TAG, "Expected stop time has changed. Not stopping.");
 
 			return;
 		}
 
 		if (!referencedPeriod.is_schedulingEnabled()) {
-			Log.d("SwitchOff", "Scheduling was disabled. Not stopping");
+			Log.d(TAG, "Scheduling was disabled. Not stopping");
 			
 			return;
 		}

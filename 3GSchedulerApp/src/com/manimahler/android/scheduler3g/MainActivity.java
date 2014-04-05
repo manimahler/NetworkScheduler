@@ -593,14 +593,22 @@ public class MainActivity extends FragmentActivity implements
 		try {
 			
 			NetworkScheduler scheduler = new NetworkScheduler();
-
-			if (! enable)
+			
+			boolean start;
+			if (selectedPeriod.activeIsEnabled())
 			{
-				scheduler.stop(selectedPeriod, this);
+				start = activate;
 			}
 			else
 			{
-				scheduler.start(selectedPeriod, this, _settings);
+				start = ! activate;
+			}
+			
+			boolean ignoreSkip = true;
+			if (start) {
+				scheduler.start(selectedPeriod, this, _settings, ignoreSkip);
+			} else {
+				scheduler.stop(selectedPeriod, this, ignoreSkip);
 			}
 			
 		} catch (Exception e) {
