@@ -113,19 +113,39 @@
         android:textColor="@android:color/white"
         android:textSize="12sp" />
 
-        <Button
-        android:id="@+id/buttonOn"
-        style="?android:attr/buttonStyleSmall"
+    <LinearLayout
+        android:id="@+id/bottomButtons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/bottomLine"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/textViewOff"
-        android:focusable="false"
-        android:maxHeight="18dip"
-        android:maxWidth="18dip"
-        android:minHeight="18dip"
-        android:minWidth="18dip" />
+        android:layout_marginLeft="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:textSize="24sp"
+        android:typeface="sans" >
+
+        <Button
+            android:id="@+id/buttonSkip"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:maxHeight="18dip"
+            android:maxWidth="18dip"
+            android:minHeight="18dip"
+            android:minWidth="18dip" />
+
+        <Button
+            android:id="@+id/buttonOn"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:maxHeight="18dip"
+            android:maxWidth="18dip"
+            android:minHeight="18dip"
+            android:minWidth="18dip" />
+    </LinearLayout>
         
 </RelativeLayout>

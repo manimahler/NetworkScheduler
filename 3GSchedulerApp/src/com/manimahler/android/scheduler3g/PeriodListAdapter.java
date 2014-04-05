@@ -49,7 +49,20 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 			button.setBackgroundColor(context.getResources().getColor(
 					R.color.transparent));
 		}
+		
+		View skip = rowView.findViewById(R.id.buttonSkip);
 
+		if (period.is_skipped()) {
+
+			// change to setBackground once support for < SDK v16 is dropped.
+			skip.setBackgroundDrawable(context.getResources().getDrawable(
+					R.drawable.ic_action_next));
+		} else {
+			skip.setBackgroundColor(context.getResources().getColor(
+					R.color.transparent));
+		}
+		
+		
 		if (period.get_name() != null && !period.get_name().isEmpty()) {
 			TextView name = (TextView) rowView.findViewById(R.id.TextViewName);
 			name.setText(period.get_name());
