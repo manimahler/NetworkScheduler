@@ -26,11 +26,16 @@ public class DateTimeUtils {
 		Calendar calendar = setTime(hourOfDay, minute);
 
 		if (!calendar.after(calendarNow)) {
-			// add 24 hours
-			calendar.add(Calendar.HOUR, 24);
+			// NOTE: add 1 day rather than 24 hours because of summer time change -> + 1 d is 23 or 25 hours!
+			addDays(calendar, 1);
 		}
 
 		return calendar.getTimeInMillis();
+	}
+	
+	public static void addDays(Calendar calendar, int days) {
+		// NOTE: 1 day <> 24 hours when changing between summer / winter time
+		calendar.add(Calendar.DATE, days);
 	}
 
 	public static long getNextTimeIn24hInMillis(long milliseconds) {
@@ -62,8 +67,8 @@ public class DateTimeUtils {
 		
 		if (absDifference > maxDifferenceConsideredSameDay)
 		{
-			// add -24 hours
-			calendar.add(Calendar.HOUR, -24);
+			// subtract one day
+			addDays(calendar, -1);
 		}
 
 		return calendar.getTimeInMillis();
