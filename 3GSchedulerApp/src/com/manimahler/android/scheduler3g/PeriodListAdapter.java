@@ -3,11 +3,8 @@ package com.manimahler.android.scheduler3g;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
-import android.graphics.drawable.ShapeDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,16 +15,32 @@ import android.widget.TextView;
 
 public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 	private final Context context;
-	private final ArrayList<ScheduledPeriod> values;
+	private ArrayList<ScheduledPeriod> values;
 
 	boolean _enabled;
 
 	public PeriodListAdapter(Context context, ArrayList<ScheduledPeriod> list) {
 		super(context, R.layout.enabled_period, list);
 		this.context = context;
-		this.values = list;
-
+		values = list;
+		
 		_enabled = true;
+	}
+	
+	public void resetPeriods(ArrayList<ScheduledPeriod> list) {
+		super.clear();
+		
+		// NOTE: addAll(list) requires API level 11
+		//super.addAll(list);
+		for (ScheduledPeriod scheduledPeriod : list) {
+			super.add(scheduledPeriod);
+		}
+		
+		notifyDataSetChanged();
+	}
+	
+	public ArrayList<ScheduledPeriod> getPeriods() {
+		return values;
 	}
 
 	@Override
@@ -39,8 +52,7 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 		ScheduledPeriod period = values.get(position);
 
 		View button = rowView.findViewById(R.id.buttonOn);
-		if (period.is_scheduleStart() && period.is_scheduleStop()
-				&& period.is_active()) {
+		if (period.is_active()) {
 
 			// change to setBackground once support for < SDK v16 is dropped.
 			button.setBackgroundDrawable(context.getResources().getDrawable(

@@ -53,10 +53,10 @@ import android.widget.ToggleButton;
 
 public class MainActivity extends FragmentActivity implements
 		OnPeriodUpdatedListener {
-
+	
 	private SchedulerSettings _settings;
-
-	private ArrayList<ScheduledPeriod> _enabledPeriods;
+	
+	//private ArrayList<ScheduledPeriod> _enabledPeriods;
 	
 	private PeriodListAdapter _adapter;
 	
@@ -66,11 +66,7 @@ public class MainActivity extends FragmentActivity implements
 
 		setContentView(R.layout.activity_main);
 
-		SharedPreferences schedulesPreferences = GetPreferences();
-
-		_enabledPeriods = PersistenceUtils.readFromPreferences(schedulesPreferences);
-		_settings = PersistenceUtils.readSettings(this);
-		
+		initializePersistedFields();
 		
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 			ActionBar actionBar = getActionBar();
@@ -101,6 +97,7 @@ public class MainActivity extends FragmentActivity implements
 //			bottomBar.addView(globalSwitch);
 //		}
 
+		
 		CompoundButton globalSwitch = (CompoundButton)findViewById(R.id.globalSwitch);
 		
 		// currently not supported < SDK 14
@@ -121,7 +118,7 @@ public class MainActivity extends FragmentActivity implements
 
 		this.registerForContextMenu(listview);
 
-		_adapter = new PeriodListAdapter(MainActivity.this, _enabledPeriods);
+		
 
 		listview.setAdapter(_adapter);
 
@@ -247,6 +244,22 @@ public class MainActivity extends FragmentActivity implements
 		// TransitionDrawable trans = (TransitionDrawable)
 		// layout.getBackground();
 		// trans.startTransition(2000);
+	}
+
+	private void initializePersistedFields() {
+		SharedPreferences schedulesPreferences = GetPreferences();
+		
+		ArrayList<ScheduledPeriod> periods = PersistenceUtils.readFromPreferences(schedulesPreferences);
+		
+		_settings = PersistenceUtils.readSettings(this);
+		
+		// important to remain in sync - the adapter must reference the list used here
+		if (_adapter != null) {
+			_adapter.resetPeriods(periods);
+		}
+		else {
+			_adapter = new PeriodListAdapter(MainActivity.this, periods);
+		}
 	}
 
 	private void setItemPressListeners(final ListView listview, boolean enabled) {
@@ -405,12 +418,12 @@ public class MainActivity extends FragmentActivity implements
 		
 		if (buttonView.isChecked())
 		{
-			scheduler.setAlarms(this, _enabledPeriods, _settings);
+			scheduler.setAlarms(this, _adapter.getPeriods(), _settings);
 			toastText = "Network Scheduler is enabled";
 		}
 		else
 		{
-			scheduler.deleteAlarms(this, _enabledPeriods);
+			scheduler.deleteAlarms(this, _adapter.getPeriods());
 			toastText = "Network Scheduler completely disabled";
 		}
 		
@@ -512,11 +525,11 @@ public class MainActivity extends FragmentActivity implements
 			showPeriodDetails(selectedPeriod);
 			return true;
 		case R.id.activate_now:
-			toggleNetworkState(selectedPeriod, true);
+			toggleActivation(selectedPeriod, true);
 			_adapter.notifyDataSetChanged();
 			return true;
 		case R.id.deactivate_now:
-			toggleNetworkState(selectedPeriod, false);
+			toggleActivation(selectedPeriod, false);
 			_adapter.notifyDataSetChanged();
 			return true;
 		case R.id.skip_next:
@@ -589,7 +602,7 @@ public class MainActivity extends FragmentActivity implements
 	}
 	
 
-	private void toggleNetworkState(ScheduledPeriod selectedPeriod, boolean enable) {
+	private void toggleActivation(ScheduledPeriod selectedPeriod, boolean activate) {
 		try {
 			
 			NetworkScheduler scheduler = new NetworkScheduler();
@@ -681,18 +694,18 @@ public class MainActivity extends FragmentActivity implements
 		
 		// use the opportunity to refresh the (potentially updated _active state) periods
 		// otherwise we'd need some kind of polling or auto-refresh.
-		_adapter.notifyDataSetChanged();
+		initializePersistedFields();
 	}
 
 	private void saveSettings() {
 		SharedPreferences preferences = GetPreferences();
 
 		Log.d("saveSettings", "Saving to preferences...");
-		PersistenceUtils.saveToPreferences(preferences, _enabledPeriods);
+		PersistenceUtils.saveToPreferences(preferences, _adapter.getPeriods());
 
 		try {
 			NetworkScheduler scheduler = new NetworkScheduler();
-			scheduler.setAlarms(this, _enabledPeriods, _settings);
+			scheduler.setAlarms(this, _adapter.getPeriods(), _settings);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
