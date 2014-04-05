@@ -162,55 +162,67 @@ public class ConnectionUtils {
 		int wifiState = wifiManager.getWifiState();
 
 		Log.d("ConnectionUtils", "Current Wi-Fi state is " + wifiState);
-
-		if (enable && !wifiManager.isWifiEnabled()) {
-
-			if (wifiState == WifiManager.WIFI_STATE_DISABLED) {
-				setWifiEnabled(wifiManager, enable);
-			} else if (wifiState == WifiManager.WIFI_STATE_UNKNOWN) {
-				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-					// observed once on SGS3: Wifi stayed in in unknown state
-					// for quite a while (but toggling worked)
-					Log.w("ConnectionUtils",
-							"Wifi state is WIFI_STATE_UNKNOWN, trying to enable...");
-					setWifiEnabled(wifiManager, enable);
-				} else {
-					// take extra care not to trigger the Wifi-Bug on KitKat
-					Log.w("ConnectionUtils",
-							"Wifi state is WIFI_STATE_UNKNOWN, doing nothing...");
-				}
-			} else {
-				Log.d("ConnectionUtils",
-						"Wifi state is not disabled, not enabling!");
-			}
-		}
-
-		if (!enable && wifiManager.isWifiEnabled()) {
-			if (!isWifiConnected(context) || wifiManager.disconnect()) {
-				setWifiEnabled(wifiManager, enable);
-			} else {
-				Log.w("ConnectionUtils",
-						"Cannot disconnect from WiFi. Not switching off!");
-			}
-		} else if (! enable) {
-			Log.d("ConnectionUtils",
-					"Wifi state is not enabled, not disabling!");
-		}
-	}
-
-	private static void setWifiEnabled(WifiManager wifiManager, boolean enable) {
-
 		
-			Log.d("ConnectionUtils", "Setting Wifi state change flag");
-			
-			// NOTE: setWifiEnabled returns long before the broadcast from the system
-			// is received. So there is no point re-setting the flag in the finally clause here.
-			WifiStateBroadcastReceiver.ChangingWifiState.set(true);
-			boolean success = wifiManager.setWifiEnabled(enable);
-			
-			Log.d("ConnectionUtils", "Wifi toggle success: " + success);
+		if (enable && ! wifiManager.isWifiEnabled()){
+			wifiManager.setWifiEnabled(enable);
+		}
 		
+		if (! enable && wifiManager.isWifiEnabled()){
+			wifiManager.setWifiEnabled(enable);
+		}
+		
+		// This entire carefulness did not really resolve the KITKAT bug and produced 
+		// issues on earlier versions (e.g. unable to disconnect on Gingerbread)
+//
+//		if (enable && !wifiManager.isWifiEnabled()) {
+//
+//			if (wifiState == WifiManager.WIFI_STATE_DISABLED) {
+//				setWifiEnabled(wifiManager, enable);
+//			} else if (wifiState == WifiManager.WIFI_STATE_UNKNOWN) {
+//				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+//					// observed once on SGS3: Wifi stayed in in unknown state
+//					// for quite a while (but toggling worked)
+//					Log.w("ConnectionUtils",
+//							"Wifi state is WIFI_STATE_UNKNOWN, trying to enable...");
+//					setWifiEnabled(wifiManager, enable);
+//				} else {
+//					// take extra care not to trigger the Wifi-Bug on KitKat
+//					Log.w("ConnectionUtils",
+//							"Wifi state is WIFI_STATE_UNKNOWN, doing nothing...");
+//				}
+//			} else {
+//				Log.d("ConnectionUtils",
+//						"Wifi state is not disabled, not enabling!");
+//			}
+//		}
+//
+//		
+//		if (!enable && wifiManager.isWifiEnabled()) {
+//			if (!isWifiConnected(context) || wifiManager.disconnect()) {
+//				setWifiEnabled(wifiManager, enable);
+//			} else {
+//				Log.w("ConnectionUtils",
+//						"Cannot disconnect from WiFi. Not switching off!");
+//			}
+//		} else if (! enable) {
+//			Log.d("ConnectionUtils",
+//					"Wifi state is not enabled, not disabling!");
+//		}
 	}
+//
+//	private static void setWifiEnabled(WifiManager wifiManager, boolean enable) {
+//
+//		
+//			Log.d("ConnectionUtils", "Setting Wifi state change flag");
+//			
+//			// NOTE: setWifiEnabled returns long before the broadcast from the system
+//			// is received. So there is no point re-setting the flag in the finally clause here.
+//			WifiStateBroadcastReceiver.ChangingWifiState.set(true);
+//			boolean success = wifiManager.setWifiEnabled(enable);
+//			
+//			Log.d("ConnectionUtils", "Wifi toggle success: " + success);
+//		
+//	}
 
 	public static void toggleBluetooth(Context context, boolean enable) {
 		BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
