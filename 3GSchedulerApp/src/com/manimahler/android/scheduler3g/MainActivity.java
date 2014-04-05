@@ -569,11 +569,13 @@ public class MainActivity extends FragmentActivity implements
 			return true;
 		case R.integer.context_menu_id_up:
 			_adapter.moveUp(info.position);
-			_adapter.notifyDataSetChanged();
+			//PeriodListAdapter.moveItemUp(_enabledPeriods, info.position);
+			// and save new list order - TODO: add property listPosition to be more explicit 
+			saveSettings();
 			return true;
 		case R.integer.context_menu_id_down:
 			_adapter.moveDown(info.position);
-			_adapter.notifyDataSetChanged();
+			saveSettings();
 		default:
 			return super.onContextItemSelected(item);
 		}
