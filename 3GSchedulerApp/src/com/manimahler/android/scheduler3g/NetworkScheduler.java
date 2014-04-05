@@ -488,6 +488,9 @@ public class NetworkScheduler {
 			} else {
 				endToggleSensors(context, period, settings, enable);
 			}
+			
+			deactivateAffectedStartOnlyPeriods(context, period, settings);
+			
 		} else {
 			String name = period.get_name();
 			if (name == null)
@@ -711,7 +714,53 @@ public class NetworkScheduler {
 			} else {
 				endToggleSensors(context, period, settings, false);
 			}
+			
+			deactivateAffectedStartOnlyPeriods(context, period, settings);
 		}
+	}
+	
+	private void deactivateAffectedStartOnlyPeriods(Context context, ScheduledPeriod currentPeriod,
+			SchedulerSettings settings) {
+		
+		ArrayList<ScheduledPeriod> allPeriods = PersistenceUtils
+		.readFromPreferences(getSchedulesPreferences(context));
+		
+		if (currentPeriod.is_wifi())
+		{
+			ArrayList<ScheduledPeriod> startedWifiPeriods = getAffectedActiveStartOnlyPeriods(allPeriods, NetworkType.WiFi, currentPeriod);
+			
+			for (ScheduledPeriod wifiPeriod : startedWifiPeriods) {
+				wifiPeriod.set_active(false);
+			}
+		}
+		
+		if (currentPeriod.is_mobileData())
+		{
+			ArrayList<ScheduledPeriod> startedMobPeriods = getAffectedActiveStartOnlyPeriods(allPeriods, NetworkType.MobileData, currentPeriod);
+			
+			for (ScheduledPeriod mobPeriod : startedMobPeriods) {
+				mobPeriod.set_active(false);
+			}
+		}
+		
+		if (currentPeriod.is_bluetooth())
+		{
+			ArrayList<ScheduledPeriod> startedBtPeriods = getAffectedActiveStartOnlyPeriods(allPeriods, NetworkType.Bluetooth, currentPeriod);
+			
+			for (ScheduledPeriod btPeriod : startedBtPeriods) {
+				btPeriod.set_active(false);
+			}
+		}
+		
+		if (currentPeriod.is_volume()) {
+			ArrayList<ScheduledPeriod> startedVolPeriods = getAffectedActiveStartOnlyPeriods(allPeriods, NetworkType.Volume, currentPeriod);
+			
+			for (ScheduledPeriod volPeriod : startedVolPeriods) {
+				volPeriod.set_active(false);
+			}
+		}
+		
+		PersistenceUtils.saveToPreferences(getSchedulesPreferences(context), allPeriods);
 	}
 
 	public void cancelSwitchOff(Context context, int periodId) {
@@ -995,6 +1044,49 @@ public class NetworkScheduler {
 	private ScheduledPeriod getLastActivatedActivePeriod(
 			ArrayList<ScheduledPeriod> allPeriods, NetworkType networkType) {
 		return getLastActivatedActivePeriod(allPeriods, networkType, null);
+	}
+	
+	private ArrayList<ScheduledPeriod> getAffectedActiveStartOnlyPeriods(
+			ArrayList<ScheduledPeriod> allPeriods, NetworkType networkType, ScheduledPeriod except) {
+		
+		ArrayList<ScheduledPeriod> result = new ArrayList<ScheduledPeriod>(allPeriods.size());
+		
+		for (ScheduledPeriod period : allPeriods) {
+			if (!period.is_active()) {
+				continue;
+			}
+			
+			if (period.is_scheduleStop()) {
+				continue;
+			}
+			
+			if (applies(networkType, period))	{
+				result.add(period);
+			}			
+		}
+		
+		return result;
+	}
+
+	private boolean applies(NetworkType networkType, ScheduledPeriod forPeriod) {
+		if (networkType == NetworkType.WiFi && !forPeriod.is_wifi()) {
+			return false;
+		}
+
+		if (networkType == NetworkType.MobileData
+				&& !forPeriod.is_mobileData()) {
+			return false;
+		}
+
+		if (networkType == NetworkType.Bluetooth && !forPeriod.is_bluetooth()) {
+			return false;
+		}
+
+		if (networkType == NetworkType.Volume && !forPeriod.is_volume()) {
+			return false;
+		}
+		
+		return true;
 	}
 
 	private ScheduledPeriod getLastActivatedActivePeriod(
