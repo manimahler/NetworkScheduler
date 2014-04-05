@@ -2,6 +2,7 @@ package com.manimahler.android.scheduler3g;
 
 import java.util.Calendar;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -550,6 +551,40 @@ public class ScheduledPeriod {
 
 	public boolean hasStartAndStopTime() {
 		return _scheduleStart && _scheduleStop;
+	}
+	
+	public String toString(Context context) {
+		String name;
+		if (_name == null)
+		{
+			name = "<no name>";
+		}
+		else
+		{
+			name = _name;
+		}
+		String start;
+		if (is_scheduleStart())
+		{
+			start = DateTimeUtils.getHourMinuteText(context, get_startTimeMillis());
+		} else {
+			start = "<no start>";
+		}
+		
+		String end;
+		
+		if (is_scheduleStop()) {
+			end = DateTimeUtils.getHourMinuteText(context, get_endTimeMillis());
+		} else {
+			end = "<no stop>";
+		}
+		
+		if (activeIsEnabled()) {
+			return String.format("%s between %s and %s" , name, start, end);
+		} else {
+			return String.format("%s between %s (stopping) and %s (re-starting)" , name, end, start);
+		}
+			
 	}
 	
 }
