@@ -11,69 +11,74 @@ import android.preference.PreferenceManager;
 
 // TODO: turn into a PreferenceFragment once gingerbread support is dropped...
 public class SettingsActivity extends PreferenceActivity implements
-	OnSharedPreferenceChangeListener {
-	
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.preferences);
-        
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-        for (int i = 0; i < getPreferenceScreen().getPreferenceCount(); i++) {
-            initSummary(getPreferenceScreen().getPreference(i));
-        }
-    }
+		OnSharedPreferenceChangeListener {
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // Set up a listener whenever a key changes
-        getPreferenceScreen().getSharedPreferences()
-                .registerOnSharedPreferenceChangeListener(this);
-    }
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		addPreferencesFromResource(R.xml.preferences);
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // Unregister the listener whenever a key changes
-        getPreferenceScreen().getSharedPreferences()
-                .unregisterOnSharedPreferenceChangeListener(this);
-    }
+		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+		for (int i = 0; i < getPreferenceScreen().getPreferenceCount(); i++) {
+			initSummary(getPreferenceScreen().getPreference(i));
+		}
+	}
 
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
-            String key) {
-        updatePrefSummary(findPreference(key));
-    }
-	
-    private void initSummary(Preference p) {
-        if (p instanceof PreferenceCategory) {
-            PreferenceCategory pCat = (PreferenceCategory) p;
-            for (int i = 0; i < pCat.getPreferenceCount(); i++) {
-                initSummary(pCat.getPreference(i));
-            }
-        } else {
-            updatePrefSummary(p);
-        }
-    }
+	@Override
+	protected void onResume() {
+		super.onResume();
+		// Set up a listener whenever a key changes
+		getPreferenceScreen().getSharedPreferences()
+				.registerOnSharedPreferenceChangeListener(this);
+	}
 
-    private void updatePrefSummary(Preference p) {
-    	// The idea to set the summary was taken from http://stackoverflow.com/questions/531427/how-do-i-display-the-current-value-of-an-android-preference-in-the-preference-su
-    	// However this does not work if the summary in the strings resource contains a format (%s)
-    	// which is replaced in here. Because the next time p.getSummary won't contain the %s parameter
-    	// and the current value does not get inserted! There does not seem to be a simple solution, so resort to hack:
-    	
-    	if (p.getKey().equals(this.getString(R.string.pref_key_delay_min)))
-    	{
-    		EditTextPreference editTextPref = (EditTextPreference) p;
-    		String summaryFormat = this.getString(R.string.pref_summary_delay_min);
-    		p.setSummary(String.format(summaryFormat,editTextPref.getText()));
-    	}
-    	
-    	if (p.getKey().equals(this.getString(R.string.pref_key_connect_interval)))
-    	{
-    		EditTextPreference editTextPref = (EditTextPreference) p;
-    		String summaryFormat = this.getString(R.string.pref_summary_connect_interval);
-    		p.setSummary(String.format(summaryFormat,editTextPref.getText()));
-    	}
-    }
+	@Override
+	protected void onPause() {
+		super.onPause();
+		// Unregister the listener whenever a key changes
+		getPreferenceScreen().getSharedPreferences()
+				.unregisterOnSharedPreferenceChangeListener(this);
+	}
+
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+			String key) {
+		updatePrefSummary(findPreference(key));
+	}
+
+	private void initSummary(Preference p) {
+		if (p instanceof PreferenceCategory) {
+			PreferenceCategory pCat = (PreferenceCategory) p;
+			for (int i = 0; i < pCat.getPreferenceCount(); i++) {
+				initSummary(pCat.getPreference(i));
+			}
+		} else {
+			updatePrefSummary(p);
+		}
+	}
+
+	private void updatePrefSummary(Preference p) {
+		// The idea to set the summary was taken from
+		// http://stackoverflow.com/questions/531427/how-do-i-display-the-current-value-of-an-android-preference-in-the-preference-su
+		// However this does not work if the summary in the strings resource
+		// contains a format (%s)
+		// which is replaced in here. Because the next time p.getSummary won't
+		// contain the %s parameter
+		// and the current value does not get inserted! There does not seem to
+		// be a simple solution, so resort to hack:
+
+		if (p.getKey().equals(this.getString(R.string.pref_key_delay_min))) {
+			EditTextPreference editTextPref = (EditTextPreference) p;
+			String summaryFormat = this
+					.getString(R.string.pref_summary_delay_min);
+			p.setSummary(String.format(summaryFormat, editTextPref.getText()));
+		}
+
+		if (p.getKey().equals(
+				this.getString(R.string.pref_key_connect_interval))) {
+			EditTextPreference editTextPref = (EditTextPreference) p;
+			String summaryFormat = this
+					.getString(R.string.pref_summary_connect_interval);
+			p.setSummary(String.format(summaryFormat, editTextPref.getText()));
+		}
+	}
 }

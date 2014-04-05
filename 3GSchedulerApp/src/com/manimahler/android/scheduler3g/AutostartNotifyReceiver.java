@@ -10,8 +10,11 @@ import android.util.Log;
 
 public class AutostartNotifyReceiver extends BroadcastReceiver {
 
-	private final String BOOT_COMPLETED_ACTION = "android.intent.action.BOOT_COMPLETED";
+	private static final String TAG = AutostartNotifyReceiver.class
+			.getSimpleName();
 	
+	private final String BOOT_COMPLETED_ACTION = "android.intent.action.BOOT_COMPLETED";
+
 	@Override
 	public void onReceive(Context context, Intent intent) {
 
@@ -20,24 +23,23 @@ public class AutostartNotifyReceiver extends BroadcastReceiver {
 
 				RestartAlarmAfterBoot(context);
 
-				Log.i("Autostart", "**********started************");
+				Log.i(TAG, "All time periods were re-scheduled after device was booted");
 			}
 		} catch (Exception e) {
-			Log.e(BOOT_COMPLETED_ACTION, "Error starting 3G scheduler", e);
+			Log.e(TAG, "Error starting Network Scheduler after device was booted", e);
 		}
 	}
-	
-	public void RestartAlarmAfterBoot(Context context)
-	{
-		NetworkScheduler alarmHandler = new NetworkScheduler();
-		
-		SharedPreferences prefs = alarmHandler.getSchedulesPreferences(context);
-		
-		ArrayList<ScheduledPeriod> enabledPeriods = 
-			PersistenceUtils.readFromPreferences(prefs);
-		
+
+	public void RestartAlarmAfterBoot(Context context) {
+		NetworkScheduler networkScheduler = new NetworkScheduler();
+
+		SharedPreferences prefs = PersistenceUtils.getSchedulesPreferences(context);
+
+		ArrayList<ScheduledPeriod> enabledPeriods = PersistenceUtils
+				.readFromPreferences(prefs);
+
 		SchedulerSettings settings = PersistenceUtils.readSettings(context);
-		
-		alarmHandler.setAlarms(context, enabledPeriods, settings);
+
+		networkScheduler.setAlarms(context, enabledPeriods, settings);
 	}
 }

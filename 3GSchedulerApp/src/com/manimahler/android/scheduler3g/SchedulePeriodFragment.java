@@ -5,9 +5,7 @@ import java.util.Calendar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
@@ -23,7 +21,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -33,6 +30,8 @@ import com.manimahler.android.scheduler3g.FlowLayout.LayoutParams;
 
 public class SchedulePeriodFragment extends DialogFragment {
 
+	private static final String TAG = SchedulePeriodFragment.class.getSimpleName();
+	
 	// Container Activity must implement this interface
 	public interface OnPeriodUpdatedListener {
 		public void onPeriodUpdated(ScheduledPeriod period);
@@ -79,7 +78,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						Log.d("SchedulePeriodFragment", "clicked ok...");
+						Log.d(TAG, "clicked ok...");
 						_listener.onPeriodUpdated(_enabledPeriod);
 					}
 				});
@@ -318,59 +317,6 @@ public class SchedulePeriodFragment extends DialogFragment {
 		}
 	}
 
-	// @Override
-	// public View onCreateView(LayoutInflater inflater, ViewGroup container,
-	// Bundle savedInstanceState) {
-	//
-	// // View view = inflater.inflate(R.layout.fragment_schedule_period,
-	// container);
-	// //
-	// // getDialog().setTitle("Set Time Period");
-	//
-	// Bundle savedData;
-	// if (savedInstanceState != null)
-	// {
-	// savedData = savedInstanceState;
-	// }
-	// else
-	// {
-	// savedData = getArguments();
-	// }
-	//
-	// _enabledPeriod = new EnabledPeriod(savedData);
-	//
-	// // start time
-	// Button timeStart = (Button)view.findViewById(R.id.buttonTimeStart);
-	// setButtonTime(_enabledPeriod.get_startTimeMillis(), timeStart);
-	//
-	// timeStart.setOnClickListener(new View.OnClickListener() {
-	//
-	// @Override
-	// public void onClick(View v) {
-	// buttonStartClicked(v);
-	// }
-	// });
-	//
-	// // end time
-	// Button timeStop = (Button)view.findViewById(R.id.buttonTimeStop);
-	// setButtonTime(_enabledPeriod.get_endTimeMillis(), timeStop);
-	//
-	// timeStop.setOnClickListener(new View.OnClickListener() {
-	//
-	// @Override
-	// public void onClick(View v) {
-	// buttonStopClicked(v);
-	// }
-	// });
-	//
-	// // week days
-	// FlowLayout flowlayout =
-	// (FlowLayout)view.findViewById(R.id.flowlayout_weekdays);
-	// inflateWeekdays(inflater, container, flowlayout);
-	//
-	// return view;
-	// }
-
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -381,16 +327,6 @@ public class SchedulePeriodFragment extends DialogFragment {
 					+ " must implement OnPeriodUpdatedListener");
 		}
 	}
-
-	// @Override
-	// public void show(FragmentManager fm, String tag) {
-	//
-	// super.show(fm, tag);
-	//
-	// //
-	// ((Button)getDialog().findViewById(android.R.id.button1)).setBackgroundResource(R.drawable.time_button);
-	//
-	// }
 
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -496,7 +432,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 				_enabledPeriod.get_startTimeMillis()) {
 			@Override
 			public void onTimeSetAndDone(int hourOfDay, int minute) {
-				Log.d("SchedulePeriodFragment", "chosen new start hour: "
+				Log.d(TAG, "chosen new start hour: "
 						+ hourOfDay);
 				startTimePicked(hourOfDay, minute);
 			}
@@ -555,7 +491,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 
 	private void startTimePicked(int hourOfDay, int minute) {
 
-		Log.d("SchedulePeriodFragment", "Picked start time " + hourOfDay + ":"
+		Log.d(TAG, "Picked start time " + hourOfDay + ":"
 				+ minute);
 
 		long nextStartTimeInMillis = DateTimeUtils.getNextTimeIn24hInMillis(
@@ -632,7 +568,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 
 	private void endTimePicked(int hourOfDay, int minute) {
 
-		Log.d("SchedulePeriodFragment", "Picked end time " + hourOfDay + ":"
+		Log.d(TAG, "Picked end time " + hourOfDay + ":"
 				+ minute);
 
 		long nextEndTimeInMillis = DateTimeUtils.getNextTimeIn24hInMillis(

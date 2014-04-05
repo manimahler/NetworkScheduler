@@ -3,19 +3,17 @@ package com.manimahler.android.scheduler3g;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
-import android.os.Build;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 
 public class ConnectionUtils {
+
+	private static final String TAG = ConnectionUtils.class.getSimpleName();
 
 	public static void toggleNetworkState(Context context,
 			ScheduledPeriod enabledPeriod, boolean enable)
@@ -45,18 +43,17 @@ public class ConnectionUtils {
 				.getSystemService(Context.AUDIO_SERVICE);
 
 		if (enable) {
-			Log.d("ConnectionUtils", "Setting ringer mode to normal");
+			Log.d(TAG, "Setting ringer mode to normal");
 			audiomanager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
 		} else {
-			Log.d("ConnectionUtils", "Setting ringer mode to silent");
+			Log.d(TAG, "Setting ringer mode to silent");
 			audiomanager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
 		}
 	}
-	
 
 	public static boolean isVolumeOn(Context context) {
 		AudioManager audiomanager = (AudioManager) context
-		.getSystemService(Context.AUDIO_SERVICE);
+				.getSystemService(Context.AUDIO_SERVICE);
 
 		return audiomanager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL;
 
@@ -78,8 +75,7 @@ public class ConnectionUtils {
 		if (adapter != null) {
 			if (adapter.getState() == BluetoothAdapter.STATE_ON) {
 
-				Log.d("ConnectionUtils",
-						"bluetooth state: " + adapter.getState());
+				Log.d(TAG, "bluetooth state: " + adapter.getState());
 
 				isBluetoothEnabled = true;
 				// TODO: differentiate between STATE_ON and STATE_CONNECTED,
@@ -129,7 +125,7 @@ public class ConnectionUtils {
 		} catch (Exception e) {
 			// Some problem accessible private API
 			// TODO do whatever error handling you want here
-			Log.e("ConnectionUtils", "Error getting mobile data state");
+			Log.e(TAG, "Error getting mobile data state");
 			e.printStackTrace();
 		}
 
@@ -157,72 +153,76 @@ public class ConnectionUtils {
 		WifiManager wifiManager = (WifiManager) context
 				.getSystemService(Context.WIFI_SERVICE);
 
-		Log.d("ConnectionUtils", "Switching WIFI ON status to " + enable);
+		Log.d(TAG, "Switching WIFI ON status to " + enable);
 
 		int wifiState = wifiManager.getWifiState();
 
-		Log.d("ConnectionUtils", "Current Wi-Fi state is " + wifiState);
-		
-		if (enable && ! wifiManager.isWifiEnabled()){
+		Log.d(TAG, "Current Wi-Fi state is " + wifiState);
+
+		if (enable && !wifiManager.isWifiEnabled()) {
 			wifiManager.setWifiEnabled(enable);
 		}
-		
-		if (! enable && wifiManager.isWifiEnabled()){
+
+		if (!enable && wifiManager.isWifiEnabled()) {
 			wifiManager.setWifiEnabled(enable);
 		}
-		
-		// This entire carefulness did not really resolve the KITKAT bug and produced 
+
+		// This entire carefulness did not really resolve the KITKAT bug and
+		// produced
 		// issues on earlier versions (e.g. unable to disconnect on Gingerbread)
-//
-//		if (enable && !wifiManager.isWifiEnabled()) {
-//
-//			if (wifiState == WifiManager.WIFI_STATE_DISABLED) {
-//				setWifiEnabled(wifiManager, enable);
-//			} else if (wifiState == WifiManager.WIFI_STATE_UNKNOWN) {
-//				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-//					// observed once on SGS3: Wifi stayed in in unknown state
-//					// for quite a while (but toggling worked)
-//					Log.w("ConnectionUtils",
-//							"Wifi state is WIFI_STATE_UNKNOWN, trying to enable...");
-//					setWifiEnabled(wifiManager, enable);
-//				} else {
-//					// take extra care not to trigger the Wifi-Bug on KitKat
-//					Log.w("ConnectionUtils",
-//							"Wifi state is WIFI_STATE_UNKNOWN, doing nothing...");
-//				}
-//			} else {
-//				Log.d("ConnectionUtils",
-//						"Wifi state is not disabled, not enabling!");
-//			}
-//		}
-//
-//		
-//		if (!enable && wifiManager.isWifiEnabled()) {
-//			if (!isWifiConnected(context) || wifiManager.disconnect()) {
-//				setWifiEnabled(wifiManager, enable);
-//			} else {
-//				Log.w("ConnectionUtils",
-//						"Cannot disconnect from WiFi. Not switching off!");
-//			}
-//		} else if (! enable) {
-//			Log.d("ConnectionUtils",
-//					"Wifi state is not enabled, not disabling!");
-//		}
+		//
+		// if (enable && !wifiManager.isWifiEnabled()) {
+		//
+		// if (wifiState == WifiManager.WIFI_STATE_DISABLED) {
+		// setWifiEnabled(wifiManager, enable);
+		// } else if (wifiState == WifiManager.WIFI_STATE_UNKNOWN) {
+		// if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+		// // observed once on SGS3: Wifi stayed in in unknown state
+		// // for quite a while (but toggling worked)
+		// Log.w("ConnectionUtils",
+		// "Wifi state is WIFI_STATE_UNKNOWN, trying to enable...");
+		// setWifiEnabled(wifiManager, enable);
+		// } else {
+		// // take extra care not to trigger the Wifi-Bug on KitKat
+		// Log.w("ConnectionUtils",
+		// "Wifi state is WIFI_STATE_UNKNOWN, doing nothing...");
+		// }
+		// } else {
+		// Log.d("ConnectionUtils",
+		// "Wifi state is not disabled, not enabling!");
+		// }
+		// }
+		//
+		//
+		// if (!enable && wifiManager.isWifiEnabled()) {
+		// if (!isWifiConnected(context) || wifiManager.disconnect()) {
+		// setWifiEnabled(wifiManager, enable);
+		// } else {
+		// Log.w("ConnectionUtils",
+		// "Cannot disconnect from WiFi. Not switching off!");
+		// }
+		// } else if (! enable) {
+		// Log.d("ConnectionUtils",
+		// "Wifi state is not enabled, not disabling!");
+		// }
 	}
-//
-//	private static void setWifiEnabled(WifiManager wifiManager, boolean enable) {
-//
-//		
-//			Log.d("ConnectionUtils", "Setting Wifi state change flag");
-//			
-//			// NOTE: setWifiEnabled returns long before the broadcast from the system
-//			// is received. So there is no point re-setting the flag in the finally clause here.
-//			WifiStateBroadcastReceiver.ChangingWifiState.set(true);
-//			boolean success = wifiManager.setWifiEnabled(enable);
-//			
-//			Log.d("ConnectionUtils", "Wifi toggle success: " + success);
-//		
-//	}
+
+	//
+	// private static void setWifiEnabled(WifiManager wifiManager, boolean
+	// enable) {
+	//
+	//
+	// Log.d("ConnectionUtils", "Setting Wifi state change flag");
+	//
+	// // NOTE: setWifiEnabled returns long before the broadcast from the system
+	// // is received. So there is no point re-setting the flag in the finally
+	// clause here.
+	// WifiStateBroadcastReceiver.ChangingWifiState.set(true);
+	// boolean success = wifiManager.setWifiEnabled(enable);
+	//
+	// Log.d("ConnectionUtils", "Wifi toggle success: " + success);
+	//
+	// }
 
 	public static void toggleBluetooth(Context context, boolean enable) {
 		BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
@@ -231,21 +231,19 @@ public class ConnectionUtils {
 			if (adapter.getState() == BluetoothAdapter.STATE_ON) {
 
 				if (enable) {
-					Log.d("Bluetooth", "Bluetooth already enabled");
+					Log.d(TAG, "Bluetooth already enabled");
 				} else {
-					Log.d("ConnectionUtils", "Switching BT ON status to "
-							+ enable);
+					Log.d(TAG, "Switching BT ON status to " + enable);
 					adapter.disable();
 				}
 
 			} else if (adapter.getState() == BluetoothAdapter.STATE_OFF) {
 
 				if (enable) {
-					Log.d("ConnectionUtils", "Switching BT ON status to "
-							+ enable);
+					Log.d(TAG, "Switching BT ON status to " + enable);
 					adapter.enable();
 				} else {
-					Log.d("Bluetooth", "Bluetooth already disabled");
+					Log.d(TAG, "Bluetooth already disabled");
 				}
 			} else {
 				// State.INTERMEDIATE_STATE;
@@ -272,7 +270,7 @@ public class ConnectionUtils {
 		final Method setMobileDataEnabledMethod = iConnectivityManagerClass
 				.getDeclaredMethod("setMobileDataEnabled", Boolean.TYPE);
 
-		Log.d("ConnectionUtils", "Switching mobile data ON status to " + enable);
+		Log.d(TAG, "Switching mobile data ON status to " + enable);
 
 		setMobileDataEnabledMethod.setAccessible(true);
 		setMobileDataEnabledMethod.invoke(iConnectivityManager, enable);

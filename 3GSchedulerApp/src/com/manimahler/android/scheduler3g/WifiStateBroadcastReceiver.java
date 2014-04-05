@@ -58,8 +58,7 @@ public class WifiStateBroadcastReceiver extends BroadcastReceiver {
 	private void setManualOverride(Context context) {
 		NetworkScheduler networkScheduler = new NetworkScheduler();
 
-		SharedPreferences schedulesPreferences = networkScheduler
-				.getSchedulesPreferences(context);
+		SharedPreferences schedulesPreferences = PersistenceUtils.getSchedulesPreferences(context);
 
 		ArrayList<ScheduledPeriod> periods = PersistenceUtils
 				.readFromPreferences(schedulesPreferences);

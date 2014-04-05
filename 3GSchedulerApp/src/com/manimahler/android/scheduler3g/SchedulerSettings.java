@@ -36,9 +36,6 @@ public class SchedulerSettings {
 	
 	private boolean _keepWifiConnected;
 	
-//	private boolean _alwaysConnectWifiWhenScreenOn;
-//	private boolean _alwaysConnectMobileDataWhenSceenOn;
-	
 	private int _connectInterval;
 	
 	public SchedulerSettings(SharedPreferences preferences)

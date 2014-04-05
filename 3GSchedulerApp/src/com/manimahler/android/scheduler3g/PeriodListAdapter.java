@@ -14,6 +14,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
+
+	private static final String TAG = PeriodListAdapter.class.getSimpleName();
+
 	private final Context context;
 	private ArrayList<ScheduledPeriod> values;
 
@@ -23,26 +26,11 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 		super(context, R.layout.enabled_period, list);
 		this.context = context;
 		values = list;
-		
+
 		_enabled = true;
 	}
-	
-	public void resetPeriods(ArrayList<ScheduledPeriod> list) {
-		super.clear();
-		
-		// NOTE: addAll(list) requires API level 11
-		//super.addAll(list);
-		for (ScheduledPeriod scheduledPeriod : list) {
-			super.add(scheduledPeriod);
-		}
-		
-		notifyDataSetChanged();
-	}
-	
-	public ArrayList<ScheduledPeriod> getPeriods() {
-		return values;
-	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		LayoutInflater inflater = (LayoutInflater) context
@@ -61,7 +49,7 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 			button.setBackgroundColor(context.getResources().getColor(
 					R.color.transparent));
 		}
-		
+
 		View skip = rowView.findViewById(R.id.buttonSkip);
 
 		if (period.is_skipped()) {
@@ -73,8 +61,7 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 			skip.setBackgroundColor(context.getResources().getColor(
 					R.color.transparent));
 		}
-		
-		
+
 		if (period.get_name() != null && !period.get_name().isEmpty()) {
 			TextView name = (TextView) rowView.findViewById(R.id.TextViewName);
 			name.setText(period.get_name());
@@ -97,7 +84,7 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 				period.get_weekDays(), context.getString(R.string.everyday),
 				context.getString(R.string.never));
 
-		Log.d("PeriodListAdapter.getView", "Week text: " + weekdayText);
+		Log.d(TAG, "Week text: " + weekdayText);
 
 		weekDayView.setText(weekdayText);
 
@@ -107,24 +94,26 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 		ImageView wifiImgView = (ImageView) rowView
 				.findViewById(R.id.imageViewWifi);
 		tintViewIcon(wifiImgView, R.drawable.ic_action_wifi, !period.is_wifi(),
-				intervalWifi, period.is_overrideIntervalWifi(), ! period.activeIsEnabled());
+				intervalWifi, period.is_overrideIntervalWifi(),
+				!period.activeIsEnabled());
 
 		boolean intervalMob = period.is_mobileData()
 				&& period.is_intervalConnectMobData();
 		ImageView mobileDataView = (ImageView) rowView
 				.findViewById(R.id.imageViewMobileData);
 		tintViewIcon(mobileDataView, R.drawable.ic_action_mobile_data,
-				!period.is_mobileData(), intervalMob, period.is_overrideIntervalMob(), ! period.activeIsEnabled());
+				!period.is_mobileData(), intervalMob,
+				period.is_overrideIntervalMob(), !period.activeIsEnabled());
 
 		ImageView btView = (ImageView) rowView
 				.findViewById(R.id.imageViewBluetooth);
 		tintViewIcon(btView, R.drawable.ic_action_bluetooth1,
-				!period.is_bluetooth(), false, false, ! period.activeIsEnabled());
+				!period.is_bluetooth(), false, false, !period.activeIsEnabled());
 
 		ImageView volView = (ImageView) rowView
 				.findViewById(R.id.imageViewVolume);
 		tintViewIcon(volView, R.drawable.ic_action_volume_up,
-				!period.is_volume(), false, false, ! period.activeIsEnabled());
+				!period.is_volume(), false, false, !period.activeIsEnabled());
 
 		if (!_enabled) {
 			ViewUtils.setControlsEnabled(_enabled, (ViewGroup) rowView);
@@ -132,53 +121,123 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 		return rowView;
 	}
 
+	public void resetPeriods(ArrayList<ScheduledPeriod> list) {
+		super.clear();
+
+		// NOTE: addAll(list) requires API level 11
+		// super.addAll(list);
+		for (ScheduledPeriod scheduledPeriod : list) {
+			super.add(scheduledPeriod);
+		}
+
+		notifyDataSetChanged();
+	}
+
+	public ArrayList<ScheduledPeriod> getPeriods() {
+		return values;
+	}
+
+	public void updateItem(ScheduledPeriod item) {
+		if (item.get_id() < 0) {
+			item.set_id(this.getMaxId() + 1);
+			this.add(item);
+
+			updateActiveProperty(item);
+		} else {
+			ScheduledPeriod itemToUpdate = findItem(item.get_id());
+
+			if (itemToUpdate == null) {
+				Log.e(TAG, "Item to update not found");
+			}
+
+			copyProperties(itemToUpdate, item);
+
+			updateActiveProperty(itemToUpdate);
+		}
+		notifyDataSetChanged();
+	}
+
+	public void removeAt(int position) {
+		ScheduledPeriod itemToRemove = this.getItem(position);
+
+		this.remove(itemToRemove);
+
+		notifyDataSetChanged();
+	}
+
+	public void moveUp(int originalPosition) {
+		ScheduledPeriod period = values.get(originalPosition);
+
+		values.remove(originalPosition);
+
+		values.add(originalPosition - 1, period);
+
+		notifyDataSetChanged();
+	}
+
+	public void moveDown(int originalPosition) {
+		ScheduledPeriod period = values.get(originalPosition);
+
+		values.remove(originalPosition);
+
+		values.add(originalPosition + 1, period);
+
+		notifyDataSetChanged();
+	}
+
+	public void setItemsEnabled(boolean enabled) {
+		_enabled = enabled;
+	}
+
 	private void tintViewIcon(ImageView imageView, int iconResourceId,
-			boolean tintIt, boolean intervals, boolean overrideIntervals, boolean strikeThrough) {
+			boolean tintIt, boolean intervals, boolean overrideIntervals,
+			boolean strikeThrough) {
 
 		Drawable icon = ViewUtils.getTintedIcon(context, tintIt,
 				R.color.button_unchecked, iconResourceId);
 
 		ArrayList<Drawable> iconList = new ArrayList<Drawable>(3);
-		
+
 		iconList.add(icon);
-		
+
 		if (intervals) {
-			Drawable intervalDrawable = 
-				ViewUtils.getTintedIcon(context, overrideIntervals, R.color.black, R.drawable.intervals);
-			
+			Drawable intervalDrawable = ViewUtils.getTintedIcon(context,
+					overrideIntervals, R.color.black, R.drawable.intervals);
+
 			// if override intervals...
-			
+
 			iconList.add(intervalDrawable);
 		}
-		
-		if (! tintIt && strikeThrough)
-		{
-			Drawable strike = context.getResources().getDrawable(R.drawable.ic_strikethrough);
-			
+
+		if (!tintIt && strikeThrough) {
+			Drawable strike = context.getResources().getDrawable(
+					R.drawable.ic_strikethrough);
+
 			iconList.add(strike);
 		}
-		
+
 		Drawable[] layers = iconList.toArray(new Drawable[iconList.size()]);
-//		if (!intervals) {
-//			imageView.setImageDrawable(icon);
-//		} else {
-//
-//			
-//			layers[0] = icon;
-//			layers[1] = context.getResources()
-//					.getDrawable(R.drawable.intervals);
-//			layers[2] = context.getResources().getDrawable(R.drawable.strikethrough);
-//			
-//			LayerDrawable layerDrawable = new LayerDrawable(layers);
-//			imageView.setImageDrawable(layerDrawable);
-//		}
-		
+		// if (!intervals) {
+		// imageView.setImageDrawable(icon);
+		// } else {
+		//
+		//
+		// layers[0] = icon;
+		// layers[1] = context.getResources()
+		// .getDrawable(R.drawable.intervals);
+		// layers[2] =
+		// context.getResources().getDrawable(R.drawable.strikethrough);
+		//
+		// LayerDrawable layerDrawable = new LayerDrawable(layers);
+		// imageView.setImageDrawable(layerDrawable);
+		// }
+
 		LayerDrawable layerDrawable = new LayerDrawable(layers);
-//		if (layerDrawable.getNumberOfLayers() == 3)
-//		{
-//			layerDrawable.setLayerInset(2, 0, 0, 0, 17);
-//		}
-		
+		// if (layerDrawable.getNumberOfLayers() == 3)
+		// {
+		// layerDrawable.setLayerInset(2, 0, 0, 0, 17);
+		// }
+
 		imageView.setImageDrawable(layerDrawable);
 	}
 
@@ -232,27 +291,6 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 		}
 	}
 
-	public void updateItem(ScheduledPeriod item) {
-		if (item.get_id() < 0) {
-			item.set_id(this.getMaxId() + 1);
-			this.add(item);
-			
-			updateActiveProperty(item);
-		} else {
-			ScheduledPeriod itemToUpdate = findItem(item.get_id());
-
-			if (itemToUpdate == null) {
-				Log.e("PeriodListAdapter.updateItem",
-						"Item to update not found");
-			}
-
-			copyProperties(itemToUpdate, item);
-			
-			updateActiveProperty(itemToUpdate);
-		}
-		notifyDataSetChanged();
-	}
-	
 	private void updateActiveProperty(ScheduledPeriod period) {
 		try {
 			period.set_active(period.isActiveNow());
@@ -261,7 +299,6 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 			e.printStackTrace();
 		}
 	}
-	
 
 	private void copyProperties(ScheduledPeriod itemToUpdate,
 			ScheduledPeriod fromItem) {
@@ -283,10 +320,11 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 		itemToUpdate.set_intervalConnectWifi(fromItem.is_intervalConnectWifi());
 		itemToUpdate.set_intervalConnectMobData(fromItem
 				.is_intervalConnectMobData());
-		
+
 		itemToUpdate.set_skipped(fromItem.is_skipped());
-		
-		// re-set the userOverride flag (the user just pressed ok to these settings)!
+
+		// re-set the userOverride flag (the user just pressed ok to these
+		// settings)!
 	}
 
 	private ScheduledPeriod findItem(int id) {
@@ -311,37 +349,5 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 		}
 
 		return result;
-	}
-
-	public void removeAt(int position) {
-		ScheduledPeriod itemToRemove = this.getItem(position);
-
-		this.remove(itemToRemove);
-
-		notifyDataSetChanged();
-	}
-
-	public void moveUp(int originalPosition) {
-		ScheduledPeriod period = values.get(originalPosition);
-
-		values.remove(originalPosition);
-
-		values.add(originalPosition - 1, period);
-
-		notifyDataSetChanged();
-	}
-
-	public void moveDown(int originalPosition) {
-		ScheduledPeriod period = values.get(originalPosition);
-
-		values.remove(originalPosition);
-
-		values.add(originalPosition + 1, period);
-
-		notifyDataSetChanged();
-	}
-
-	public void setItemsEnabled(boolean enabled) {
-		_enabled = enabled;
 	}
 }

@@ -9,11 +9,16 @@ import android.util.Log;
 
 public class PersistenceUtils {
 
-	private static final String TAG = "PersistenceUtils";
-	
+	private static final String TAG = PersistenceUtils.class.getSimpleName();
+
 	private static final String ARRAY_SIZE = "ARRAY_SIZE";
 	private static final String PREF_VERSION = "VERSION";
-	
+
+	public static SharedPreferences getSchedulesPreferences(Context context) {
+		return context.getSharedPreferences("SCHEDULER_PREFS",
+				Context.MODE_PRIVATE);
+	}
+
 	public static void saveToPreferences(SharedPreferences preferences,
 			ArrayList<ScheduledPeriod> periods) {
 		// Rough idea: EnabledPeriod could implement some interface
@@ -26,7 +31,7 @@ public class PersistenceUtils {
 		// For the moment:
 
 		try {
-			
+
 			SharedPreferences.Editor editor = preferences.edit();
 
 			// TODO: get rid of this:
@@ -40,12 +45,12 @@ public class PersistenceUtils {
 
 			for (int i = 0; i < size; i++) {
 
-				Log.d("saveToPreferences", "Saving period : " + i);
+				Log.d(TAG, "Saving period : " + i);
 				ScheduledPeriod period = periods.get(i);
 
 				period.saveToPreferences(editor, Integer.toString(i));
 			}
-			
+
 			// Commit to storage
 			editor.commit();
 
@@ -55,29 +60,27 @@ public class PersistenceUtils {
 			// throw ex;
 		}
 	}
-	
+
 	public static void saveToPreferences(SharedPreferences preferences,
-			ScheduledPeriod period)
-	{
+			ScheduledPeriod period) {
 		try {
-			
+
 			// Brute force. TODO: Sqlite
 			ArrayList<ScheduledPeriod> savedPeriods = readFromPreferences(preferences);
-			
+
 			int idxToReplace = -1;
 			for (int i = 0; i < savedPeriods.size(); i++) {
-				if (savedPeriods.get(i).get_id() == period.get_id()){
+				if (savedPeriods.get(i).get_id() == period.get_id()) {
 					idxToReplace = i;
 				}
 			}
-			
-			if (idxToReplace < 0)
-			{
+
+			if (idxToReplace < 0) {
 				throw new Exception("Error storing enabled-period");
 			}
-			
+
 			savedPeriods.set(idxToReplace, period);
-			
+
 			saveToPreferences(preferences, savedPeriods);
 
 		} catch (Exception ex) {
@@ -86,31 +89,21 @@ public class PersistenceUtils {
 			// throw ex;
 		}
 	}
-	
-	
-	
-//	public static void putSettings(SchedulerSettings settings, SharedPreferences.Editor editor)
-//	{
-//		editor.putBoolean(VIBRATE, settings.is_vibrate());
-//		editor.putBoolean(WARN_DEACTIVATION, settings.is_warnOnDeactivation());
-//		editor.putInt(CONNECT_INTERVAL, settings.get_connectInterval());
-//		
-//	}
-	
-	public static SchedulerSettings readSettings(Context context)
-	{
-		SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-		
+
+	public static SchedulerSettings readSettings(Context context) {
+		SharedPreferences sharedPrefs = PreferenceManager
+				.getDefaultSharedPreferences(context);
+
 		// initialize defaults, in case the prefs screen was never opened
 		PreferenceManager.setDefaultValues(context, R.xml.preferences, false);
-		
-		return new SchedulerSettings(sharedPrefs);		
+
+		return new SchedulerSettings(sharedPrefs);
 	}
 
 	public static ArrayList<ScheduledPeriod> readFromPreferences(
 			SharedPreferences preferences) {
 		preferences.getInt(PREF_VERSION, 0);
-		
+
 		// assertion...
 		int size = preferences.getInt(ARRAY_SIZE, 0);
 
@@ -133,24 +126,23 @@ public class PersistenceUtils {
 				return enabledPeriod;
 			}
 		}
-		
+
 		Log.d(TAG, "Unable to find enabled period " + periodId);
 		return null;
 	}
-	
-	
-	
-	public static void saveGlobalOnState(Context context, boolean value){
 
-		SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-		
+	public static void saveGlobalOnState(Context context, boolean value) {
+
+		SharedPreferences sharedPrefs = PreferenceManager
+				.getDefaultSharedPreferences(context);
+
 		SharedPreferences.Editor editor = sharedPrefs.edit();
-		
+
 		String GLOBAL_ON = "pref_key_global_on";
-		
+
 		editor.putBoolean(GLOBAL_ON, value);
-		
+
 		editor.commit();
-     }
+	}
 
 }

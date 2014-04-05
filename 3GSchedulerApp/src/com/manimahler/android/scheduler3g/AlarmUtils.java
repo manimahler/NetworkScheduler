@@ -9,6 +9,9 @@ import android.util.Log;
 
 public class AlarmUtils {
 
+	private static final String TAG = AlarmUtils.class.getSimpleName();
+	
+
 	public static void cancelAlarm(Context context, PendingIntent pendingIntent) {
 		AlarmManager am = (AlarmManager) context
 				.getSystemService(android.content.Context.ALARM_SERVICE);
@@ -28,33 +31,36 @@ public class AlarmUtils {
 			long wakeTime) {
 		AlarmManager am = (AlarmManager) context
 				.getSystemService(android.content.Context.ALARM_SERVICE);
-		
+
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(wakeTime);
 
-		Log.d("AlarmHandler", "Setting alarm with intent " + pendingIntent.toString()
+		Log.d(TAG, "Setting alarm with intent " + pendingIntent.toString()
 				+ " to go off at " + calendar.getTime().toString());
 
 		am.set(AlarmManager.RTC_WAKEUP, wakeTime, pendingIntent);
 	}
-	
-	public static void setInexactRepeatingAlarm(Context context, PendingIntent pendingIntent,
-			int intervalSeconds)
-	{
+
+	public static void setInexactRepeatingAlarm(Context context,
+			PendingIntent pendingIntent, int intervalSeconds) {
 		AlarmManager am = (AlarmManager) context
-		.getSystemService(android.content.Context.ALARM_SERVICE);
-		
-		long firstTimeMillis = DateTimeUtils.getTimeFromNowInMillis(intervalSeconds);
-				
+				.getSystemService(android.content.Context.ALARM_SERVICE);
+
+		long firstTimeMillis = DateTimeUtils
+				.getTimeFromNowInMillis(intervalSeconds);
+
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(firstTimeMillis);
 
-		Log.d("AlarmHandler", "Setting inexact repeating alarm with intent " + pendingIntent.toString()
-				+ " to first go off at " + calendar.getTime().toString() + " and then every " + intervalSeconds + " sec.");
-		
+		Log.d(TAG, "Setting inexact repeating alarm with intent "
+				+ pendingIntent.toString() + " to first go off at "
+				+ calendar.getTime().toString() + " and then every "
+				+ intervalSeconds + " sec.");
+
 		int intervalMillis = intervalSeconds * 1000;
-		
-		am.setInexactRepeating(AlarmManager.RTC_WAKEUP, firstTimeMillis, intervalMillis, pendingIntent);
+
+		am.setInexactRepeating(AlarmManager.RTC_WAKEUP, firstTimeMillis,
+				intervalMillis, pendingIntent);
 	}
-	
+
 }
