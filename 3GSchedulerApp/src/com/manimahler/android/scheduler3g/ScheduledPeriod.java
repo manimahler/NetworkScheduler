@@ -421,7 +421,10 @@ public class ScheduledPeriod {
 		Calendar lastDeactivation;
 		if (activeIsEnabled()){
 			lastDeactivation = getPreviousHourMinuteInMillis(timeMillis, get_endTimeMillis());
-		} else{
+		} else if (! is_scheduleStart()){
+			// only ever de-activating
+			return false;
+		} else {
 			lastDeactivation = getPreviousHourMinuteInMillis(timeMillis, get_startTimeMillis());
 		}
 		
@@ -473,8 +476,12 @@ public class ScheduledPeriod {
 		
 		if (is_scheduleStart() && is_scheduleStop()){
 			result = DateTimeUtils.isEarlierInTheDay(_startTimeMillis, _endTimeMillis);
-		} else {
+		} else if (is_scheduleStart() || is_scheduleStop()){
 			result = is_scheduleStart();
+		}
+		else {
+			// no start, no stop
+			result = true;
 		}
 		
 		return result;
