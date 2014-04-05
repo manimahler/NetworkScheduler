@@ -20,10 +20,10 @@
     
     <string name="skipped_period">The next occurrence of the profile will be ignored</string>
     <string name="unskipped_period">The next occurrence of the profile will be activated normally</string>
-    <string name="overridden_wifi_interval">For this occurrence of the profile Wi-Fi Interval Connect was stopped</string>
-    <string name="unoverridden_wifi_interval">For this occurrence of the profile Wi-Fi Interval Connect was stopped</string>
-    <string name="overridden_mob_interval">For this occurrence of the profile Mobile Data Interval Connect was stopped</string>
-    <string name="unoverridden_mob_interval">For this occurrence of the profile Mobile Data Interval Connect was stopped</string>
+    <string name="overridden_wifi_interval">For this period Wi-Fi Interval Connect was stopped</string>
+    <string name="unoverridden_wifi_interval">Wi-Fi Interval Connect was resumed</string>
+    <string name="overridden_mob_interval">For this period mobile data Interval Connect was stopped</string>
+    <string name="unoverridden_mob_interval">Mobile data Interval Connect was resumed</string>
     
     <string name="action_3g_on">Action3gOn</string>
     <string name="action_3g_off">Action3gOff</string>
