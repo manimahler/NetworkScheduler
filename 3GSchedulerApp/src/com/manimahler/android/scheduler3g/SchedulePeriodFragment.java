@@ -5,6 +5,7 @@ import java.util.Calendar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
@@ -79,6 +80,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						Log.d(TAG, "clicked ok...");
+						
 						_listener.onPeriodUpdated(_enabledPeriod);
 					}
 				});
@@ -179,7 +181,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 
 			@Override
 			public void onClick(View v) {
-				onToggleMobileDataClicked(v);
+				onToggleMobileData(v);
 			}
 		});
 		updateCheckboxAppearance(toggleMobileData,
@@ -191,7 +193,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 
 			@Override
 			public void onClick(View v) {
-				onToggleWifiClicked(v);
+				onToggleWifi(v);
 			}
 		});
 		updateCheckboxAppearance(toggleWifi, R.drawable.ic_action_wifi);
@@ -246,24 +248,12 @@ public class SchedulePeriodFragment extends DialogFragment {
 					public void onCheckedChanged(CompoundButton buttonView,
 							boolean isChecked) {
 
-						if (!_enabledPeriod.is_wifi()) {
-							// disabled, ignore
-							return;
-						}
-
-						_enabledPeriod.set_intervalConnectWifi(isChecked);
-						updateCheckboxAppearance(
-								(CheckBox) buttonView,
-								R.drawable.ic_action_interval,
-								_enabledPeriod.is_wifi()
-										&& _enabledPeriod.activeIsEnabled(),
-								false);
+						onToggleWifiInterval((CheckBox)buttonView, isChecked);
 					}
 				});
-		updateCheckboxAppearance(checkBoxIntervalConnectWifi,
-				R.drawable.ic_action_interval,
-				_enabledPeriod.activeIsEnabled() && _enabledPeriod.is_wifi(), false);
-
+		
+		updateCheckBoxIntervalConnectWifi(checkBoxIntervalConnectWifi);
+		
 		// check box interval connect mob data
 		CheckBox checkBoxIntervalConnectMobData = (CheckBox) view
 				.findViewById(R.id.checkBoxScheduleIntervalMob);
@@ -274,23 +264,11 @@ public class SchedulePeriodFragment extends DialogFragment {
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView,
 							boolean isChecked) {
-
-						if (!_enabledPeriod.is_mobileData()) {
-							// disabled, ignore
-							return;
-						}
-
-						_enabledPeriod.set_intervalConnectMobData(isChecked);
-						updateCheckboxAppearance((CheckBox) buttonView,
-								R.drawable.ic_action_interval,
-								_enabledPeriod.is_mobileData()
-										&& _enabledPeriod.activeIsEnabled(),
-								false);
+						onToggleMobileDataInterval((CheckBox)buttonView, isChecked);
 					}
 				});
-		updateCheckboxAppearance(checkBoxIntervalConnectMobData,
-				R.drawable.ic_action_interval,
-				_enabledPeriod.activeIsEnabled() && _enabledPeriod.is_mobileData(), false);
+		
+		updateCheckBoxIntervalConnectMobData(checkBoxIntervalConnectMobData);
 
 		AlertDialog dialog = builder.create();
 
@@ -298,7 +276,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 
 		return dialog;
 	}
-
+	
 	@Override
 	public void onStart() {
 		super.onStart();
@@ -386,26 +364,25 @@ public class SchedulePeriodFragment extends DialogFragment {
 		_enabledPeriod.get_weekDays()[dayIndex] = isChecked;
 	}
 
-	public void onToggleMobileDataClicked(View v) {
+	public void onToggleMobileData(View v) {
 
 		boolean isChecked = ((CheckBox) v).isChecked();
 
 		_enabledPeriod.set_mobileData(isChecked);
 
 		updateCheckboxAppearance((CheckBox) v, R.drawable.ic_action_mobile_data);
-
+		
 		Dialog dialog = getDialog();
-
+		
 		if (dialog != null) {
 			CheckBox checkBoxIntervalConnectMob = (CheckBox) dialog
 					.findViewById(R.id.checkBoxScheduleIntervalMob);
-
-			updateCheckboxAppearance(checkBoxIntervalConnectMob,
-					R.drawable.ic_action_interval, isChecked, false);
+			
+			updateCheckBoxIntervalConnectMobData(checkBoxIntervalConnectMob);
 		}
 	}
-
-	public void onToggleWifiClicked(View v) {
+	
+	private void onToggleWifi(View v) {
 
 		boolean isChecked = ((CheckBox) v).isChecked();
 
@@ -419,12 +396,41 @@ public class SchedulePeriodFragment extends DialogFragment {
 			CheckBox checkBoxIntervalConnectWifi = (CheckBox) dialog
 					.findViewById(R.id.checkBoxScheduleIntervalWifi);
 
-			updateCheckboxAppearance(checkBoxIntervalConnectWifi,
-					R.drawable.ic_action_interval, isChecked, false);
+			updateCheckBoxIntervalConnectWifi(checkBoxIntervalConnectWifi);
 		}
 	}
+	
+	private void onToggleMobileDataInterval(
+			CheckBox checkBox, boolean isChecked) {
+		if (!_enabledPeriod.is_mobileData() ||
+				!_enabledPeriod.activeIsEnabled()) {
+			// disabled, ignore
+			makeIntervalConnectNotSupportedToast();
+			checkBox.setChecked(false);
+			return;
+		} else {
+			_enabledPeriod.set_intervalConnectMobData(isChecked);
+		}
+		
+		updateCheckBoxIntervalConnectMobData(checkBox);
+	}
+	
+	private void onToggleWifiInterval(
+			CheckBox checkBox, boolean isChecked) {
+		if (!_enabledPeriod.is_wifi() ||
+				!_enabledPeriod.activeIsEnabled()) {
+			// disabled, ignore
+			makeIntervalConnectNotSupportedToast();
+			checkBox.setChecked(false);
+			return;
+		} else {
+			_enabledPeriod.set_intervalConnectWifi(isChecked);
+		}
+		
+		updateCheckBoxIntervalConnectWifi(checkBox);
+	}
 
-	public void buttonStartClicked(View v) {
+	private void buttonStartClicked(View v) {
 
 		FragmentManager fm = getActivity().getSupportFragmentManager();
 
@@ -439,6 +445,27 @@ public class SchedulePeriodFragment extends DialogFragment {
 		};
 
 		timePicker.show(fm, "timePickerStart");
+	}
+
+	private void updateCheckBoxIntervalConnectMobData(CheckBox checkBox) {
+		
+		updateCheckBoxIntervalConnect(checkBox, _enabledPeriod.is_mobileData());
+	}
+	
+	private void updateCheckBoxIntervalConnectWifi(CheckBox checkBox) {
+		
+		updateCheckBoxIntervalConnect(checkBox, _enabledPeriod.is_wifi());
+	}
+	
+	private void updateCheckBoxIntervalConnect(CheckBox checkBox, boolean intervalConnectActive) {
+		
+		boolean checkBoxEnabled = _enabledPeriod.activeIsEnabled() && intervalConnectActive;
+		
+		boolean strikeThrough = false;
+		
+		updateCheckboxAppearance(checkBox,
+				R.drawable.ic_action_interval,
+				checkBoxEnabled, strikeThrough);
 	}
 
 	private void updateCheckboxAppearance(CheckBox v, int iconResourceId) {
@@ -487,6 +514,18 @@ public class SchedulePeriodFragment extends DialogFragment {
 			v.setTextColor(getResources().getColor(
 					R.color.toggle_button_unchecked));
 		}
+	}
+
+	private void makeIntervalConnectNotSupportedToast() {
+		
+		Context context = getActivity();
+		
+		if (context == null) {
+			// it's not worth it
+			return;
+		}
+		
+		Toast.makeText(context, R.string.interval_connect_disabling_period, Toast.LENGTH_LONG).show();
 	}
 
 	private void startTimePicked(int hourOfDay, int minute) {

@@ -263,7 +263,7 @@ public class ScheduledPeriod {
 	}
 
 	public boolean is_intervalConnectWifi() {
-		return _intervalConnectWifi;
+		return _intervalConnectWifi && activeIsEnabled();
 	}
 
 	public void set_intervalConnectWifi(boolean _intervalConnectWifi) {
@@ -271,7 +271,7 @@ public class ScheduledPeriod {
 	}
 
 	public boolean is_intervalConnectMobData() {
-		return _intervalConnectMobData;
+		return _intervalConnectMobData && activeIsEnabled();
 	}
 
 	public void set_intervalConnectMobData(boolean _intervalConnectMobData) {
