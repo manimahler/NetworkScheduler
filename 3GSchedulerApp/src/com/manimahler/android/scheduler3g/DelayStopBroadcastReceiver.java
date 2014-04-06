@@ -18,7 +18,7 @@ public class DelayStopBroadcastReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 
 		int periodId = intent.getExtras().getInt(
-				context.getString(R.string.period_id), -4);
+				NetworkScheduler.INTENT_EXTRA_PERIOD_ID, -4);
 
 		String action = intent.getAction();
 		Log.d(TAG, "Received delay broadcast for action " + action

@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Network Scheduler</string>
-    <string name="three_g_scheduler">Network\nScheduler</string>
+    
     <string name="start_text">on</string>
     <string name="start_interval_text">Interval connect</string>
     <string name="stop_text">off</string>
     
+    <string name="interval_connect_disabling_period">Interval connect is not possible when switch-off is before switch-on</string>
+    
+    <!-- Context menu actions -->
     <string name="modify">Edit</string>
     <string name="activate_now">Activate now</string>
     <string name="deactivate_now">Deactivate now</string>
@@ -18,16 +21,14 @@
     <string name="move_up">Move up</string>
     <string name="move_down">Move down</string>
     
-    <string name="skipped_period">The next occurrence of the profile will be ignored</string>
-    <string name="unskipped_period">The next occurrence of the profile will be activated normally</string>
+    <!-- Context menu actions -->
+    <string name="skipped_period">The next time period will be skipped</string>
+    <string name="unskipped_period">The next time period will be activated normally</string>
     <string name="overridden_wifi_interval">For this period Wi-Fi Interval Connect was stopped</string>
     <string name="unoverridden_wifi_interval">Wi-Fi Interval Connect was resumed</string>
     <string name="overridden_mob_interval">For this period mobile data Interval Connect was stopped</string>
     <string name="unoverridden_mob_interval">Mobile data Interval Connect was resumed</string>
     
-    <string name="action_3g_on">Action3gOn</string>
-    <string name="action_3g_off">Action3gOff</string>
-    <string name="period_id">PERIOD_ID</string>
     <string name="name_hint">Name (optional)</string>
     <string name="mobile_data">Mobile data</string>
     <string name="wifi">Wi-Fi</string>
@@ -40,8 +41,6 @@
     <string name="switch_off_auto_delayed_until">Delayed until %s because device was in use</string>
     <string name="switch_off_skipped_today">Switch off skipped today</string>
     
-    <string name="action_start">START</string>
-    <string name="action_stop">STOP</string>
     <string name="everyday">Everyday</string>
     <string name="never">Never</string>
     <string name="on">on</string>

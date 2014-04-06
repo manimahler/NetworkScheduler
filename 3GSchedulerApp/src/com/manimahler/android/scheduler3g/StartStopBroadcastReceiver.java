@@ -24,7 +24,7 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 			long stopTime = bundle.getLong("StopAt", 0);
 
 			// TODO: magic number for default
-			int periodId = bundle.getInt(context.getString(R.string.period_id),
+			int periodId = bundle.getInt(NetworkScheduler.INTENT_EXTRA_PERIOD_ID,
 					-2);
 
 			// cancel existing notifications
@@ -54,11 +54,10 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 			} else {
 
 				boolean on;
-
-				if (action.equals(context.getString(R.string.action_start))) {
+				
+				if (action.equals(NetworkScheduler.ACTION_START)) {
 					on = true;
-				} else if (action.equals(context
-						.getString(R.string.action_stop))) {
+				} else if (action.equals(NetworkScheduler.ACTION_STOP)) {
 					on = false;
 				} else {
 					Log.e(TAG, "Unknown action " + action);

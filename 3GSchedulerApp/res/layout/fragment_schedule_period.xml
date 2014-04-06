@@ -36,8 +36,8 @@
                 android:layout_height="wrap_content"
                 android:fillViewport="true"
                 android:text="@string/start_text"
-                android:textColor="@android:color/white"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@android:color/white" />
 
             <Button
                 android:id="@+id/buttonTimeStart"
@@ -58,8 +58,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/stop_text"
-                android:textColor="@android:color/black"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@android:color/black" />
 
             <Button
                 android:id="@+id/buttonTimeStop"
@@ -99,8 +99,8 @@
                 android:text="@string/mobile_data"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@drawable/toggle_button_textcolor" />
-            
-                        <CheckBox
+
+            <CheckBox
                 android:id="@+id/checkBoxScheduleIntervalMob"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -133,7 +133,7 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@drawable/toggle_button_textcolor" />
 
-                        <CheckBox
+            <CheckBox
                 android:id="@+id/checkBoxVolume"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -142,8 +142,6 @@
                 android:text="@string/volume_on"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@drawable/toggle_button_textcolor" />
-
-
         </RelativeLayout>
     </LinearLayout>
 

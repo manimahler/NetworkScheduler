@@ -31,10 +31,14 @@ public class NetworkScheduler {
 	public static final String ACTION_SWITCHOFF_SKIP = "SKIP";
 	public static final String ACTION_SWITCHOFF_DEACTIVATE_NOW = "DEACTIVATE";
 
+	public static final String ACTION_START = "START";
+	public static final String ACTION_STOP = "STOP";
 	public static final String ACTION_INTERVAL_ON = "INTERVAL_ON";
 	public static final String ACTION_INTERVAL_OFF = "INTERVAL_OFF";
 	public static final String ACTION_OFF = "OFF";
 	public static final String ACTION_OFF_DELAYED = "OFF_DELAYED";
+	
+	public static final String INTENT_EXTRA_PERIOD_ID = "PERIOD_ID";
 	
 	private static final String INTERVAL_MOBILEDATA = "MOBILEDATA";
 	private static final String INTERVAL_WIFI = "WIFI";
@@ -651,7 +655,7 @@ public class NetworkScheduler {
 				DelayStopBroadcastReceiver.class);
 	
 		deactivateNowIntent.setAction(ACTION_SWITCHOFF_DEACTIVATE_NOW);
-		deactivateNowIntent.putExtra(context.getString(R.string.period_id),
+		deactivateNowIntent.putExtra(INTENT_EXTRA_PERIOD_ID,
 				period.get_id());
 	
 		PendingIntent deactivateNowIntentPending = PendingIntent.getBroadcast(
@@ -662,7 +666,7 @@ public class NetworkScheduler {
 				DelayStopBroadcastReceiver.class);
 	
 		skipIntent.setAction(ACTION_SWITCHOFF_SKIP);
-		skipIntent.putExtra(context.getString(R.string.period_id),
+		skipIntent.putExtra(INTENT_EXTRA_PERIOD_ID,
 				period.get_id());
 	
 		PendingIntent skipIntentPending = PendingIntent.getBroadcast(context,
@@ -737,7 +741,7 @@ public class NetworkScheduler {
 		// delayIntent.putExtra(context.getString(R.string.period_id),
 		// periodId);
 		delayIntent.setAction(ACTION_SWITCHOFF_DELAY);
-		delayIntent.putExtra(context.getString(R.string.period_id),
+		delayIntent.putExtra(INTENT_EXTRA_PERIOD_ID,
 				period.get_id());
 	
 		PendingIntent delayIntentPending = PendingIntent.getBroadcast(context,
@@ -749,7 +753,7 @@ public class NetworkScheduler {
 		// delayIntent.putExtra(context.getString(R.string.period_id),
 		// periodId);
 		skipIntent.setAction(ACTION_SWITCHOFF_SKIP);
-		skipIntent.putExtra(context.getString(R.string.period_id),
+		skipIntent.putExtra(INTENT_EXTRA_PERIOD_ID,
 				period.get_id());
 	
 		PendingIntent skipIntentPending = PendingIntent.getBroadcast(context,
@@ -1032,9 +1036,9 @@ public class NetworkScheduler {
 		String action;
 
 		if (start) {
-			action = context.getString(R.string.action_start);
+			action = ACTION_START;
 		} else {
-			action = context.getString(R.string.action_stop);
+			action = ACTION_STOP;
 		}
 
 		Intent intent = new Intent(context, StartStopBroadcastReceiver.class);
@@ -1044,8 +1048,7 @@ public class NetworkScheduler {
 		intent.setAction(action);
 
 		Bundle bundle = new Bundle();
-		bundle.putBoolean(context.getString(R.string.action_3g_on), start);
-		bundle.putInt(context.getString(R.string.period_id), period.get_id());
+		bundle.putInt(INTENT_EXTRA_PERIOD_ID, period.get_id());
 
 		intent.putExtras(bundle);
 
@@ -1079,13 +1082,12 @@ public class NetworkScheduler {
 		intent.setAction(actionName);
 
 		Bundle bundle = new Bundle();
-		bundle.putBoolean(context.getString(R.string.action_3g_on), false);
 
 		if (endTimeMillis > 0) {
 			bundle.putLong("StopAt", endTimeMillis);
 		}
 
-		bundle.putInt(context.getString(R.string.period_id), periodId);
+		bundle.putInt(INTENT_EXTRA_PERIOD_ID, periodId);
 
 		intent.putExtras(bundle);
 
