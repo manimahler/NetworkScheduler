@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.InsetDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -112,8 +113,8 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 
 		ImageView volView = (ImageView) rowView
 				.findViewById(R.id.imageViewVolume);
-		tintViewIcon(volView, R.drawable.ic_action_volume_up,
-				!period.is_volume(), false, false, !period.activeIsEnabled());
+		tintVolumeIcon(volView, !period.is_volume(),
+				period.is_vibrateWhenSilent(), !period.activeIsEnabled());
 
 		if (!_enabled) {
 			ViewUtils.setControlsEnabled(_enabled, (ViewGroup) rowView);
@@ -189,6 +190,44 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 		_enabled = enabled;
 	}
 
+	private void tintVolumeIcon(ImageView imageView, boolean tintIt,
+			boolean vibrate, boolean strikeThrough) {
+
+		int iconResourceId = R.drawable.ic_action_volume_up;
+
+		Drawable icon = ViewUtils.getTintedIcon(context, tintIt,
+				R.color.button_unchecked, iconResourceId);
+
+		ArrayList<Drawable> iconList = new ArrayList<Drawable>(3);
+
+		iconList.add(icon);
+
+		if (vibrate) {
+			Drawable vibrateDrawable = context.getResources().getDrawable(
+					R.drawable.ic_action_vibrate);
+
+			int insetLeft = (int) Math.round(icon.getIntrinsicWidth() * 0.6);
+			int insetTop = (int) Math.round(icon.getIntrinsicHeight() * 0.6);
+			int insetBottom = 0;
+			InsetDrawable smallVibrator = new InsetDrawable(vibrateDrawable,
+					insetLeft, insetTop, 0, insetBottom);
+
+			iconList.add(smallVibrator);
+		}
+
+		if (!tintIt && strikeThrough) {
+			Drawable strike = context.getResources().getDrawable(
+					R.drawable.ic_strikethrough);
+
+			iconList.add(strike);
+		}
+
+		Drawable[] layers = iconList.toArray(new Drawable[iconList.size()]);
+		LayerDrawable layerDrawable = new LayerDrawable(layers);
+
+		imageView.setImageDrawable(layerDrawable);
+	}
+
 	private void tintViewIcon(ImageView imageView, int iconResourceId,
 			boolean tintIt, boolean intervals, boolean overrideIntervals,
 			boolean strikeThrough) {
@@ -205,7 +244,6 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 					overrideIntervals, R.color.black, R.drawable.intervals);
 
 			// if override intervals...
-
 			iconList.add(intervalDrawable);
 		}
 
@@ -217,26 +255,7 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 		}
 
 		Drawable[] layers = iconList.toArray(new Drawable[iconList.size()]);
-		// if (!intervals) {
-		// imageView.setImageDrawable(icon);
-		// } else {
-		//
-		//
-		// layers[0] = icon;
-		// layers[1] = context.getResources()
-		// .getDrawable(R.drawable.intervals);
-		// layers[2] =
-		// context.getResources().getDrawable(R.drawable.strikethrough);
-		//
-		// LayerDrawable layerDrawable = new LayerDrawable(layers);
-		// imageView.setImageDrawable(layerDrawable);
-		// }
-
 		LayerDrawable layerDrawable = new LayerDrawable(layers);
-		// if (layerDrawable.getNumberOfLayers() == 3)
-		// {
-		// layerDrawable.setLayerInset(2, 0, 0, 0, 17);
-		// }
 
 		imageView.setImageDrawable(layerDrawable);
 	}
