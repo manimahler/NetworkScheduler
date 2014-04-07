@@ -20,6 +20,11 @@
         android:title="@string/skip_next_occurrence" 
         android:checkable="true" >
     </item>
+    <item
+        android:id="@+id/is_enabled"
+        android:title="@string/is_period_enabled" 
+        android:checkable="true" >
+    </item>
     <!-- android:icon="@android:drawable/ic_menu_revert" -->
     <item
         android:id="@+id/delete"

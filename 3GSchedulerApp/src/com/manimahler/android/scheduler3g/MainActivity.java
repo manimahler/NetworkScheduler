@@ -283,6 +283,11 @@ public class MainActivity extends FragmentActivity implements
 			Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 
 			return true;
+		case R.id.is_enabled:
+			selectedPeriod.set_schedulingEnabled(!selectedPeriod.is_schedulingEnabled());
+			onPeriodUpdated(selectedPeriod);
+
+			return true;
 		case R.integer.context_menu_id_interval_wifi:
 			toggleCurrentIntervalWifi(selectedPeriod);
 
@@ -382,6 +387,13 @@ public class MainActivity extends FragmentActivity implements
 
 				MenuItem skipItem = menu.findItem(R.id.skip_next);
 				skipItem.setChecked(selectedPeriod.is_skipped());
+				
+				if (! selectedPeriod.is_schedulingEnabled()) {
+					menu.removeItem(R.id.skip_next);
+				}
+				
+				MenuItem enabledItem = menu.findItem(R.id.is_enabled);
+				enabledItem.setChecked(selectedPeriod.is_schedulingEnabled());
 
 				if (!selectedPeriod.activeIsEnabled()) {
 					MenuItem activateItem = menu.findItem(R.id.activate_now);
@@ -433,7 +445,7 @@ public class MainActivity extends FragmentActivity implements
 		setItemPressListeners(listview, enabled);
 
 		RelativeLayout mainView = (RelativeLayout) findViewById(R.id.mainview);
-		ViewUtils.setControlsEnabled(enabled, mainView);
+		ViewUtils.setControlsEnabled(enabled, mainView, true);
 
 		_adapter.setItemsEnabled(enabled);
 		_adapter.notifyDataSetChanged();
@@ -490,7 +502,6 @@ public class MainActivity extends FragmentActivity implements
 			} else {
 				scheduler.stop(selectedPeriod, this, ignoreSkip);
 			}
-
 		} catch (Exception e) {
 			Toast.makeText(this, "Error (de-)activating selected profile",
 					Toast.LENGTH_SHORT).show();

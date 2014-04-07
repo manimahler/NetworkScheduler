@@ -117,7 +117,11 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 				period.is_vibrateWhenSilent(), !period.activeIsEnabled());
 
 		if (!_enabled) {
-			ViewUtils.setControlsEnabled(_enabled, (ViewGroup) rowView);
+			ViewUtils.setControlsEnabled(_enabled, (ViewGroup) rowView, true);
+		}
+		
+		if (! period.is_schedulingEnabled()) {
+			ViewUtils.setControlsEnabled(false, (ViewGroup) rowView, false);
 		}
 		return rowView;
 	}

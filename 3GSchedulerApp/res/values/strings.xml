@@ -16,6 +16,7 @@
     <string name="activate_now_off">Activate now (switch OFF)</string>
     <string name="deactivate_now_on">Deactivate now (switch ON)</string>
     <string name="skip_next_occurrence">Skip next occurrence</string>
+    <string name="is_period_enabled">Enabled</string>
     <string name="context_menu_interval_wifi">Wi-Fi interval connect</string>
     <string name="context_menu_interval_mob">Mobile data interval connect</string>
     <string name="delete">Delete</string>

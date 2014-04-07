@@ -8,15 +8,12 @@ import android.view.ViewGroup;
 
 public class ViewUtils {
 
-	public static void setControlsEnabled(boolean enable, ViewGroup vg) {
+	public static void setControlsEnabled(boolean enable, ViewGroup vg, boolean includeClickable) {
 		for (int i = 0; i < vg.getChildCount(); i++) {
 			View child = vg.getChildAt(i);
 			if (child instanceof ViewGroup) {
-				setControlsEnabled(enable, (ViewGroup) child);
+				setControlsEnabled(enable, (ViewGroup) child, includeClickable);
 			} else {
-
-				child.setClickable(enable);
-
 				float alpha = 1;
 
 				if (!enable) {
@@ -24,8 +21,10 @@ public class ViewUtils {
 				}
 				child.setAlpha(alpha);
 
-				child.setFocusable(enable);
-
+				if (includeClickable) {
+					child.setClickable(enable);
+					child.setFocusable(enable);
+				}
 			}
 		}
 	}
