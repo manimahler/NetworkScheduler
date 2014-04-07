@@ -34,17 +34,21 @@ public class ConnectionUtils {
 		}
 
 		if (enabledPeriod.is_volume()) {
-			toggleVolume(context, enable);
+			toggleVolume(context, enable, enabledPeriod.is_vibrateWhenSilent());
 		}
 	}
 
-	public static void toggleVolume(Context context, boolean enable) {
+	public static void toggleVolume(Context context, boolean enable,
+			boolean vibrateWhenSilent) {
 		AudioManager audiomanager = (AudioManager) context
 				.getSystemService(Context.AUDIO_SERVICE);
 
 		if (enable) {
 			Log.d(TAG, "Setting ringer mode to normal");
 			audiomanager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+		} else if (vibrateWhenSilent) {
+			Log.d(TAG, "Setting ringer mode to vibrate");
+			audiomanager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
 		} else {
 			Log.d(TAG, "Setting ringer mode to silent");
 			audiomanager.setRingerMode(AudioManager.RINGER_MODE_SILENT);

@@ -142,6 +142,18 @@
                 android:text="@string/volume_on"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@drawable/toggle_button_textcolor" />
+            
+           	<CheckBox
+                android:id="@+id/checkBoxVolumeVibrate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxVolume"
+                android:layout_marginLeft="38dp"
+                android:button="@drawable/ic_action_vibrate"
+                android:text="@string/volume_with_vibrate"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@drawable/toggle_button_textcolor" />
         </RelativeLayout>
     </LinearLayout>
 

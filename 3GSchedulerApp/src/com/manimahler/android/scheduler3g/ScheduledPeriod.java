@@ -28,6 +28,7 @@ public class ScheduledPeriod {
 
 	private static final String INTERVAL_CONNECT_WIFI = "IntervalConnectWifi";
 	private static final String INTERVAL_CONNECT_MOB = "IntervalConnectMob";
+	private static final String VIBRATE_WHEN_SILENT = "VibrateWhenSilent";
 
 	private static final String ACTIVE = "Active";
 
@@ -50,6 +51,7 @@ public class ScheduledPeriod {
 
 	private boolean _intervalConnectWifi;
 	private boolean _intervalConnectMobData;
+	private boolean _vibrateWhenSilent;
 
 	private boolean[] _weekDays;
 
@@ -86,6 +88,7 @@ public class ScheduledPeriod {
 		_intervalConnectWifi = bundle.getBoolean(INTERVAL_CONNECT_WIFI, false);
 		_intervalConnectMobData = bundle
 				.getBoolean(INTERVAL_CONNECT_MOB, false);
+		_vibrateWhenSilent = bundle.getBoolean(VIBRATE_WHEN_SILENT, false);
 
 		_active = bundle.getBoolean(ACTIVE, false);
 
@@ -124,6 +127,7 @@ public class ScheduledPeriod {
 				+ qualifier, false);
 		_intervalConnectMobData = preferences.getBoolean(INTERVAL_CONNECT_MOB
 				+ qualifier, false);
+		_vibrateWhenSilent = preferences.getBoolean(VIBRATE_WHEN_SILENT + qualifier, false);
 
 		_active = preferences.getBoolean(ACTIVE + qualifier, false);
 
@@ -278,6 +282,14 @@ public class ScheduledPeriod {
 		this._intervalConnectMobData = _intervalConnectMobData;
 	}
 
+	public boolean is_vibrateWhenSilent() {
+		return _vibrateWhenSilent;
+	}
+
+	public void set_vibrateWhenSilent(boolean _vibrateWhenSilent) {
+		this._vibrateWhenSilent = _vibrateWhenSilent;
+	}
+
 	public boolean is_active() {
 		return _active;
 	}
@@ -324,12 +336,10 @@ public class ScheduledPeriod {
 	}
 
 	public boolean isIntervalConnectingWifi() {
-		// TODO: additional check if within enabled period
 		return (is_wifi() && is_intervalConnectWifi() && is_active() && is_schedulingEnabled());
 	}
 
 	public boolean isIntervalConnectingMobileData() {
-		// TODO: additional check if within enabled period
 		return (is_mobileData() && is_intervalConnectMobData() && is_active() && is_schedulingEnabled());
 	}
 
@@ -361,6 +371,8 @@ public class ScheduledPeriod {
 				_intervalConnectWifi);
 		editor.putBoolean(INTERVAL_CONNECT_MOB + qualifier,
 				_intervalConnectMobData);
+		editor.putBoolean(VIBRATE_WHEN_SILENT + qualifier, _vibrateWhenSilent);
+
 
 		editor.putBoolean(ACTIVE + qualifier, _active);
 
@@ -372,28 +384,29 @@ public class ScheduledPeriod {
 	public void saveToBundle(Bundle bundle) {
 		bundle.putInt(PERIOD_ID, _id);
 		bundle.putString(NAME, _name);
-
+		
 		bundle.putBoolean(SCHEDULE_START, _scheduleStart);
 		bundle.putBoolean(SCHEDULE_STOP, _scheduleStop);
-
+		
 		bundle.putLong(START_TIME, _startTimeMillis);
 		bundle.putLong(END_TIME, _endTimeMillis);
 		bundle.putBoolean(SCHEDULING_ENABLED, _schedulingEnabled);
 		bundle.putLong(START_TIME, _startTimeMillis);
 		bundle.putLong(END_TIME, _endTimeMillis);
-
+		
 		bundle.putBoolean(MOBILE_DATA, _mobileData);
 		bundle.putBoolean(WIFI, _wifi);
 		bundle.putBoolean(BLUETOOTH, _bluetooth);
 		bundle.putBoolean(VOLUME, _volume);
-
+		
 		bundle.putBooleanArray(WEEK_DAYS, _weekDays);
-
+		
 		bundle.putBoolean(INTERVAL_CONNECT_WIFI, _intervalConnectWifi);
 		bundle.putBoolean(INTERVAL_CONNECT_MOB, _intervalConnectMobData);
-
+		bundle.putBoolean(VIBRATE_WHEN_SILENT, _vibrateWhenSilent);
+		
 		bundle.putBoolean(ACTIVE, _active);
-
+		
 		bundle.putBoolean(SKIPPED, _skipped);
 		bundle.putBoolean(OVERRIDE_WIFI, _overrideIntervalWifi);
 		bundle.putBoolean(OVERRIDE_MOB, _overrideIntervalMob);

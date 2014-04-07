@@ -596,7 +596,7 @@ public class NetworkScheduler {
 						&& previousActiveVolume.activeIsEnabled();
 			}
 	
-			ConnectionUtils.toggleVolume(context, enableVolume);
+			ConnectionUtils.toggleVolume(context, enableVolume, period.is_vibrateWhenSilent());
 		}
 	
 		if (intervalConnectRequired) {

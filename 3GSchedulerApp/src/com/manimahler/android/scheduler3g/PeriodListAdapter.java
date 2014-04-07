@@ -321,6 +321,8 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 		itemToUpdate.set_intervalConnectMobData(fromItem
 				.is_intervalConnectMobData());
 
+		itemToUpdate.set_vibrateWhenSilent(fromItem.is_vibrateWhenSilent());
+
 		itemToUpdate.set_skipped(fromItem.is_skipped());
 
 		// re-set the userOverride flag (the user just pressed ok to these

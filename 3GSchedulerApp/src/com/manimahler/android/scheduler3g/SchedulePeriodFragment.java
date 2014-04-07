@@ -228,10 +228,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
-				// boolean isChecked1 = ((CheckBox) buttonView).isChecked();
-				_enabledPeriod.set_volume(isChecked);
-				updateCheckboxAppearance((CheckBox) buttonView,
-						R.drawable.ic_action_volume_up);
+				onToggleVolume(buttonView, isChecked);
 			}
 		});
 
@@ -269,7 +266,25 @@ public class SchedulePeriodFragment extends DialogFragment {
 				});
 		
 		updateCheckBoxIntervalConnectMobData(checkBoxIntervalConnectMobData);
-
+		
+		
+		// check box vibrate when silent
+		CheckBox checkBoxVibrate = (CheckBox) view
+				.findViewById(R.id.checkBoxVolumeVibrate);
+		checkBoxVibrate.setChecked(_enabledPeriod
+				.is_vibrateWhenSilent());
+		checkBoxVibrate
+				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+					@Override
+					public void onCheckedChanged(CompoundButton buttonView,
+							boolean isChecked) {
+						onToggleVibrateWhenSilent((CheckBox)buttonView, isChecked);
+					}
+				});
+		
+		updateCheckBoxVibrateWhenSilent(checkBoxVibrate);
+		
+		
 		AlertDialog dialog = builder.create();
 
 		_view = view;
@@ -428,6 +443,44 @@ public class SchedulePeriodFragment extends DialogFragment {
 		}
 		
 		updateCheckBoxIntervalConnectWifi(checkBox);
+	}
+	
+	private void onToggleVolume(CompoundButton checkBox,
+			boolean isChecked) {
+		_enabledPeriod.set_volume(isChecked);
+		updateCheckboxAppearance((CheckBox) checkBox,
+				R.drawable.ic_action_volume_up);
+		
+		Dialog dialog = getDialog();
+		
+		if (dialog != null) {
+			CheckBox checkBoxVibrate = (CheckBox) dialog
+					.findViewById(R.id.checkBoxVolumeVibrate);
+			
+			updateCheckBoxVibrateWhenSilent(checkBoxVibrate);
+		}
+	}
+	
+	private void onToggleVibrateWhenSilent(CheckBox checkBox,
+			boolean isChecked) {
+		if (!_enabledPeriod.is_volume()) {
+			checkBox.setChecked(false);
+			return;
+		} else {
+			_enabledPeriod.set_vibrateWhenSilent(isChecked);
+		}
+		
+		updateCheckBoxVibrateWhenSilent(checkBox);
+	}
+
+	private void updateCheckBoxVibrateWhenSilent(CheckBox checkBox) {
+		boolean checkBoxEnabled = _enabledPeriod.is_volume();
+		
+		boolean strikeThrough = false;
+		
+		updateCheckboxAppearance(checkBox,
+				R.drawable.ic_action_vibrate, // TODO
+				checkBoxEnabled, strikeThrough);
 	}
 
 	private void buttonStartClicked(View v) {
