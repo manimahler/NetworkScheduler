@@ -3,7 +3,7 @@
     <string name="app_name">Network Scheduler</string>
     
     <string name="start_text">on</string>
-    <string name="start_interval_text">Interval connect</string>
+    <string name="interval_text">Interval connect</string>
     <string name="stop_text">off</string>
     <string name="volume_with_vibrate">Vibrate when silent</string>
     

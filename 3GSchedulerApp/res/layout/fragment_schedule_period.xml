@@ -107,7 +107,7 @@
                 android:layout_alignLeft="@+id/checkBoxScheduleIntervalWifi"
                 android:layout_below="@+id/checkBoxMobileData"
                 android:button="@drawable/ic_action_interval"
-                android:text="@string/start_interval_text"
+                android:text="@string/interval_text"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@drawable/toggle_button_textcolor" />
 
@@ -129,7 +129,7 @@
                 android:layout_below="@+id/checkBoxWifi"
                 android:layout_marginLeft="38dp"
                 android:button="@drawable/ic_action_interval"
-                android:text="@string/start_interval_text"
+                android:text="@string/interval_text"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@drawable/toggle_button_textcolor" />
 
