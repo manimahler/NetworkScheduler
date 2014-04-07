@@ -774,7 +774,7 @@ public class NetworkScheduler {
 				context)
 				.setSmallIcon(R.drawable.clock_notification)
 				.setLargeIcon(bm)
-				.setContentTitle("Switching off network")
+				.setContentTitle(context.getString(R.string.switch_off_notification_title))
 				.setContentText(tickerText)
 				.setTicker(tickerText)
 				.setPriority(NotificationCompat.PRIORITY_MAX)

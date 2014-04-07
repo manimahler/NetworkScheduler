@@ -187,10 +187,10 @@ public class MainActivity extends FragmentActivity implements
 
 		if (buttonView.isChecked()) {
 			scheduler.setAlarms(this, _adapter.getPeriods(), _settings);
-			toastText = "Network Scheduler is enabled";
+			toastText = getResources().getString(R.string.global_switch_on_toast);
 		} else {
 			scheduler.deleteAlarms(this, _adapter.getPeriods());
-			toastText = "Network Scheduler completely disabled";
+			toastText = getResources().getString(R.string.global_switch_off_toast);
 		}
 
 		updateEnabledAppearance(buttonView.isChecked());
@@ -217,7 +217,7 @@ public class MainActivity extends FragmentActivity implements
 			showSettingsScreen();
 			return true;
 		case R.id.help:
-			String url = "https://sites.google.com/site/networkscheduler/home";
+			String url = getResources().getString(R.string.help_url);
 			Intent i = new Intent(Intent.ACTION_VIEW);
 			i.setData(Uri.parse(url));
 			startActivity(i);
