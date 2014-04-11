@@ -405,7 +405,7 @@ public class NetworkScheduler {
 		}
 	
 		Log.d(TAG, "intervalSwitchOn: Interval connect is ON.");
-		int connectTimeSec = 60;
+		int connectTimeSec = 60 * settings.get_connectDuration();
 	
 		scheduleIntervalSwitchOff(context, connectTimeSec,
 				createIntervalSwitchOffExtras(intervalWifi, intervalMobData));
