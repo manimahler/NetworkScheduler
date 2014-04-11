@@ -16,6 +16,7 @@ public class SchedulerSettings {
 	private static final String INTERVAL_CONNECT_WIFI_KEEP = "pref_key_interval_connect_wifi_keep_connected";
 	private static final String INTERVAL_CONNECT_MOBILEDATA = "pref_key_interval_connect_mobiledata";
 	private static final String CONNECT_INTERVAL = "pref_key_connect_interval";
+	private static final String CONNECT_DURATION = "pref_key_connect_duration";
 	
 	private static final String GLOBAL_ON = "pref_key_global_on";
 	
@@ -37,6 +38,7 @@ public class SchedulerSettings {
 	private boolean _keepWifiConnected;
 	
 	private int _connectInterval;
+	private int _connectDuration;
 	
 	public SchedulerSettings(SharedPreferences preferences)
 	{
@@ -45,7 +47,7 @@ public class SchedulerSettings {
 		_vibrate = preferences.getBoolean(VIBRATE, true);
 		_playSound = preferences.getBoolean(PLAY_SOUND, true);
 		
-		_delay = Integer.parseInt(preferences.getString(DELAY, "60"));
+		_delay = tryReadInt(preferences, DELAY, 60);
 		_autoDelay = preferences.getBoolean(AUTO_DELAY, false);
 		
 		_warnOnDeactivation = preferences.getBoolean(WARN_DEACTIVATION, true);
@@ -55,9 +57,28 @@ public class SchedulerSettings {
 		
 		_intervalConnectWifi = preferences.getBoolean(INTERVAL_CONNECT_WIFI, false);
 		_intervalConnectMobileData = preferences.getBoolean(INTERVAL_CONNECT_MOBILEDATA, false);
-		_connectInterval = Integer.parseInt(preferences.getString(CONNECT_INTERVAL, "15"));
+		_connectInterval = tryReadInt(preferences, CONNECT_INTERVAL, 15);
+		_connectDuration = tryReadInt(preferences, CONNECT_DURATION, 1);
 		
 		_keepWifiConnected = preferences.getBoolean(INTERVAL_CONNECT_WIFI_KEEP, false);
+	}
+	
+	private int tryReadInt(SharedPreferences preferences, String name, int defValue) {
+		
+		String defValueString = "default";
+		String stringValue = preferences.getString(name, defValueString);
+		
+		int result = defValue;
+		if (! stringValue.equals(defValueString)) {
+			try {
+				result = Integer.parseInt(stringValue);
+			}
+			catch (Exception ex) {
+				// caught intentionally, the stored value is no integer
+			}
+		}
+		
+		return result;
 	}
 	
 	
@@ -156,5 +177,13 @@ public class SchedulerSettings {
 
 	public void set_connectInterval(int _connectInterval) {
 		this._connectInterval = _connectInterval;
+	}
+
+	public int get_connectDuration() {
+		return _connectDuration;
+	}
+
+	public void set_connectDuration(int _connectDuration) {
+		this._connectDuration = _connectDuration;
 	}
 }
