@@ -66,19 +66,38 @@ public class SettingsActivity extends PreferenceActivity implements
 		// and the current value does not get inserted! There does not seem to
 		// be a simple solution, so resort to hack:
 
-		if (p.getKey().equals(this.getString(R.string.pref_key_delay_min))) {
-			EditTextPreference editTextPref = (EditTextPreference) p;
-			String summaryFormat = this
-					.getString(R.string.pref_summary_delay_min);
-			p.setSummary(String.format(summaryFormat, editTextPref.getText()));
-		}
-
 		if (p.getKey().equals(
 				this.getString(R.string.pref_key_connect_interval))) {
-			EditTextPreference editTextPref = (EditTextPreference) p;
-			String summaryFormat = this
-					.getString(R.string.pref_summary_connect_interval);
-			p.setSummary(String.format(summaryFormat, editTextPref.getText()));
+			
+			updatePreferenceTitle(p, R.string.pref_title_connect_interval);
+			updatePreferenceSummary(p, R.string.pref_summary_connect_interval);
 		}
+		
+		if (p.getKey().equals(this.getString(R.string.pref_key_connect_duration))) {
+			updatePreferenceTitle(p, R.string.pref_title_connect_duration);
+			updatePreferenceSummary(p, R.string.pref_summary_connect_duration);
+		}
+		
+		if (p.getKey().equals(this.getString(R.string.pref_key_delay_min))) {
+			
+			updatePreferenceSummary(p, R.string.pref_summary_delay_min);
+		}
+	}
+	
+	private void updatePreferenceSummary(Preference p, int summaryResId) {
+		
+		EditTextPreference editTextPref = (EditTextPreference) p;
+		
+		String summaryFormat = this.getString(summaryResId);
+		
+		p.setSummary(String.format(summaryFormat, editTextPref.getText()));
+	}
+	
+	private void updatePreferenceTitle(Preference p, int titleResId) {
+		EditTextPreference editTextPref = (EditTextPreference) p;
+		
+		String titleFormat = this.getString(titleResId);
+		
+		p.setTitle(String.format(titleFormat, editTextPref.getText()));
 	}
 }
