@@ -381,6 +381,9 @@ public class SchedulePeriodFragment extends DialogFragment {
 
 	public void onToggleMobileData(View v) {
 
+		// to avoid the scroll view from jumping back up 
+		v.requestFocusFromTouch();
+		
 		boolean isChecked = ((CheckBox) v).isChecked();
 
 		_enabledPeriod.set_mobileData(isChecked);
@@ -399,6 +402,9 @@ public class SchedulePeriodFragment extends DialogFragment {
 	
 	private void onToggleWifi(View v) {
 
+		// to avoid the scroll view from jumping back up 
+		v.requestFocusFromTouch();
+		
 		boolean isChecked = ((CheckBox) v).isChecked();
 
 		_enabledPeriod.set_wifi(isChecked);
@@ -417,6 +423,10 @@ public class SchedulePeriodFragment extends DialogFragment {
 	
 	private void onToggleMobileDataInterval(
 			CheckBox checkBox, boolean isChecked) {
+		
+		// to avoid the scroll view from jumping back up 
+		checkBox.requestFocusFromTouch();
+		
 		if (!_enabledPeriod.is_mobileData() ||
 				!_enabledPeriod.activeIsEnabled()) {
 			// disabled, ignore
@@ -432,6 +442,10 @@ public class SchedulePeriodFragment extends DialogFragment {
 	
 	private void onToggleWifiInterval(
 			CheckBox checkBox, boolean isChecked) {
+		
+		// to avoid the scroll view from jumping back up 
+		checkBox.requestFocusFromTouch();
+		
 		if (!_enabledPeriod.is_wifi() ||
 				!_enabledPeriod.activeIsEnabled()) {
 			// disabled, ignore
@@ -447,6 +461,10 @@ public class SchedulePeriodFragment extends DialogFragment {
 	
 	private void onToggleVolume(CompoundButton checkBox,
 			boolean isChecked) {
+
+		// to avoid the scroll view from jumping back up 
+		checkBox.requestFocusFromTouch();
+		
 		_enabledPeriod.set_volume(isChecked);
 		updateCheckboxAppearance((CheckBox) checkBox,
 				R.drawable.ic_action_volume_up);
@@ -463,6 +481,10 @@ public class SchedulePeriodFragment extends DialogFragment {
 	
 	private void onToggleVibrateWhenSilent(CheckBox checkBox,
 			boolean isChecked) {
+		
+		// to avoid the scroll view from jumping back up 
+		checkBox.requestFocusFromTouch();
+		
 		if (!_enabledPeriod.is_volume()) {
 			checkBox.setChecked(false);
 			return;
