@@ -89,8 +89,13 @@
     <string name="pref_summary_interval_connect_mobiledata">Switch on mobile data only every %s minutes to fetch messages (only when active)</string>
     
     <string name="pref_key_connect_interval">pref_key_connect_interval</string>
-    <string name="pref_title_connect_interval">Connect interval</string>
-    <string name="pref_summary_connect_interval">Connect every %s minutes for a short while to fetch messages</string>
+    <string name="pref_title_connect_interval">Connect interval: %s min</string>
+    <string name="pref_summary_connect_interval">Connect every %s minutes for a short while to fetch messages (only for periods that use Interval Connect)</string>
     <string name="pref_dialog_title_connect_interval">Interval (min)</string>
+
+    <string name="pref_key_connect_duration">pref_key_connect_duration</string>
+    <string name="pref_title_connect_duration">Connect duration: %s min</string>
+    <string name="pref_summary_connect_duration">Connect for %s minute(s) to fetch messages (only for periods that use Interval Connect)</string>
+    <string name="pref_dialog_title_connect_duration">Duration (min)</string>
     
 </resources>
