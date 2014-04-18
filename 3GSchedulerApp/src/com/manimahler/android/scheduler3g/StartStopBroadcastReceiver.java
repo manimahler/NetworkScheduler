@@ -77,6 +77,8 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 
 				// re-start 'repeating' alarm (not using repeating because it
 				// has become inexact on kitkat)
+				// TODO: on gingerbread, sometimes the current time is not after the stop time!
+				// -> alarm is re-set for right now and appears to be received twice!
 				if (on) {
 					scheduler.setNextAlarmStart(context, period, settings);
 				} else {
