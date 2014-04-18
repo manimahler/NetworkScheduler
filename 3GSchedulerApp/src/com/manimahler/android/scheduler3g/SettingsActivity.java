@@ -8,6 +8,9 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
+import android.text.InputFilter;
+import android.util.Log;
+import android.widget.Toast;
 
 // TODO: turn into a PreferenceFragment once gingerbread support is dropped...
 public class SettingsActivity extends PreferenceActivity implements
@@ -21,6 +24,7 @@ public class SettingsActivity extends PreferenceActivity implements
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 		for (int i = 0; i < getPreferenceScreen().getPreferenceCount(); i++) {
 			initSummary(getPreferenceScreen().getPreference(i));
+			
 		}
 	}
 
@@ -42,7 +46,7 @@ public class SettingsActivity extends PreferenceActivity implements
 
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
 			String key) {
-		updatePrefSummary(findPreference(key));
+		updatePrefAppearance(findPreference(key));
 	}
 
 	private void initSummary(Preference p) {
@@ -52,11 +56,11 @@ public class SettingsActivity extends PreferenceActivity implements
 				initSummary(pCat.getPreference(i));
 			}
 		} else {
-			updatePrefSummary(p);
+			updatePrefAppearance(p);
 		}
 	}
 
-	private void updatePrefSummary(Preference p) {
+	private void updatePrefAppearance(Preference p) {
 		// The idea to set the summary was taken from
 		// http://stackoverflow.com/questions/531427/how-do-i-display-the-current-value-of-an-android-preference-in-the-preference-su
 		// However this does not work if the summary in the strings resource
@@ -68,22 +72,44 @@ public class SettingsActivity extends PreferenceActivity implements
 
 		if (p.getKey().equals(
 				this.getString(R.string.pref_key_connect_interval))) {
+			ensurePreferenceLarger0(p);
 			
 			updatePreferenceTitle(p, R.string.pref_title_connect_interval);
 			updatePreferenceSummary(p, R.string.pref_summary_connect_interval);
 		}
 		
 		if (p.getKey().equals(this.getString(R.string.pref_key_connect_duration))) {
+			ensurePreferenceLarger0(p);
+			
 			updatePreferenceTitle(p, R.string.pref_title_connect_duration);
 			updatePreferenceSummary(p, R.string.pref_summary_connect_duration);
 		}
 		
 		if (p.getKey().equals(this.getString(R.string.pref_key_delay_min))) {
+			ensurePreferenceLarger0(p);
 			
+			updatePreferenceTitle(p, R.string.pref_title_delay_min);
 			updatePreferenceSummary(p, R.string.pref_summary_delay_min);
 		}
 	}
 	
+	private void ensurePreferenceLarger0(Preference p) {
+		EditTextPreference editTextPref = (EditTextPreference) p;
+		String currentText = editTextPref.getText();
+		int currentValue = 0;
+		try {
+			currentValue = Integer.parseInt(currentText);
+		} catch (Exception e) {
+			// caught intentionally
+		}
+		
+		if (currentValue == 0)
+		{
+			// minimum value:
+			editTextPref.setText("1");
+		}
+	}
+
 	private void updatePreferenceSummary(Preference p, int summaryResId) {
 		
 		EditTextPreference editTextPref = (EditTextPreference) p;

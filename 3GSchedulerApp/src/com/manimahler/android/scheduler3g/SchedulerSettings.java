@@ -47,7 +47,7 @@ public class SchedulerSettings {
 		_vibrate = preferences.getBoolean(VIBRATE, true);
 		_playSound = preferences.getBoolean(PLAY_SOUND, true);
 		
-		_delay = tryReadInt(preferences, DELAY, 60);
+		_delay = tryReadIntLarger0(preferences, DELAY, 60);
 		_autoDelay = preferences.getBoolean(AUTO_DELAY, false);
 		
 		_warnOnDeactivation = preferences.getBoolean(WARN_DEACTIVATION, true);
@@ -57,13 +57,13 @@ public class SchedulerSettings {
 		
 		_intervalConnectWifi = preferences.getBoolean(INTERVAL_CONNECT_WIFI, false);
 		_intervalConnectMobileData = preferences.getBoolean(INTERVAL_CONNECT_MOBILEDATA, false);
-		_connectInterval = tryReadInt(preferences, CONNECT_INTERVAL, 15);
-		_connectDuration = tryReadInt(preferences, CONNECT_DURATION, 1);
+		_connectInterval = tryReadIntLarger0(preferences, CONNECT_INTERVAL, 15);
+		_connectDuration = tryReadIntLarger0(preferences, CONNECT_DURATION, 1);
 		
 		_keepWifiConnected = preferences.getBoolean(INTERVAL_CONNECT_WIFI_KEEP, false);
 	}
 	
-	private int tryReadInt(SharedPreferences preferences, String name, int defValue) {
+	private int tryReadIntLarger0(SharedPreferences preferences, String name, int defValue) {
 		
 		String defValueString = "default";
 		String stringValue = preferences.getString(name, defValueString);
@@ -72,6 +72,12 @@ public class SchedulerSettings {
 		if (! stringValue.equals(defValueString)) {
 			try {
 				result = Integer.parseInt(stringValue);
+				
+				// safety net, we don't want 0
+				if (result == 0)
+				{
+					result = 1;
+				}
 			}
 			catch (Exception ex) {
 				// caught intentionally, the stored value is no integer
