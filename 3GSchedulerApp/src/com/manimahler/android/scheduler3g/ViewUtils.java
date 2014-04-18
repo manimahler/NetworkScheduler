@@ -3,24 +3,34 @@ package com.manimahler.android.scheduler3g;
 import android.content.Context;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 
 public class ViewUtils {
 
-	public static void setControlsEnabled(boolean enable, ViewGroup vg, boolean includeClickable) {
+	public static void setControlsEnabled(Context context, 
+			boolean enable, ViewGroup vg, boolean includeClickable) {
 		for (int i = 0; i < vg.getChildCount(); i++) {
+			
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+				vg.setBackgroundColor(context.getResources().getColor(R.color.grey));
+			}
+			
 			View child = vg.getChildAt(i);
 			if (child instanceof ViewGroup) {
-				setControlsEnabled(enable, (ViewGroup) child, includeClickable);
+				setControlsEnabled(context, enable, (ViewGroup) child, includeClickable);
 			} else {
 				float alpha = 1;
 
 				if (!enable) {
 					alpha = 0.3f;
 				}
-				child.setAlpha(alpha);
 
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+					child.setAlpha(alpha);
+				}
+				
 				if (includeClickable) {
 					child.setClickable(enable);
 					child.setFocusable(enable);
@@ -28,9 +38,9 @@ public class ViewUtils {
 			}
 		}
 	}
-	
-	public static Drawable getTintedIcon(Context context, boolean tint, int colorResId, int iconResId)
-	{
+
+	public static Drawable getTintedIcon(Context context, boolean tint,
+			int colorResId, int iconResId) {
 		int tintColor = context.getResources().getColor(colorResId);
 
 		// re-reading the icon from the resource seems to be the only way to
@@ -43,7 +53,7 @@ public class ViewUtils {
 		} else {
 			icon.mutate().clearColorFilter();
 		}
-		
+
 		return icon;
 	}
 }
