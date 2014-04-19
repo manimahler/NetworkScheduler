@@ -144,6 +144,20 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@drawable/toggle_button_textcolor" />
 
+            <ImageButton
+                android:id="@+id/buttonIntervalMobDataHelp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/checkBoxScheduleIntervalMob"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@id/checkBoxScheduleIntervalMob"
+                android:background="@drawable/time_button"
+                android:contentDescription="@string/interval_connection_help_content_desc"
+                android:onClick="showIntervalConnectExplanation"
+                android:src="@drawable/ic_action_help"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/white" />
+
             <CheckBox
                 android:id="@+id/checkBoxBluetooth"
                 android:layout_width="wrap_content"
@@ -165,6 +179,20 @@
                 android:text="@string/interval_text"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@drawable/toggle_button_textcolor" />
+
+            <ImageButton
+                android:id="@+id/buttonIntervalWifiHelp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/checkBoxScheduleIntervalWifi"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@id/checkBoxScheduleIntervalWifi"
+                android:background="@drawable/time_button"
+                android:contentDescription="@string/interval_connection_help_content_desc"
+                android:onClick="showIntervalConnectExplanation"
+                android:src="@drawable/ic_action_help"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/white" />
 
             <CheckBox
                 android:id="@+id/checkBoxVolume"

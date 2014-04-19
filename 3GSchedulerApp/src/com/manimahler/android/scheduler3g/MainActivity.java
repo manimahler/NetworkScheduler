@@ -575,4 +575,20 @@ public class MainActivity extends FragmentActivity implements
 
 		schedulePeriodFragment.show(fm, "fragment_schedule_period");
 	}
+	
+	public void showIntervalConnectExplanation(View view) {
+		FragmentManager fm = getSupportFragmentManager();
+		
+		String radio;
+		if (view.getId() == R.id.buttonIntervalWifiHelp) {
+			radio = this.getResources().getString(R.string.wifi);
+		} else {
+			radio = this.getResources().getString(R.string.mobile_data);
+		}
+			
+		ExplainIntervalConnectDialog explainDlg = ExplainIntervalConnectDialog.newInstance(
+				radio, _settings.get_connectInterval(), _settings.get_connectDuration());
+		
+		explainDlg.show(fm, "fragment_explain_intervalconnect");
+	}
 }
