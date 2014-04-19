@@ -25,50 +25,83 @@
             <requestFocus />
         </EditText>
 
-        <LinearLayout
-            android:id="@+id/layout_time_start"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/layout_on_off"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
-            <CheckBox
-                android:id="@+id/checkBoxScheduleStart"
+            <LinearLayout
+                android:id="@+id/layout_time_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <CheckBox
+                    android:id="@+id/checkBoxScheduleStart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fillViewport="true"
+                    android:text="@string/start_text"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/on_green" />
+
+                <Button
+                    android:id="@+id/buttonTimeStart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/time_button"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/text_start_nextday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_time_stop"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fillViewport="true"
-                android:text="@string/start_text"
+                android:layout_below="@id/layout_time_start" >
+
+                <CheckBox
+                    android:id="@+id/checkBoxScheduleStop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/stop_text"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/off_red" />
+
+                <Button
+                    android:id="@+id/buttonTimeStop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/time_button"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/text_stop_nextday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            </LinearLayout>
+
+            <CheckBox
+                android:id="@+id/checkBoxActiveIsEnabled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:button="@drawable/swap_active_on"
+                android:paddingRight="8dp"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@android:color/white" />
 
-            <Button
-                android:id="@+id/buttonTimeStart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/time_button"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@android:color/white" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layout_time_stop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <CheckBox
-                android:id="@+id/checkBoxScheduleStop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/stop_text"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@android:color/black" />
-
-            <Button
-                android:id="@+id/buttonTimeStop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/time_button"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@android:color/black" />
-        </LinearLayout>
+        </RelativeLayout>
 
         <com.manimahler.android.scheduler3g.FlowLayout
             android:id="@+id/flowlayout_weekdays"
@@ -108,7 +141,7 @@
                 android:layout_below="@+id/checkBoxMobileData"
                 android:button="@drawable/ic_action_interval"
                 android:text="@string/interval_text"
-                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@drawable/toggle_button_textcolor" />
 
             <CheckBox
@@ -130,7 +163,7 @@
                 android:layout_marginLeft="38dp"
                 android:button="@drawable/ic_action_interval"
                 android:text="@string/interval_text"
-                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@drawable/toggle_button_textcolor" />
 
             <CheckBox
@@ -142,8 +175,8 @@
                 android:text="@string/volume_on"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@drawable/toggle_button_textcolor" />
-            
-           	<CheckBox
+
+            <CheckBox
                 android:id="@+id/checkBoxVolumeVibrate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -152,7 +185,7 @@
                 android:layout_marginLeft="38dp"
                 android:button="@drawable/ic_action_vibrate"
                 android:text="@string/volume_with_vibrate"
-                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@drawable/toggle_button_textcolor" />
         </RelativeLayout>
     </LinearLayout>

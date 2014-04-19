@@ -8,7 +8,7 @@
         </shape></item>
     <item android:state_focused="true"><shape>
             <solid android:color="@color/blue" />
-            
+
             <stroke android:width="0dp" android:color="@color/blue" />
 
             <corners android:radius="3dp" />

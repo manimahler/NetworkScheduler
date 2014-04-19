@@ -18,6 +18,7 @@ public class ScheduledPeriod {
 	private static final String SCHEDULING_ENABLED = "SchedulingEnabled";
 	private static final String SCHEDULE_START = "ScheduleStart";
 	private static final String SCHEDULE_STOP = "ScheduleStop";
+	private static final String ENABLE_RADIOS = "EnableRadios";
 
 	private static final String BLUETOOTH = "BLUETOOTH";
 	private static final String WIFI = "WIFI";
@@ -43,6 +44,7 @@ public class ScheduledPeriod {
 	private long _endTimeMillis;
 	private boolean _scheduleStart;
 	private boolean _scheduleStop;
+	private boolean _enableRadios;
 
 	private boolean _mobileData;
 	private boolean _wifi;
@@ -73,6 +75,8 @@ public class ScheduledPeriod {
 		_scheduleStop = bundle.getBoolean(SCHEDULE_STOP, true);
 		_startTimeMillis = bundle.getLong(START_TIME, 0);
 		_endTimeMillis = bundle.getLong(END_TIME, 0);
+		
+		_enableRadios = bundle.getBoolean(ENABLE_RADIOS, true);
 
 		_mobileData = bundle.getBoolean(MOBILE_DATA, true);
 		_wifi = bundle.getBoolean(WIFI, false);
@@ -110,6 +114,8 @@ public class ScheduledPeriod {
 
 		_startTimeMillis = preferences.getLong(START_TIME + qualifier, 0);
 		_endTimeMillis = preferences.getLong(END_TIME + qualifier, 0);
+		
+		_enableRadios = preferences.getBoolean(ENABLE_RADIOS + qualifier, true);
 
 		_mobileData = preferences.getBoolean(MOBILE_DATA + qualifier, true);
 		_wifi = preferences.getBoolean(WIFI + qualifier, false);
@@ -150,6 +156,8 @@ public class ScheduledPeriod {
 		_schedulingEnabled = schedulingEnabled;
 		_startTimeMillis = startTimeMillis;
 		_endTimeMillis = endTimeMillis;
+		
+		_enableRadios = true;
 
 		_weekDays = weekDays;
 
@@ -226,6 +234,15 @@ public class ScheduledPeriod {
 		this._endTimeMillis = endTimeMillis;
 	}
 
+	
+	public boolean is_enableRadios() {
+		return _enableRadios;
+	}
+
+	public void set_enableRadios(boolean _enableRadios) {
+		this._enableRadios = _enableRadios;
+	}
+
 	public boolean[] get_weekDays() {
 		return _weekDays;
 	}
@@ -267,7 +284,7 @@ public class ScheduledPeriod {
 	}
 
 	public boolean is_intervalConnectWifi() {
-		return _intervalConnectWifi && activeIsEnabled();
+		return _intervalConnectWifi && is_enableRadios();
 	}
 
 	public void set_intervalConnectWifi(boolean _intervalConnectWifi) {
@@ -275,7 +292,7 @@ public class ScheduledPeriod {
 	}
 
 	public boolean is_intervalConnectMobData() {
-		return _intervalConnectMobData && activeIsEnabled();
+		return _intervalConnectMobData && is_enableRadios();
 	}
 
 	public void set_intervalConnectMobData(boolean _intervalConnectMobData) {
@@ -323,7 +340,7 @@ public class ScheduledPeriod {
 	}
 
 	public long getActivationTimeMillis() {
-		if (activeIsEnabled()) {
+		if (is_enableRadios()) {
 			return _startTimeMillis;
 		} else {
 			return _endTimeMillis;
@@ -354,6 +371,8 @@ public class ScheduledPeriod {
 		editor.putBoolean(SCHEDULING_ENABLED + qualifier, _schedulingEnabled);
 		editor.putLong(START_TIME + qualifier, _startTimeMillis);
 		editor.putLong(END_TIME + qualifier, _endTimeMillis);
+		
+		editor.putBoolean(ENABLE_RADIOS + qualifier, _enableRadios);
 
 		Log.d(TAG, "EnabledPeriod: Saving network settings...");
 
@@ -393,6 +412,8 @@ public class ScheduledPeriod {
 		bundle.putBoolean(SCHEDULING_ENABLED, _schedulingEnabled);
 		bundle.putLong(START_TIME, _startTimeMillis);
 		bundle.putLong(END_TIME, _endTimeMillis);
+		
+		bundle.putBoolean(ENABLE_RADIOS, _enableRadios);
 		
 		bundle.putBoolean(MOBILE_DATA, _mobileData);
 		bundle.putBoolean(WIFI, _wifi);
@@ -435,7 +456,7 @@ public class ScheduledPeriod {
 
 		// now the last start happened, check if it hasn't already stopped
 		Calendar lastDeactivation;
-		if (activeIsEnabled()) {
+		if (is_enableRadios()) {
 			lastDeactivation = getPreviousHourMinuteInMillis(timeMillis,
 					get_endTimeMillis());
 		} else if (!is_scheduleStart()) {
@@ -449,14 +470,31 @@ public class ScheduledPeriod {
 		// case 1: last stop is after last start (but of course before the check
 		// time)
 		if (lastDeactivation.after(lastActivation)) {
-			// it has already stopped: false (if applicable)
-			return !isOnActiveWeekday(lastDeactivation.getTimeInMillis());
+			// it has already stopped: false (if applicable)			
+			if (deactivationOnNextDay())
+			{
+				// the relevant active week day is the day before
+				DateTimeUtils.addDays(lastDeactivation, -1);
+			}
+			
+			long relevantMillis = lastDeactivation.getTimeInMillis();
+			
+			return !isOnActiveWeekday(relevantMillis);
 		}
 
 		// case 2: last stop is before the last start, i.e. after check time
 		// today
 		// -> still running
 		return true;
+	}
+	
+	public boolean deactivationOnNextDay()
+	{
+		if (is_enableRadios()) {
+			return ! startIsBeforeStop();
+		} else {
+			return startIsBeforeStop();
+		}
 	}
 
 	public Calendar getLastScheduledActivationTime() {
@@ -468,7 +506,7 @@ public class ScheduledPeriod {
 		return lastActivation;
 	}
 
-	public boolean activeIsEnabled() {
+	public boolean startIsBeforeStop() {
 		boolean result;
 
 		if (is_scheduleStart() && is_scheduleStop()) {
@@ -493,6 +531,13 @@ public class ScheduledPeriod {
 
 		Log.d(TAG, "enable: " + enable);
 
+		boolean isPeriodActivation;
+		if (is_enableRadios()) {
+			isPeriodActivation = enable;
+		} else {
+			isPeriodActivation = !enable;
+		}
+		
 		if (enable) {
 			alarmTime = get_startTimeMillis();
 		} else {
@@ -503,8 +548,15 @@ public class ScheduledPeriod {
 		// isOnActiveWeekday
 		long actualAlarmTime = DateTimeUtils
 				.getPreviousTimeIn24hInMillis(alarmTime);
-
+		
 		Log.d(TAG, "actualAlarmTime: " + actualAlarmTime);
+		
+		if (!isPeriodActivation && deactivationOnNextDay()) {
+			// subtract a day, as the relevant day was yesterday
+			
+			actualAlarmTime = DateTimeUtils.addDays(actualAlarmTime, -1);
+			Log.d(TAG, "subtracted 1 day: " + actualAlarmTime);
+		}
 
 		int weekdayIndex = DateTimeUtils.getWeekdayIndex(actualAlarmTime);
 
@@ -540,8 +592,8 @@ public class ScheduledPeriod {
 			end = "<no stop>";
 		}
 
-		if (activeIsEnabled()) {
-			return String.format("%s between %s and %s", name, start, end);
+		if (is_enableRadios()) {
+			return String.format("%s enabled between %s and %s", name, start, end);
 		} else {
 			return String.format(
 					"%s between %s (stopping) and %s (re-starting)", name, end,
@@ -552,7 +604,7 @@ public class ScheduledPeriod {
 
 	private Calendar getPreviousActivation(long beforeTimeMillis) {
 		Calendar lastActivation;
-		if (activeIsEnabled()) {
+		if (is_enableRadios()) {
 	
 			if (!is_scheduleStart()) {
 				lastActivation = null;

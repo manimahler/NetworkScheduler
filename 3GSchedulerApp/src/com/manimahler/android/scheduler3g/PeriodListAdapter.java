@@ -75,8 +75,10 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 
 		TextView onView = (TextView) rowView.findViewById(R.id.textViewOn);
 		TextView offView = (TextView) rowView.findViewById(R.id.textViewOff);
+		
+		TextView nextDayView = (TextView) rowView.findViewById(R.id.text_start_nextday);
 
-		setPeriodItemTimes(period, startView, stopView, onView, offView);
+		setPeriodItemTimes(period, startView, stopView, onView, offView, nextDayView);
 
 		// week days
 		TextView weekDayView = (TextView) rowView.findViewById(R.id.bottomLine);
@@ -96,7 +98,7 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 				.findViewById(R.id.imageViewWifi);
 		tintViewIcon(wifiImgView, R.drawable.ic_action_wifi, !period.is_wifi(),
 				intervalWifi, period.is_overrideIntervalWifi(),
-				!period.activeIsEnabled());
+				!period.is_enableRadios());
 
 		boolean intervalMob = period.is_mobileData()
 				&& period.is_intervalConnectMobData();
@@ -104,24 +106,24 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 				.findViewById(R.id.imageViewMobileData);
 		tintViewIcon(mobileDataView, R.drawable.ic_action_mobile_data,
 				!period.is_mobileData(), intervalMob,
-				period.is_overrideIntervalMob(), !period.activeIsEnabled());
+				period.is_overrideIntervalMob(), !period.is_enableRadios());
 
 		ImageView btView = (ImageView) rowView
 				.findViewById(R.id.imageViewBluetooth);
 		tintViewIcon(btView, R.drawable.ic_action_bluetooth1,
-				!period.is_bluetooth(), false, false, !period.activeIsEnabled());
+				!period.is_bluetooth(), false, false, !period.is_enableRadios());
 
 		ImageView volView = (ImageView) rowView
 				.findViewById(R.id.imageViewVolume);
 		tintVolumeIcon(volView, !period.is_volume(),
-				period.is_vibrateWhenSilent(), !period.activeIsEnabled());
+				period.is_vibrateWhenSilent(), !period.is_enableRadios());
 
 		if (!_enabled) {
-			ViewUtils.setControlsEnabled(_enabled, (ViewGroup) rowView, true);
+			ViewUtils.setControlsEnabled(context, _enabled, (ViewGroup) rowView, true);
 		}
 		
 		if (! period.is_schedulingEnabled()) {
-			ViewUtils.setControlsEnabled(false, (ViewGroup) rowView, false);
+			ViewUtils.setControlsEnabled(context, false, (ViewGroup) rowView, false);
 		}
 		return rowView;
 	}
@@ -265,9 +267,12 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 	}
 
 	private void setPeriodItemTimes(ScheduledPeriod period, TextView startView,
-			TextView stopView, TextView onView, TextView offView) {
+			TextView stopView, TextView onView, TextView offView, TextView nextDayText) {
 
 		int tint = R.color.weak_grey_transparent;
+		
+		int green = context.getResources().getColor(R.color.on_green);
+		int red = context.getResources().getColor(R.color.off_red);
 
 		String startTime = DateTimeUtils.getHourMinuteText(this.context,
 				period.get_startTimeMillis());
@@ -275,25 +280,33 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 				period.get_endTimeMillis());
 
 		if (period.is_scheduleStart() && period.is_scheduleStop()) {
-			if (DateTimeUtils.isEarlierInTheDay(period.get_startTimeMillis(),
-					period.get_endTimeMillis())) {
+			if (period.is_enableRadios()) {
 				// both on (normal)
 				startView.setText(startTime);
 				stopView.setText(stopTime);
-				stopView.setTextColor(tint);
-				offView.setTextColor(tint);
+				//stopView.setTextColor(tint);
+				//offView.setTextColor(tint);
+				onView.setTextColor(green);
+				offView.setTextColor(red);
 			} else {
 				// both on (swap start and end time)
 				startView.setText(stopTime);
 				stopView.setText(startTime);
 
-				startView.setTextColor(tint);
-				onView.setTextColor(tint);
+				//startView.setTextColor(tint);
+				//onView.setTextColor(tint);
+				onView.setTextColor(red);
+				offView.setTextColor(green);
 
 				// and swap the on-off texts
 				onView.setText(R.string.off);
 				offView.setText(R.string.on);
 			}
+			
+			if (period.deactivationOnNextDay())	{
+				nextDayText.setText(context.getString(R.string.next_day));
+			}
+			
 		} else {
 			if (period.is_scheduleStart()) {
 				startView.setText(startTime);
@@ -316,7 +329,9 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 
 	private void updateActiveProperty(ScheduledPeriod period) {
 		try {
-			period.set_active(period.isActiveNow());
+			if (period.is_schedulingEnabled()) {
+				period.set_active(period.isActiveNow());
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -333,6 +348,7 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 
 		itemToUpdate.set_startTimeMillis(fromItem.get_startTimeMillis());
 		itemToUpdate.set_endTimeMillis(fromItem.get_endTimeMillis());
+		itemToUpdate.set_enableRadios(fromItem.is_enableRadios());
 		itemToUpdate.set_weekDays(fromItem.get_weekDays());
 
 		itemToUpdate.set_mobileData(fromItem.is_mobileData());
@@ -347,6 +363,8 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 		itemToUpdate.set_vibrateWhenSilent(fromItem.is_vibrateWhenSilent());
 
 		itemToUpdate.set_skipped(fromItem.is_skipped());
+		
+		itemToUpdate.set_schedulingEnabled(fromItem.is_schedulingEnabled());
 
 		// re-set the userOverride flag (the user just pressed ok to these
 		// settings)!

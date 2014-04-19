@@ -112,6 +112,7 @@ public class NetworkScheduler {
 			AlarmUtils.setAlarm(context, pendingIntentOn, startMillis);
 
 		} else {
+			Log.d(TAG, "Cancelling start alarm for period " + period.get_id());
 			am.cancel(pendingIntentOn);
 		}
 
@@ -154,7 +155,7 @@ public class NetworkScheduler {
 		
 		boolean skip = period.is_skipped();
 
-		boolean isPeriodActivation = period.activeIsEnabled();
+		boolean isPeriodActivation = period.is_enableRadios();
 		
 		boolean activate = isPeriodActivation  && (!skip || manualActivation);
 		period.set_active(activate);
@@ -278,7 +279,7 @@ public class NetworkScheduler {
 			return;
 		}
 
-		boolean isPeriodActivation = !period.activeIsEnabled();
+		boolean isPeriodActivation = !period.is_enableRadios();
 		
 		// only activate the period if it will be ever de-activated by re-starting
 		period.set_active(isPeriodActivation && period.is_scheduleStart());
@@ -389,12 +390,12 @@ public class NetworkScheduler {
 				allPeriods, NetworkType.MobileData);
 	
 		boolean intervalWifi = lastActivatedWifiPeriod != null
-				&& lastActivatedWifiPeriod.activeIsEnabled()
+				&& lastActivatedWifiPeriod.is_enableRadios()
 				&& lastActivatedWifiPeriod.is_intervalConnectWifi()
 				&& !lastActivatedWifiPeriod.is_overrideIntervalWifi();
 	
 		boolean intervalMobData = lastActivatedMobDataPeriod != null
-				&& lastActivatedMobDataPeriod.activeIsEnabled()
+				&& lastActivatedMobDataPeriod.is_enableRadios()
 				&& lastActivatedMobDataPeriod.is_intervalConnectMobData()
 				&& !lastActivatedMobDataPeriod.is_overrideIntervalMob();
 	
@@ -531,15 +532,15 @@ public class NetworkScheduler {
 			boolean enableWifi;
 			if (enable) {
 				enableWifi = previousActiveWifi == null
-						|| previousActiveWifi.activeIsEnabled();
+						|| previousActiveWifi.is_enableRadios();
 			} else {
 				enableWifi = previousActiveWifi != null
-						&& previousActiveWifi.activeIsEnabled();
+						&& previousActiveWifi.is_enableRadios();
 			}
 			ConnectionUtils.toggleWifi(context, enableWifi);
 	
 			if (enableWifi && previousActiveWifi != null
-					&& previousActiveWifi.activeIsEnabled()
+					&& previousActiveWifi.is_enableRadios()
 					&& previousActiveWifi.is_intervalConnectWifi()) {
 				intervalConnectRequired = true;
 			}
@@ -552,16 +553,16 @@ public class NetworkScheduler {
 			boolean enableMobData;
 			if (enable) {
 				enableMobData = previousActiveMobData == null
-						|| previousActiveMobData.activeIsEnabled();
+						|| previousActiveMobData.is_enableRadios();
 			} else {
 				enableMobData = previousActiveMobData != null
-						&& previousActiveMobData.activeIsEnabled();
+						&& previousActiveMobData.is_enableRadios();
 			}
 	
 			ConnectionUtils.toggleMobileData(context, enableMobData);
 	
 			if (enableMobData && previousActiveMobData != null
-					&& previousActiveMobData.activeIsEnabled()
+					&& previousActiveMobData.is_enableRadios()
 					&& previousActiveMobData.is_intervalConnectMobData()) {
 				intervalConnectRequired = true;
 			}
@@ -574,10 +575,10 @@ public class NetworkScheduler {
 			boolean enableBluetooth;
 			if (enable) {
 				enableBluetooth = previousActiveBluetooth == null
-						|| previousActiveBluetooth.activeIsEnabled();
+						|| previousActiveBluetooth.is_enableRadios();
 			} else {
 				enableBluetooth = previousActiveBluetooth != null
-						&& previousActiveBluetooth.activeIsEnabled();
+						&& previousActiveBluetooth.is_enableRadios();
 			}
 	
 			ConnectionUtils.toggleBluetooth(context, enableBluetooth);
@@ -590,10 +591,10 @@ public class NetworkScheduler {
 			boolean enableVolume;
 			if (enable) {
 				enableVolume = previousActiveVolume == null
-						|| previousActiveVolume.activeIsEnabled();
+						|| previousActiveVolume.is_enableRadios();
 			} else {
 				enableVolume = previousActiveVolume != null
-						&& previousActiveVolume.activeIsEnabled();
+						&& previousActiveVolume.is_enableRadios();
 			}
 	
 			ConnectionUtils.toggleVolume(context, enableVolume, period.is_vibrateWhenSilent());
@@ -611,7 +612,7 @@ public class NetworkScheduler {
 
 	private void setAlarm(Context context, ScheduledPeriod period,
 			SchedulerSettings settings) throws Exception {
-	
+		
 		setNextAlarmStart(context, period, settings);
 		setNextAlarmStop(context, period);
 	}

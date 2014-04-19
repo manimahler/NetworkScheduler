@@ -395,7 +395,7 @@ public class MainActivity extends FragmentActivity implements
 				MenuItem enabledItem = menu.findItem(R.id.is_enabled);
 				enabledItem.setChecked(selectedPeriod.is_schedulingEnabled());
 
-				if (!selectedPeriod.activeIsEnabled()) {
+				if (!selectedPeriod.is_enableRadios()) {
 					MenuItem activateItem = menu.findItem(R.id.activate_now);
 					activateItem.setTitle(R.string.activate_now_off);
 
@@ -490,7 +490,7 @@ public class MainActivity extends FragmentActivity implements
 			NetworkScheduler scheduler = new NetworkScheduler();
 
 			boolean start;
-			if (selectedPeriod.activeIsEnabled()) {
+			if (selectedPeriod.is_enableRadios()) {
 				start = activate;
 			} else {
 				start = !activate;

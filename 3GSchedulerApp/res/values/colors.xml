@@ -16,4 +16,7 @@
 	<color name="weak_grey_transparent">#20FFFFFF</color>
 	<color name="weak_blue_transparent">#40000000</color>
 	<color name="red">#90DB0000</color>
+	<color name="off_red">#EC1C1C</color>
+	<color name="on_green">#00C400</color>
+	<color name="grey">#646464</color>
 </resources>

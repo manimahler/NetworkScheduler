@@ -6,11 +6,11 @@
     <string name="global_switch_off_toast">Network Scheduler is completely disabled</string>
     
     <string name="start_text">on</string>
-    <string name="interval_text">Interval connect</string>
+    <string name="next_day">next day</string>
     <string name="stop_text">off</string>
     <string name="volume_with_vibrate">Vibrate when silent</string>
     
-    <string name="interval_connect_disabling_period">Interval connect is not possible when switch-off is before switch-on</string>
+    <string name="interval_connect_disabling_period">Interval connection is not possible when switch-off is before switch-on</string>
     
     <!-- Context menu actions -->
     <string name="modify">Edit</string>
