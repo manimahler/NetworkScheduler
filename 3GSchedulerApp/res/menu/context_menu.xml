@@ -7,6 +7,11 @@
     </item>
     <!-- android:icon="@android:drawable/ic_menu_edit" -->
     <item
+        android:id="@+id/is_enabled"
+        android:checkable="true"
+        android:title="@string/is_period_enabled">
+    </item>
+    <item
         android:id="@+id/activate_now"
         android:title="@string/activate_now">
     </item>
@@ -15,21 +20,17 @@
         android:id="@+id/deactivate_now"
         android:title="@string/deactivate_now">
     </item>
-    <item
-        android:id="@+id/skip_next"
-        android:title="@string/skip_next_occurrence" 
-        android:checkable="true" >
-    </item>
-    <item
-        android:id="@+id/is_enabled"
-        android:title="@string/is_period_enabled" 
-        android:checkable="true" >
-    </item>
+
     <!-- android:icon="@android:drawable/ic_menu_revert" -->
     <item
         android:id="@+id/delete"
         android:title="@string/delete">
     </item>
     <!-- android:icon="@android:drawable/ic_delete" -->
+    <item
+        android:id="@+id/skip_next"
+        android:checkable="true"
+        android:title="@string/skip_next_occurrence">
+    </item>
 
 </menu>
