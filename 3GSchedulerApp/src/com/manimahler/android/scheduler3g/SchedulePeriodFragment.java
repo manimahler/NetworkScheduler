@@ -18,7 +18,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -113,6 +115,18 @@ public class SchedulePeriodFragment extends DialogFragment {
 			public void afterTextChanged(Editable s) {
 				_enabledPeriod.set_name(s.toString());
 
+			}
+		});
+		
+		editTextName.setOnFocusChangeListener(new EditText.OnFocusChangeListener() {
+			// make sure the soft keyboard goes away once the focus is somewhere else to avoid
+			// that the keyboard hides the cancel/ok buttons
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+		        if(!hasFocus) {
+		            InputMethodManager imm =  (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+		            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+		        }
 			}
 		});
 
