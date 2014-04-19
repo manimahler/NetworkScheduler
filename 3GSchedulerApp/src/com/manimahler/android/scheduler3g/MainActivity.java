@@ -176,6 +176,7 @@ public class MainActivity extends FragmentActivity implements
 
 		showPeriodDetails(newPeriod);
 	}
+	
 
 	public void onGlobalOnClicked(CompoundButton buttonView) {
 
@@ -273,8 +274,9 @@ public class MainActivity extends FragmentActivity implements
 			return true;
 		case R.id.skip_next:
 			selectedPeriod.set_skipped(!selectedPeriod.is_skipped());
-			onPeriodUpdated(selectedPeriod);
-
+			saveSettings();
+			_adapter.notifyDataSetChanged();
+			
 			if (selectedPeriod.is_skipped()) {
 				msg = getResources().getString(R.string.skipped_period);
 			} else {
@@ -285,7 +287,16 @@ public class MainActivity extends FragmentActivity implements
 			return true;
 		case R.id.is_enabled:
 			selectedPeriod.set_schedulingEnabled(!selectedPeriod.is_schedulingEnabled());
-			onPeriodUpdated(selectedPeriod);
+			
+			if (! selectedPeriod.is_schedulingEnabled())
+			{
+				selectedPeriod.set_active(false);
+			}
+			
+			saveSettings();
+			_adapter.notifyDataSetChanged();
+			
+			//onPeriodUpdated(selectedPeriod);
 
 			return true;
 		case R.integer.context_menu_id_interval_wifi:
@@ -316,6 +327,7 @@ public class MainActivity extends FragmentActivity implements
 
 			return true;
 		case R.integer.context_menu_id_up:
+			
 			_adapter.moveUp(info.position);
 			// PeriodListAdapter.moveItemUp(_enabledPeriods, info.position);
 			// and save new list order - TODO: add property listPosition to be
@@ -445,7 +457,7 @@ public class MainActivity extends FragmentActivity implements
 		setItemPressListeners(listview, enabled);
 
 		RelativeLayout mainView = (RelativeLayout) findViewById(R.id.mainview);
-		ViewUtils.setControlsEnabled(enabled, mainView, true);
+		ViewUtils.setControlsEnabled(this, enabled, mainView, true);
 
 		_adapter.setItemsEnabled(enabled);
 		_adapter.notifyDataSetChanged();
