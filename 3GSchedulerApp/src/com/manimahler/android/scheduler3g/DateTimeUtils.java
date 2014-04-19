@@ -250,9 +250,18 @@ public class DateTimeUtils {
 		return resultBuilder.toString();
 	}
 	
-	private static void addDays(Calendar calendar, int days) {
+	public static void addDays(Calendar calendar, int days) {
 		// NOTE: 1 day <> 24 hours when changing between summer / winter time
 		calendar.add(Calendar.DATE, days);
+	}
+	
+	public static long addDays(long millis, int days) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(millis);
+		
+		addDays(calendar, days);
+		
+		return calendar.getTimeInMillis();
 	}
 	
 	private static Calendar setTime(int hourOfDay, int minute) {
