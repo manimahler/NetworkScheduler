@@ -8,9 +8,6 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
-import android.text.InputFilter;
-import android.util.Log;
-import android.widget.Toast;
 
 // TODO: turn into a PreferenceFragment once gingerbread support is dropped...
 public class SettingsActivity extends PreferenceActivity implements
