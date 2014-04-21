@@ -1,8 +1,8 @@
 package com.manimahler.android.scheduler3g;
 
 import java.util.Calendar;
-
 import android.animation.LayoutTransition;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -32,7 +32,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-
 import com.manimahler.android.scheduler3g.FlowLayout.LayoutParams;
 
 public class SchedulePeriodFragment extends DialogFragment {
@@ -196,6 +195,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 		checkBoxActiveEnabled.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			LayoutTransition transition = null;
+					@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView,
 							boolean isChecked) {
@@ -693,41 +693,13 @@ public class SchedulePeriodFragment extends DialogFragment {
 		long nextStartTimeInMillis = DateTimeUtils.getNextTimeIn24hInMillis(
 				hourOfDay, minute);
 
-		boolean activeIsEnabledBefore = DateTimeUtils.isEarlierInTheDay(
-				_enabledPeriod.get_startTimeMillis(),
-				_enabledPeriod.get_endTimeMillis());
-
-		boolean activeIsEnabledAfter = DateTimeUtils.isEarlierInTheDay(
-				nextStartTimeInMillis, _enabledPeriod.get_endTimeMillis());
-
 		_enabledPeriod.set_startTimeMillis(nextStartTimeInMillis);
 
 		setButtonTime(nextStartTimeInMillis, R.id.buttonTimeStart);
 
-		activeIsEnabledChanged(activeIsEnabledBefore,
-				activeIsEnabledAfter);
+		updateNextDayText();
 	}
 
-	private void activeIsEnabledChanged(boolean activeIsEnabledBefore,
-			boolean activeIsEnabledAfter) {
-
-		if (! _enabledPeriod.startIsBeforeStop()) {
-			updateNextDayText();
-		}
-		
-//		if (activeIsEnabledBefore != activeIsEnabledAfter) {
-//			String message;
-//			if (activeIsEnabledAfter) {
-//				message = "Start is before stop. Scheduled period starts networks";
-//			} else {
-//				message = "Stop is before start. Scheduled period disables networks";
-//			}
-//
-//			Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
-//			
-//			updateSensorCheckboxes();
-//		}
-	}
 
 	private void updateSensorCheckboxes() {
 		boolean activeIsEnabled = _enabledPeriod.is_enableRadios();
@@ -780,19 +752,11 @@ public class SchedulePeriodFragment extends DialogFragment {
 		long nextEndTimeInMillis = DateTimeUtils.getNextTimeIn24hInMillis(
 				hourOfDay, minute);
 
-		boolean activeIsEnabledBefore = DateTimeUtils.isEarlierInTheDay(
-				_enabledPeriod.get_startTimeMillis(),
-				_enabledPeriod.get_endTimeMillis());
-
-		boolean activeIsEnabledAfter = DateTimeUtils.isEarlierInTheDay(
-				_enabledPeriod.get_startTimeMillis(), nextEndTimeInMillis);
-
 		_enabledPeriod.set_endTimeMillis(nextEndTimeInMillis);
 
 		setButtonTime(nextEndTimeInMillis, R.id.buttonTimeStop);
 
-		activeIsEnabledChanged(activeIsEnabledBefore,
-				activeIsEnabledAfter);
+		updateNextDayText();
 	}
 
 	private void setButtonTime(long timeInMillis, int buttonId) {
@@ -819,6 +783,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 		button.setText(text);
 	}
 
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private LayoutTransition updateOnOffLayout(boolean enableRadios, boolean animate) {
 		RelativeLayout layout = (RelativeLayout) _view.findViewById(R.id.layout_on_off);
 		
@@ -840,14 +805,6 @@ public class SchedulePeriodFragment extends DialogFragment {
 		
 		LinearLayout upperLine = (LinearLayout) _view.findViewById(upperLineId);
 		LinearLayout lowerLine = (LinearLayout) _view.findViewById(lowerLineId);
-		
-//		TextView nextDayText = (TextView)lowerLine.getChildAt(2);
-//		nextDayText.setText("");
-//		
-//		if (_enabledPeriod.deactivationOnNextDay()) {
-//			nextDayText = (TextView) upperLine.getChildAt(2);
-//			nextDayText.setText(getActivity().getString(R.string.next_day));
-//		}
 		
 		layout.removeView(upperLine);
 		
@@ -885,9 +842,12 @@ public class SchedulePeriodFragment extends DialogFragment {
 		TextView nextDayText = (TextView)upperLine.getChildAt(TEXT_VIEW_INDEX_NEXTDAY);
 		nextDayText.setText("");
 		
+		nextDayText = (TextView) lowerLine.getChildAt(TEXT_VIEW_INDEX_NEXTDAY);
+		
 		if (_enabledPeriod.deactivationOnNextDay()) {
-			nextDayText = (TextView) lowerLine.getChildAt(TEXT_VIEW_INDEX_NEXTDAY);
 			nextDayText.setText(getActivity().getString(R.string.next_day));
+		} else {
+			nextDayText.setText("");
 		}
 	}
 }
