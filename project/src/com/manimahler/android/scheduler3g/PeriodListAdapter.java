@@ -75,10 +75,12 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 
 		TextView onView = (TextView) rowView.findViewById(R.id.textViewOn);
 		TextView offView = (TextView) rowView.findViewById(R.id.textViewOff);
-		
-		TextView nextDayView = (TextView) rowView.findViewById(R.id.text_start_nextday);
 
-		setPeriodItemTimes(period, startView, stopView, onView, offView, nextDayView);
+		TextView nextDayView = (TextView) rowView
+				.findViewById(R.id.text_start_nextday);
+
+		setPeriodItemTimes(period, startView, stopView, onView, offView,
+				nextDayView);
 
 		// week days
 		TextView weekDayView = (TextView) rowView.findViewById(R.id.bottomLine);
@@ -116,14 +118,17 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 		ImageView volView = (ImageView) rowView
 				.findViewById(R.id.imageViewVolume);
 		tintVolumeIcon(volView, !period.is_volume(),
-				period.is_vibrateWhenSilent(), !period.is_enableRadios());
+				period.is_vibrateWhenSilent() && period.is_volume(),
+				!period.is_enableRadios());
 
 		if (!_enabled) {
-			ViewUtils.setControlsEnabled(context, _enabled, (ViewGroup) rowView, true);
+			ViewUtils.setControlsEnabled(context, _enabled,
+					(ViewGroup) rowView, true);
 		}
-		
-		if (! period.is_schedulingEnabled()) {
-			ViewUtils.setControlsEnabled(context, false, (ViewGroup) rowView, false);
+
+		if (!period.is_schedulingEnabled()) {
+			ViewUtils.setControlsEnabled(context, false, (ViewGroup) rowView,
+					false);
 		}
 		return rowView;
 	}
@@ -267,10 +272,11 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 	}
 
 	private void setPeriodItemTimes(ScheduledPeriod period, TextView startView,
-			TextView stopView, TextView onView, TextView offView, TextView nextDayText) {
+			TextView stopView, TextView onView, TextView offView,
+			TextView nextDayText) {
 
 		int tint = R.color.weak_grey_transparent;
-		
+
 		int green = context.getResources().getColor(R.color.on_green);
 		int red = context.getResources().getColor(R.color.off_red);
 
@@ -284,8 +290,8 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 				// both on (normal)
 				startView.setText(startTime);
 				stopView.setText(stopTime);
-				//stopView.setTextColor(tint);
-				//offView.setTextColor(tint);
+				// stopView.setTextColor(tint);
+				// offView.setTextColor(tint);
 				onView.setTextColor(green);
 				offView.setTextColor(red);
 			} else {
@@ -293,8 +299,8 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 				startView.setText(stopTime);
 				stopView.setText(startTime);
 
-				//startView.setTextColor(tint);
-				//onView.setTextColor(tint);
+				// startView.setTextColor(tint);
+				// onView.setTextColor(tint);
 				onView.setTextColor(red);
 				offView.setTextColor(green);
 
@@ -302,11 +308,11 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 				onView.setText(R.string.off);
 				offView.setText(R.string.on);
 			}
-			
-			if (period.deactivationOnNextDay())	{
+
+			if (period.deactivationOnNextDay()) {
 				nextDayText.setText(context.getString(R.string.next_day));
 			}
-			
+
 		} else {
 			if (period.is_scheduleStart()) {
 				startView.setText(startTime);
@@ -363,7 +369,7 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 		itemToUpdate.set_vibrateWhenSilent(fromItem.is_vibrateWhenSilent());
 
 		itemToUpdate.set_skipped(fromItem.is_skipped());
-		
+
 		itemToUpdate.set_schedulingEnabled(fromItem.is_schedulingEnabled());
 
 		// re-set the userOverride flag (the user just pressed ok to these
