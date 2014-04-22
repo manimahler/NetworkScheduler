@@ -10,7 +10,8 @@ import android.util.Log;
 
 public class UserPresentBroadCastReceiver extends BroadcastReceiver {
 
-	private static final String TAG = UserPresentBroadCastReceiver.class.getSimpleName();
+	private static final String TAG = UserPresentBroadCastReceiver.class
+			.getSimpleName();
 
 	private final String USER_PRESENT_ACTION = "android.intent.action.USER_PRESENT";
 
@@ -26,14 +27,14 @@ public class UserPresentBroadCastReceiver extends BroadcastReceiver {
 
 				Log.d(TAG, "Receiving action USER PRESENT");
 
-				StartSensorsInIntervalConnect(context);
+				startSensorsInIntervalConnect(context);
 			}
 		} catch (Exception e) {
 			Log.e(USER_PRESENT_ACTION, "Error handling user-present event", e);
 		}
 	}
 
-	private void StartSensorsInIntervalConnect(Context context)
+	private void startSensorsInIntervalConnect(Context context)
 			throws Exception {
 
 		SharedPreferences prefs = PersistenceUtils
