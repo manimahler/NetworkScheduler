@@ -37,16 +37,17 @@ import com.manimahler.android.scheduler3g.FlowLayout.LayoutParams;
 public class SchedulePeriodFragment extends DialogFragment {
 
 	private static final int TEXT_VIEW_INDEX_NEXTDAY = 2;
-	private static final String TAG = SchedulePeriodFragment.class.getSimpleName();
-	
+	private static final String TAG = SchedulePeriodFragment.class
+			.getSimpleName();
+
 	// Container Activity must implement this interface
 	public interface OnPeriodUpdatedListener {
 		public void onPeriodUpdated(ScheduledPeriod period);
 	}
-	
+
 	ScheduledPeriod _enabledPeriod;
 	OnPeriodUpdatedListener _listener;
-	
+
 	View _view;
 
 	// Factory method
@@ -72,8 +73,6 @@ public class SchedulePeriodFragment extends DialogFragment {
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-		
-		
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
 		LayoutInflater inflator = getActivity().getLayoutInflater();
@@ -88,7 +87,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						Log.d(TAG, "clicked ok...");
-						
+
 						_listener.onPeriodUpdated(_enabledPeriod);
 					}
 				});
@@ -103,7 +102,8 @@ public class SchedulePeriodFragment extends DialogFragment {
 		_enabledPeriod = new ScheduledPeriod(savedData);
 
 		// name
-		EditText editTextName = (EditText) _view.findViewById(R.id.editTextName);
+		EditText editTextName = (EditText) _view
+				.findViewById(R.id.editTextName);
 		editTextName.setText(_enabledPeriod.get_name());
 		editTextName.addTextChangedListener(new TextWatcher() {
 
@@ -123,18 +123,22 @@ public class SchedulePeriodFragment extends DialogFragment {
 
 			}
 		});
-		
-		editTextName.setOnFocusChangeListener(new EditText.OnFocusChangeListener() {
-			// make sure the soft keyboard goes away once the focus is somewhere else to avoid
-			// that the keyboard hides the cancel/ok buttons
-			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-		        if(!hasFocus) {
-		            InputMethodManager imm =  (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-		            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-		        }
-			}
-		});
+
+		editTextName
+				.setOnFocusChangeListener(new EditText.OnFocusChangeListener() {
+					// make sure the soft keyboard goes away once the focus is
+					// somewhere else to avoid
+					// that the keyboard hides the cancel/ok buttons
+					@Override
+					public void onFocusChange(View v, boolean hasFocus) {
+						if (!hasFocus) {
+							InputMethodManager imm = (InputMethodManager) getActivity()
+									.getSystemService(
+											Context.INPUT_METHOD_SERVICE);
+							imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+						}
+					}
+				});
 
 		// check boxes to schedule start / stop
 		CheckBox checkBoxScheduleStart = (CheckBox) _view
@@ -180,49 +184,52 @@ public class SchedulePeriodFragment extends DialogFragment {
 		setButtonTime(_enabledPeriod.get_endTimeMillis(), timeStop);
 
 		timeStop.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				buttonStopClicked(v);
 			}
 		});
-		
-		
+
 		// active is enabled
-		CheckBox checkBoxActiveEnabled = (CheckBox) _view.findViewById(R.id.checkBoxActiveIsEnabled);
+		CheckBox checkBoxActiveEnabled = (CheckBox) _view
+				.findViewById(R.id.checkBoxActiveIsEnabled);
 		boolean activeIsEnabled = _enabledPeriod.is_enableRadios();
 		checkBoxActiveEnabled.setChecked(activeIsEnabled);
-		checkBoxActiveEnabled.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+		checkBoxActiveEnabled
+				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
-			LayoutTransition transition = null;
+					LayoutTransition transition = null;
+
 					@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView,
 							boolean isChecked) {
-						
+
 						if (transition != null && transition.isRunning()) {
-							// if animation is still running in double click, do nothing and re-set checked state
+							// if animation is still running in double click, do
+							// nothing and re-set checked state
 							buttonView.setChecked(!isChecked);
 							return;
 						}
-						
+
 						_enabledPeriod.set_enableRadios(isChecked);
-						
+
 						updateCheckBoxEnableRadios(buttonView, isChecked);
 						updateSensorCheckboxes();
 						transition = updateOnOffLayout(isChecked, true);
 						updateNextDayText();
 					}
 				});
-		
+
 		updateCheckBoxEnableRadios(checkBoxActiveEnabled, activeIsEnabled);
-		
-		if (! activeIsEnabled) {
+
+		if (!activeIsEnabled) {
 			updateOnOffLayout(activeIsEnabled, false);
 		}
-		
+
 		updateNextDayText();
-		
+
 		// week days
 		FlowLayout flowlayout = (FlowLayout) _view
 				.findViewById(R.id.flowlayout_weekdays);
@@ -301,12 +308,12 @@ public class SchedulePeriodFragment extends DialogFragment {
 					public void onCheckedChanged(CompoundButton buttonView,
 							boolean isChecked) {
 
-						onToggleWifiInterval((CheckBox)buttonView, isChecked);
+						onToggleWifiInterval((CheckBox) buttonView, isChecked);
 					}
 				});
-		
+
 		updateCheckBoxIntervalConnectWifi(checkBoxIntervalConnectWifi);
-		
+
 		// check box interval connect mob data
 		CheckBox checkBoxIntervalConnectMobData = (CheckBox) _view
 				.findViewById(R.id.checkBoxScheduleIntervalMob);
@@ -317,34 +324,34 @@ public class SchedulePeriodFragment extends DialogFragment {
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView,
 							boolean isChecked) {
-						onToggleMobileDataInterval((CheckBox)buttonView, isChecked);
+						onToggleMobileDataInterval((CheckBox) buttonView,
+								isChecked);
 					}
 				});
-		
+
 		updateCheckBoxIntervalConnectMobData(checkBoxIntervalConnectMobData);
-		
-		
+
 		// check box vibrate when silent
 		CheckBox checkBoxVibrate = (CheckBox) _view
 				.findViewById(R.id.checkBoxVolumeVibrate);
-		checkBoxVibrate.setChecked(_enabledPeriod
-				.is_vibrateWhenSilent());
+		checkBoxVibrate.setChecked(_enabledPeriod.is_vibrateWhenSilent());
 		checkBoxVibrate
 				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView,
 							boolean isChecked) {
-						onToggleVibrateWhenSilent((CheckBox)buttonView, isChecked);
+						onToggleVibrateWhenSilent((CheckBox) buttonView,
+								isChecked);
 					}
 				});
-		
+
 		updateCheckBoxVibrateWhenSilent(checkBoxVibrate);
-		
+
 		AlertDialog dialog = builder.create();
 
 		return dialog;
 	}
-	
+
 	@Override
 	public void onStart() {
 		super.onStart();
@@ -434,30 +441,30 @@ public class SchedulePeriodFragment extends DialogFragment {
 
 	public void onToggleMobileData(View v) {
 
-		// to avoid the scroll view from jumping back up 
+		// to avoid the scroll view from jumping back up
 		v.requestFocusFromTouch();
-		
+
 		boolean isChecked = ((CheckBox) v).isChecked();
 
 		_enabledPeriod.set_mobileData(isChecked);
 
 		updateCheckboxAppearance((CheckBox) v, R.drawable.ic_action_mobile_data);
-		
+
 		Dialog dialog = getDialog();
-		
+
 		if (dialog != null) {
 			CheckBox checkBoxIntervalConnectMob = (CheckBox) dialog
 					.findViewById(R.id.checkBoxScheduleIntervalMob);
-			
+
 			updateCheckBoxIntervalConnectMobData(checkBoxIntervalConnectMob);
 		}
 	}
-	
+
 	private void onToggleWifi(View v) {
 
-		// to avoid the scroll view from jumping back up 
+		// to avoid the scroll view from jumping back up
 		v.requestFocusFromTouch();
-		
+
 		boolean isChecked = ((CheckBox) v).isChecked();
 
 		_enabledPeriod.set_wifi(isChecked);
@@ -473,15 +480,14 @@ public class SchedulePeriodFragment extends DialogFragment {
 			updateCheckBoxIntervalConnectWifi(checkBoxIntervalConnectWifi);
 		}
 	}
-	
-	private void onToggleMobileDataInterval(
-			CheckBox checkBox, boolean isChecked) {
-		
-		// to avoid the scroll view from jumping back up 
+
+	private void onToggleMobileDataInterval(CheckBox checkBox, boolean isChecked) {
+
+		// to avoid the scroll view from jumping back up
 		checkBox.requestFocusFromTouch();
-		
-		if (!_enabledPeriod.is_mobileData() ||
-				!_enabledPeriod.is_enableRadios()) {
+
+		if (!_enabledPeriod.is_mobileData()
+				|| !_enabledPeriod.is_enableRadios()) {
 			// disabled, ignore
 			makeIntervalConnectNotSupportedToast();
 			checkBox.setChecked(false);
@@ -489,18 +495,16 @@ public class SchedulePeriodFragment extends DialogFragment {
 		} else {
 			_enabledPeriod.set_intervalConnectMobData(isChecked);
 		}
-		
+
 		updateCheckBoxIntervalConnectMobData(checkBox);
 	}
-	
-	private void onToggleWifiInterval(
-			CheckBox checkBox, boolean isChecked) {
-		
-		// to avoid the scroll view from jumping back up 
+
+	private void onToggleWifiInterval(CheckBox checkBox, boolean isChecked) {
+
+		// to avoid the scroll view from jumping back up
 		checkBox.requestFocusFromTouch();
-		
-		if (!_enabledPeriod.is_wifi() ||
-				!_enabledPeriod.is_enableRadios()) {
+
+		if (!_enabledPeriod.is_wifi() || !_enabledPeriod.is_enableRadios()) {
 			// disabled, ignore
 			makeIntervalConnectNotSupportedToast();
 			checkBox.setChecked(false);
@@ -508,53 +512,50 @@ public class SchedulePeriodFragment extends DialogFragment {
 		} else {
 			_enabledPeriod.set_intervalConnectWifi(isChecked);
 		}
-		
+
 		updateCheckBoxIntervalConnectWifi(checkBox);
 	}
-	
-	private void onToggleVolume(CompoundButton checkBox,
-			boolean isChecked) {
 
-		// to avoid the scroll view from jumping back up 
+	private void onToggleVolume(CompoundButton checkBox, boolean isChecked) {
+
+		// to avoid the scroll view from jumping back up
 		checkBox.requestFocusFromTouch();
-		
+
 		_enabledPeriod.set_volume(isChecked);
 		updateCheckboxAppearance((CheckBox) checkBox,
 				R.drawable.ic_action_volume_up);
-		
+
 		Dialog dialog = getDialog();
-		
+
 		if (dialog != null) {
 			CheckBox checkBoxVibrate = (CheckBox) dialog
 					.findViewById(R.id.checkBoxVolumeVibrate);
-			
+
 			updateCheckBoxVibrateWhenSilent(checkBoxVibrate);
 		}
 	}
-	
-	private void onToggleVibrateWhenSilent(CheckBox checkBox,
-			boolean isChecked) {
-		
-		// to avoid the scroll view from jumping back up 
+
+	private void onToggleVibrateWhenSilent(CheckBox checkBox, boolean isChecked) {
+
+		// to avoid the scroll view from jumping back up
 		checkBox.requestFocusFromTouch();
-		
+
 		if (!_enabledPeriod.is_volume()) {
 			checkBox.setChecked(false);
 			return;
 		} else {
 			_enabledPeriod.set_vibrateWhenSilent(isChecked);
 		}
-		
+
 		updateCheckBoxVibrateWhenSilent(checkBox);
 	}
 
 	private void updateCheckBoxVibrateWhenSilent(CheckBox checkBox) {
 		boolean checkBoxEnabled = _enabledPeriod.is_volume();
-		
+
 		boolean strikeThrough = false;
-		
-		updateCheckboxAppearance(checkBox,
-				R.drawable.ic_action_vibrate, // TODO
+
+		updateCheckboxAppearance(checkBox, R.drawable.ic_action_vibrate, // TODO
 				checkBoxEnabled, strikeThrough);
 	}
 
@@ -566,17 +567,16 @@ public class SchedulePeriodFragment extends DialogFragment {
 				_enabledPeriod.get_startTimeMillis()) {
 			@Override
 			public void onTimeSetAndDone(int hourOfDay, int minute) {
-				Log.d(TAG, "chosen new start hour: "
-						+ hourOfDay);
+				Log.d(TAG, "chosen new start hour: " + hourOfDay);
 				startTimePicked(hourOfDay, minute);
 			}
 		};
 
 		timePicker.show(fm, "timePickerStart");
 	}
-	
-	private void updateCheckBoxEnableRadios(
-			CompoundButton checkBox, boolean enableRadios) {
+
+	private void updateCheckBoxEnableRadios(CompoundButton checkBox,
+			boolean enableRadios) {
 		// update button appearance
 		int arrowColor, bottomBarColor;
 		if (enableRadios) {
@@ -587,12 +587,11 @@ public class SchedulePeriodFragment extends DialogFragment {
 			bottomBarColor = R.color.on_green;
 		}
 
-		Drawable icon = ViewUtils.getTintedIcon(getActivity(),
-				true, arrowColor, R.drawable.swap_active_on);
+		Drawable icon = ViewUtils.getTintedIcon(getActivity(), true,
+				arrowColor, R.drawable.swap_active_on);
 
-		Drawable underline = ViewUtils.getTintedIcon(
-				getActivity(), true, bottomBarColor,
-				R.drawable.swap_active_underline);
+		Drawable underline = ViewUtils.getTintedIcon(getActivity(), true,
+				bottomBarColor, R.drawable.swap_active_underline);
 
 		Drawable[] layers = new Drawable[2];
 		layers[0] = icon;
@@ -605,23 +604,24 @@ public class SchedulePeriodFragment extends DialogFragment {
 	}
 
 	private void updateCheckBoxIntervalConnectMobData(CheckBox checkBox) {
-		
+
 		updateCheckBoxIntervalConnect(checkBox, _enabledPeriod.is_mobileData());
 	}
-	
+
 	private void updateCheckBoxIntervalConnectWifi(CheckBox checkBox) {
-		
+
 		updateCheckBoxIntervalConnect(checkBox, _enabledPeriod.is_wifi());
 	}
-	
-	private void updateCheckBoxIntervalConnect(CheckBox checkBox, boolean intervalConnectActive) {
-		
-		boolean checkBoxEnabled = _enabledPeriod.is_enableRadios() && intervalConnectActive;
-		
+
+	private void updateCheckBoxIntervalConnect(CheckBox checkBox,
+			boolean intervalConnectActive) {
+
+		boolean checkBoxEnabled = _enabledPeriod.is_enableRadios()
+				&& intervalConnectActive;
+
 		boolean strikeThrough = false;
-		
-		updateCheckboxAppearance(checkBox,
-				R.drawable.ic_action_interval,
+
+		updateCheckboxAppearance(checkBox, R.drawable.ic_action_interval,
 				checkBoxEnabled, strikeThrough);
 	}
 
@@ -674,21 +674,21 @@ public class SchedulePeriodFragment extends DialogFragment {
 	}
 
 	private void makeIntervalConnectNotSupportedToast() {
-		
+
 		Context context = getActivity();
-		
+
 		if (context == null) {
 			// it's not worth it
 			return;
 		}
-		
-		Toast.makeText(context, R.string.interval_connect_disabling_period, Toast.LENGTH_LONG).show();
+
+		Toast.makeText(context, R.string.interval_connect_disabling_period,
+				Toast.LENGTH_LONG).show();
 	}
 
 	private void startTimePicked(int hourOfDay, int minute) {
 
-		Log.d(TAG, "Picked start time " + hourOfDay + ":"
-				+ minute);
+		Log.d(TAG, "Picked start time " + hourOfDay + ":" + minute);
 
 		long nextStartTimeInMillis = DateTimeUtils.getNextTimeIn24hInMillis(
 				hourOfDay, minute);
@@ -700,15 +700,13 @@ public class SchedulePeriodFragment extends DialogFragment {
 		updateNextDayText();
 	}
 
-
 	private void updateSensorCheckboxes() {
 		boolean activeIsEnabled = _enabledPeriod.is_enableRadios();
 
 		CheckBox wifi = (CheckBox) _view.findViewById(R.id.checkBoxWifi);
 		updateCheckboxAppearance(wifi, R.drawable.ic_action_wifi);
 
-		CheckBox mob = (CheckBox) _view
-				.findViewById(R.id.checkBoxMobileData);
+		CheckBox mob = (CheckBox) _view.findViewById(R.id.checkBoxMobileData);
 		updateCheckboxAppearance(mob, R.drawable.ic_action_mobile_data);
 
 		CheckBox bt = (CheckBox) _view.findViewById(R.id.checkBoxBluetooth);
@@ -746,8 +744,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 
 	private void endTimePicked(int hourOfDay, int minute) {
 
-		Log.d(TAG, "Picked end time " + hourOfDay + ":"
-				+ minute);
+		Log.d(TAG, "Picked end time " + hourOfDay + ":" + minute);
 
 		long nextEndTimeInMillis = DateTimeUtils.getNextTimeIn24hInMillis(
 				hourOfDay, minute);
@@ -784,16 +781,18 @@ public class SchedulePeriodFragment extends DialogFragment {
 	}
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	private LayoutTransition updateOnOffLayout(boolean enableRadios, boolean animate) {
-		RelativeLayout layout = (RelativeLayout) _view.findViewById(R.id.layout_on_off);
-		
+	private LayoutTransition updateOnOffLayout(boolean enableRadios,
+			boolean animate) {
+		RelativeLayout layout = (RelativeLayout) _view
+				.findViewById(R.id.layout_on_off);
+
 		LayoutTransition transition = null;
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH
 				&& animate) {
 			transition = new LayoutTransition();
 			layout.setLayoutTransition(transition);
 		}
-		
+
 		int upperLineId, lowerLineId;
 		if (!enableRadios) {
 			upperLineId = R.id.layout_time_start;
@@ -802,32 +801,32 @@ public class SchedulePeriodFragment extends DialogFragment {
 			upperLineId = R.id.layout_time_stop;
 			lowerLineId = R.id.layout_time_start;
 		}
-		
+
 		LinearLayout upperLine = (LinearLayout) _view.findViewById(upperLineId);
 		LinearLayout lowerLine = (LinearLayout) _view.findViewById(lowerLineId);
-		
+
 		layout.removeView(upperLine);
-		
+
 		lowerLine.setLayoutParams(new RelativeLayout.LayoutParams(
 				ViewGroup.LayoutParams.WRAP_CONTENT,
-		        ViewGroup.LayoutParams.WRAP_CONTENT));
+				ViewGroup.LayoutParams.WRAP_CONTENT));
 
 		RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(
 				ViewGroup.LayoutParams.WRAP_CONTENT,
-		        ViewGroup.LayoutParams.WRAP_CONTENT);
-		
+				ViewGroup.LayoutParams.WRAP_CONTENT);
+
 		// add below the (originally) lower line
 		p.addRule(RelativeLayout.BELOW, lowerLineId);
 
 		layout.addView(upperLine, p);
-		
+
 		return transition;
 	}
-	
+
 	private void updateNextDayText() {
-			
+
 		int upperLineId, lowerLineId;
-		
+
 		if (_enabledPeriod.is_enableRadios()) {
 			upperLineId = R.id.layout_time_start;
 			lowerLineId = R.id.layout_time_stop;
@@ -835,15 +834,16 @@ public class SchedulePeriodFragment extends DialogFragment {
 			upperLineId = R.id.layout_time_stop;
 			lowerLineId = R.id.layout_time_start;
 		}
-		
+
 		LinearLayout upperLine = (LinearLayout) _view.findViewById(upperLineId);
 		LinearLayout lowerLine = (LinearLayout) _view.findViewById(lowerLineId);
-		
-		TextView nextDayText = (TextView)upperLine.getChildAt(TEXT_VIEW_INDEX_NEXTDAY);
+
+		TextView nextDayText = (TextView) upperLine
+				.getChildAt(TEXT_VIEW_INDEX_NEXTDAY);
 		nextDayText.setText("");
-		
+
 		nextDayText = (TextView) lowerLine.getChildAt(TEXT_VIEW_INDEX_NEXTDAY);
-		
+
 		if (_enabledPeriod.deactivationOnNextDay()) {
 			nextDayText.setText(getActivity().getString(R.string.next_day));
 		} else {
