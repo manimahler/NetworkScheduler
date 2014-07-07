@@ -97,7 +97,12 @@ public class PersistenceUtils {
 		// initialize defaults, in case the prefs screen was never opened
 		PreferenceManager.setDefaultValues(context, R.xml.preferences, false);
 
-		return new SchedulerSettings(sharedPrefs);
+		SchedulerSettings result = new SchedulerSettings(sharedPrefs);
+		
+		// static cache in user log
+		UserLog.set_loggingEnabled(result.is_loggingEnabled(), context);
+		
+		return result;
 	}
 
 	public static ArrayList<ScheduledPeriod> readFromPreferences(

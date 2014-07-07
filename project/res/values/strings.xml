@@ -67,6 +67,7 @@
     
     <string name="settings_title_interval_connect">Interval Connection</string>
     <string name="settings_title_notifications">Switch-Off Notification</string>
+    <string name="settings_title_logging">Logging</string>
     
     <string name="pref_title_warn_switchoff">Switch-off warning</string>
     <string name="pref_summary_warn_switchoff">Show a notification before deactivating connections when the screen is on</string>
@@ -103,5 +104,21 @@
     <string name="pref_title_connect_duration">Connection duration: %s min</string>
     <string name="pref_summary_connect_duration">Connect for %s minute(s) to fetch messages</string>
     <string name="pref_dialog_title_connect_duration">Duration (min)</string>
+
+    
+    <string name="pref_key_logging_enable">pref_key_logging_enable</string>
+    <string name="pref_title_logging_enable">Enable logging</string>
+    <string name="pref_summary_logging_enable">Write all actions to a log file</string>
+    
+    <string name="pref_key_logging_show">pref_key_logging_show</string>
+    <string name="pref_title_logging_show">Show log</string>
+    <string name="pref_summary_logging_show">Open the log file with the text editor of your choice</string>
+    
+    <string name="pref_key_logging_delete">pref_key_logging_delete</string>
+    <string name="pref_title_logging_delete">Delete log</string>
+    <string name="pref_summary_logging_delete">Delete the log file (%sKB)</string>
+    
+    <string name="log_file_deleted">Log file deleted</string>
+    
     
 </resources>

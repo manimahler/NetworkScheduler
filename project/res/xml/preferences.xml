@@ -53,5 +53,21 @@
         android:key="pref_key_notify_no_switchoff_unlocked"
         android:summary="@string/pref_summary_no_switchoff_unlocked"
         android:title="@string/pref_title_no_switchoff_unlocked" />
+    
+    <PreferenceCategory android:title="@string/settings_title_logging" />
+    
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="pref_key_logging_enable"
+        android:summary="@string/pref_summary_logging_enable"
+        android:title="@string/pref_title_logging_enable" />
+        
+    <Preference android:key="pref_key_logging_show"
+        android:title="@string/pref_title_logging_show"
+        android:summary="@string/pref_summary_logging_show"/>
+    
+    <Preference android:key="pref_key_logging_delete"
+        android:title="@string/pref_title_logging_delete"
+        android:summary="@string/pref_summary_logging_delete"/>
 
 </PreferenceScreen>

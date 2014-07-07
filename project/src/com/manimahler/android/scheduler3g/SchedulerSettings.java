@@ -18,6 +18,8 @@ public class SchedulerSettings {
 	private static final String CONNECT_INTERVAL = "pref_key_connect_interval";
 	private static final String CONNECT_DURATION = "pref_key_connect_duration";
 	
+	private static final String LOGGING_ON = "pref_key_logging_enable";
+	
 	private static final String GLOBAL_ON = "pref_key_global_on";
 	
 	private boolean _globalOn;
@@ -40,6 +42,8 @@ public class SchedulerSettings {
 	private int _connectInterval;
 	private int _connectDuration;
 	
+	private boolean _loggingEnabled;
+	
 	public SchedulerSettings(SharedPreferences preferences)
 	{
 		_globalOn = preferences.getBoolean(GLOBAL_ON, true);
@@ -61,6 +65,8 @@ public class SchedulerSettings {
 		_connectDuration = tryReadIntLarger0(preferences, CONNECT_DURATION, 1);
 		
 		_keepWifiConnected = preferences.getBoolean(INTERVAL_CONNECT_WIFI_KEEP, false);
+		
+		_loggingEnabled = preferences.getBoolean(LOGGING_ON, false);
 	}
 	
 	private int tryReadIntLarger0(SharedPreferences preferences, String name, int defValue) {
@@ -191,5 +197,13 @@ public class SchedulerSettings {
 
 	public void set_connectDuration(int _connectDuration) {
 		this._connectDuration = _connectDuration;
+	}
+
+	public boolean is_loggingEnabled() {
+		return _loggingEnabled;
+	}
+
+	public void set_loggingEnabled(boolean _loggingEnabled) {
+		this._loggingEnabled = _loggingEnabled;
 	}
 }
