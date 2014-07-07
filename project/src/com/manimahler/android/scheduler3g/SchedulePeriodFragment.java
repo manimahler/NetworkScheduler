@@ -489,8 +489,12 @@ public class SchedulePeriodFragment extends DialogFragment {
 		if (!_enabledPeriod.is_mobileData()
 				|| !_enabledPeriod.is_enableRadios()) {
 			// disabled, ignore
-			makeIntervalConnectNotSupportedToast();
+			
 			checkBox.setChecked(false);
+			
+			if (!_enabledPeriod.is_enableRadios()) {
+				makeIntervalConnectNotSupportedToast();
+			}
 			return;
 		} else {
 			_enabledPeriod.set_intervalConnectMobData(isChecked);
@@ -506,8 +510,12 @@ public class SchedulePeriodFragment extends DialogFragment {
 
 		if (!_enabledPeriod.is_wifi() || !_enabledPeriod.is_enableRadios()) {
 			// disabled, ignore
-			makeIntervalConnectNotSupportedToast();
+			
 			checkBox.setChecked(false);
+			
+			if (!_enabledPeriod.is_enableRadios()) {
+				makeIntervalConnectNotSupportedToast();
+			}
 			return;
 		} else {
 			_enabledPeriod.set_intervalConnectWifi(isChecked);
