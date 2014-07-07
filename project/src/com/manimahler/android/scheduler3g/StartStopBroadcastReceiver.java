@@ -24,8 +24,8 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 			long stopTime = bundle.getLong("StopAt", 0);
 
 			// TODO: magic number for default
-			int periodId = bundle.getInt(NetworkScheduler.INTENT_EXTRA_PERIOD_ID,
-					-2);
+			int periodId = bundle.getInt(
+					NetworkScheduler.INTENT_EXTRA_PERIOD_ID, -2);
 
 			// cancel existing notifications
 			NotificationManager notificationManager = (NotificationManager) context
@@ -39,6 +39,9 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 
 			Log.d(TAG, "Received broadcast action " + action
 					+ " for period id " + periodId);
+
+			UserLog.log(context, String.format("Action %s for period id %s",
+					action, periodId));
 
 			SchedulerSettings settings = PersistenceUtils.readSettings(context);
 
@@ -54,7 +57,7 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 			} else {
 
 				boolean on;
-				
+
 				if (action.equals(NetworkScheduler.ACTION_START)) {
 					on = true;
 				} else if (action.equals(NetworkScheduler.ACTION_STOP)) {
@@ -72,13 +75,17 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 					// assuming deleted -> no action, no re-scheduling
 					Log.w(TAG,
 							"Scheduled period not found, assuming deleted. No action.");
+					UserLog.log(context,
+							"Scheduled time period not found any more. Was it deleted?");
 					return;
 				}
 
 				// re-start 'repeating' alarm (not using repeating because it
 				// has become inexact on kitkat)
-				// TODO: on gingerbread, sometimes the current time is not after the stop time!
-				// -> alarm is re-set for right now and appears to be received twice!
+				// TODO: on gingerbread, sometimes the current time is not after
+				// the stop time!
+				// -> alarm is re-set for right now and appears to be received
+				// twice!
 				if (on) {
 					scheduler.setNextAlarmStart(context, period, settings);
 				} else {
@@ -86,9 +93,12 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 				}
 
 				if (!period.appliesToday(on)) {
-					Log.i(TAG, "Scheduled action " + action
-							+ " for scheduled period " + period.toString()
-							+ " does not apply today ");
+					String actionText = "Scheduled action " + action
+							+ " for scheduled period "
+							+ period.toString(context)
+							+ " does not apply today ";
+					Log.i(TAG, actionText);
+					UserLog.log(context, actionText);
 					return;
 				}
 
@@ -97,13 +107,14 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 					scheduler.stopApproved(context, period, settings);
 				} else {
 					boolean manualActivation = false;
-					scheduler
-							.start(period, context, settings, manualActivation);
+					scheduler.start(period, context, settings, manualActivation);
 				}
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+
+			UserLog.log(context, "Error starting / stopping radio/volume.", e);
 
 			Toast.makeText(context, "Error changing 3g setting",
 					Toast.LENGTH_SHORT).show();

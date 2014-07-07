@@ -45,12 +45,15 @@ public class ConnectionUtils {
 
 		if (enable) {
 			Log.d(TAG, "Setting ringer mode to normal");
+			UserLog.log(context, "Setting ringer mode to normal");
 			audiomanager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
 		} else if (vibrateWhenSilent) {
 			Log.d(TAG, "Setting ringer mode to vibrate");
+			UserLog.log(context, "Setting ringer mode to vibrate");
 			audiomanager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
 		} else {
 			Log.d(TAG, "Setting ringer mode to silent");
+			UserLog.log(context, "Setting ringer mode to silent");
 			audiomanager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
 		}
 	}
@@ -164,12 +167,15 @@ public class ConnectionUtils {
 		Log.d(TAG, "Current Wi-Fi state is " + wifiState);
 
 		if (enable && !wifiManager.isWifiEnabled()) {
+			UserLog.log(context, "Enabling Wi-Fi");
 			wifiManager.setWifiEnabled(enable);
 		}
-
+		
 		if (!enable && wifiManager.isWifiEnabled()) {
+			UserLog.log(context, "Disabling Wi-Fi");
 			wifiManager.setWifiEnabled(enable);
 		}
+		
 
 		// This entire carefulness did not really resolve the KITKAT bug and
 		// produced
@@ -236,8 +242,10 @@ public class ConnectionUtils {
 
 				if (enable) {
 					Log.d(TAG, "Bluetooth already enabled");
+					UserLog.log(context, "Bluetooth already enabled");
 				} else {
 					Log.d(TAG, "Switching BT ON status to " + enable);
+					UserLog.log(context, "Disabling Bluetooth");
 					adapter.disable();
 				}
 
@@ -245,9 +253,11 @@ public class ConnectionUtils {
 
 				if (enable) {
 					Log.d(TAG, "Switching BT ON status to " + enable);
+					UserLog.log(context, "Enabling Bluetooth");
 					adapter.enable();
 				} else {
 					Log.d(TAG, "Bluetooth already disabled");
+					UserLog.log(context, "Bluetooth already disabled");
 				}
 			} else {
 				// State.INTERMEDIATE_STATE;
@@ -277,6 +287,14 @@ public class ConnectionUtils {
 		Log.d(TAG, "Switching mobile data ON status to " + enable);
 
 		setMobileDataEnabledMethod.setAccessible(true);
+		
+		if (enable) {
+			UserLog.log(context, "Enabling Mobile Data");
+		}
+		else {
+			UserLog.log(context, "Disabling Mobile Data");
+		}
+		
 		setMobileDataEnabledMethod.invoke(iConnectivityManager, enable);
 	}
 }

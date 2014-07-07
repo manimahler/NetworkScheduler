@@ -12,7 +12,7 @@ public class AutostartNotifyReceiver extends BroadcastReceiver {
 
 	private static final String TAG = AutostartNotifyReceiver.class
 			.getSimpleName();
-	
+
 	private final String BOOT_COMPLETED_ACTION = "android.intent.action.BOOT_COMPLETED";
 
 	@Override
@@ -23,17 +23,27 @@ public class AutostartNotifyReceiver extends BroadcastReceiver {
 
 				RestartAlarmAfterBoot(context);
 
-				Log.i(TAG, "All time periods were re-scheduled after device was booted");
+				Log.i(TAG,
+						"All time periods were re-scheduled after device was booted");
+
+				UserLog.log(context,
+						"Device was booted - time periods re-scheduled");
 			}
 		} catch (Exception e) {
-			Log.e(TAG, "Error starting Network Scheduler after device was booted", e);
+			Log.e(TAG,
+					"Error starting Network Scheduler after device was booted",
+					e);
+
+			UserLog.log(context,
+					"Error re-scheduling time periods after re-boot.", e);
 		}
 	}
 
 	public void RestartAlarmAfterBoot(Context context) {
 		NetworkScheduler networkScheduler = new NetworkScheduler();
 
-		SharedPreferences prefs = PersistenceUtils.getSchedulesPreferences(context);
+		SharedPreferences prefs = PersistenceUtils
+				.getSchedulesPreferences(context);
 
 		ArrayList<ScheduledPeriod> enabledPeriods = PersistenceUtils
 				.readFromPreferences(prefs);

@@ -31,7 +31,9 @@ public class DelayStopBroadcastReceiver extends BroadcastReceiver {
 			Toast.makeText(context,
 					context.getString(R.string.switch_off_skipped_today),
 					Toast.LENGTH_LONG).show();
+			UserLog.log(context, "Switch-off was skipped");
 			// do nothing
+			
 			return;
 		}
 
@@ -39,8 +41,11 @@ public class DelayStopBroadcastReceiver extends BroadcastReceiver {
 			try {
 				scheduler.stop(periodId, context);
 				showSwitchOffToast(context);
+				UserLog.log(context, "Switch-off initiated from notification");
 			} catch (Exception e) {
-				Log.e(TAG, "Error delaying switch off", e);
+				Log.e(TAG, "Error deactivating connection", e);
+				UserLog.log(context, "Error deactivating connection from notification", e);
+				
 				Toast.makeText(context,
 						"Error deactivating network connection",
 						Toast.LENGTH_LONG).show();
@@ -59,8 +64,11 @@ public class DelayStopBroadcastReceiver extends BroadcastReceiver {
 						periodId);
 
 				showDelayToast(context, delayInSec);
+				UserLog.log(context, "Switch-off delayed by " + settings.get_delay() + "min");
+				
 			} catch (Exception e) {
 				Log.e(TAG, "Error delaying switch off", e);
+				UserLog.log(context, "Error delaying switch off", e);
 			}
 		} else {
 			Log.e(TAG, "Unknown action");
