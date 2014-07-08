@@ -6,11 +6,11 @@
     
     <string name="start_text">ein</string>
     <string name="next_day">Folgetag</string>
-    <string name="interval_text">Interval Connection</string>
+    <string name="interval_text">Intervall-Verbindung</string>
     <string name="interval_connection_help_content_desc">Hilfe Anzeigen für Interval Connection</string>
     <string name="explain_interval_connection_title">Intervall-Verbindung</string>
     <string name="explain_interval_connection_intro">Diese Option reduziert den Akkuverbrauch und die Datennutzung</string>
-    <string name="explain_interval_connection_text">Intervall-Verbindung schaltet die %1$s Verbindung aus, wenn das Gerät nicht verwendet wird und verbindet wieder alle %2$s Min. für %3$s Min. um neue Nachrichten abzurufen (Intervall und Verbindungsdauer können in den Einstellungen geändert werden). Die Verbindung wird auch hergestellt, wenn das Gerät entriegelt wird.</string>
+    <string name="explain_interval_connection_text">Die Option Intervall-Verbindung schaltet die %1$s Verbindung aus, wenn das Gerät nicht verwendet wird und verbindet erneut alle %2$s Min. für %3$s Min. um neue Nachrichten abzurufen (Intervall und Verbindungsdauer können in den Einstellungen geändert werden). Die Verbindung wird auch hergestellt, wenn das Gerät entriegelt wird.</string>
     <string name="close_dialog">Schließen</string>
     <string name="stop_text">aus</string>
     <string name="volume_with_vibrate">Vibrieren wenn lautlos</string>
@@ -24,7 +24,7 @@
     <string name="activate_now_off">Jetzt aktivieren (Ausschalten)</string>
     <string name="deactivate_now_on">Jetzt deaktivieren (Einschalten)</string>
     <string name="skip_next_occurrence">Nächste Periode überspringen</string>
-    <string name="is_period_enabled">Aktiviert</string>
+    <string name="is_period_enabled">Periode aktiv</string>
     <string name="context_menu_interval_wifi">WLAN Intervall-Verbindung</string>
     <string name="context_menu_interval_mob">Mobile Daten Intervall-Verbindung</string>
     <string name="delete">Löschen</string>
@@ -73,7 +73,7 @@
     <string name="pref_title_warn_sound">Ton</string>
     <string name="pref_summary_warn_sound">Standardton für Benachrichtigungen wiedergeben, damit die Abschalt-Warnung nicht verpasst wird</string>
     
-    <string name="pref_title_delay_min">Abschalten aufschieben: %s min</string>
+    <string name="pref_title_delay_min">Abschalten aufschieben: %s Min.</string>
     <string name="pref_summary_delay_min">Abschaltung kann in der Abschalt-Benachrichtigung um %s Minuten aufgeschoben werden</string>
     <string name="pref_dialog_title_delay_min">Aufschub (Minuten)</string>
     
@@ -83,12 +83,12 @@
     <string name="pref_title_interval_connect_wifi_keep_connected">WLAN bleibt verbunden</string>
     <string name="pref_summary_interval_connect_wifi_keep_connected">Intervall-Verbindung schaltet WLAN nicht aus, wenn mit Hotspot verbunden (z.B. zu Hause)</string>
 
-    <string name="pref_title_connect_interval">Verbindungs-Intervall: %s min</string>
+    <string name="pref_title_connect_interval">Verbindungs-Intervall: %s Min.</string>
     <string name="pref_summary_connect_interval">Alle %s Minuten für kurze Zeit (s. unten) verbinden</string>
     <string name="pref_dialog_title_connect_interval">Intervall (Min.)</string>
 
     <string name="pref_title_connect_duration">Verbindungszeit: %s Min.</string>
-    <string name="pref_summary_connect_duration">Für %s Minute(n) Verbinden, um neue Nachrichten abzurufen</string>
+    <string name="pref_summary_connect_duration">Für %s Minute(n) verbinden, um neue Nachrichten abzurufen</string>
     <string name="pref_dialog_title_connect_duration">Zeitdauer (Min.)</string>
     
     <string name="pref_title_logging_enable">Logging einschalten</string>
