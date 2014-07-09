@@ -265,10 +265,12 @@ public class MainActivity extends FragmentActivity implements
 			showPeriodDetails(selectedPeriod);
 			return true;
 		case R.id.activate_now:
+			UserLog.log(this, "Manual activation for period " + selectedPeriod);
 			toggleActivation(selectedPeriod, true);
 			_adapter.notifyDataSetChanged();
 			return true;
 		case R.id.deactivate_now:
+			UserLog.log(this, "Manual deactivation for period " + selectedPeriod);
 			toggleActivation(selectedPeriod, false);
 			_adapter.notifyDataSetChanged();
 			return true;
@@ -282,6 +284,8 @@ public class MainActivity extends FragmentActivity implements
 			} else {
 				msg = getResources().getString(R.string.unskipped_period);
 			}
+			
+			UserLog.log(this, msg + " Period: " + selectedPeriod);
 			Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 
 			return true;
@@ -290,14 +294,13 @@ public class MainActivity extends FragmentActivity implements
 			
 			if (! selectedPeriod.is_schedulingEnabled())
 			{
+				UserLog.log(this, "Disabling period " + selectedPeriod);
 				selectedPeriod.set_active(false);
 			}
 			
 			saveSettings();
 			_adapter.notifyDataSetChanged();
 			
-			//onPeriodUpdated(selectedPeriod);
-
 			return true;
 		case R.integer.context_menu_id_interval_wifi:
 			toggleCurrentIntervalWifi(selectedPeriod);
@@ -310,6 +313,7 @@ public class MainActivity extends FragmentActivity implements
 						R.string.unoverridden_wifi_interval);
 			}
 
+			UserLog.log(this, msg + " Period: " + selectedPeriod);
 			Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 
 			return true;
@@ -323,6 +327,8 @@ public class MainActivity extends FragmentActivity implements
 				msg = getResources().getString(
 						R.string.unoverridden_mob_interval);
 			}
+			
+			UserLog.log(this, msg + " Period: " + selectedPeriod);
 			Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 
 			return true;

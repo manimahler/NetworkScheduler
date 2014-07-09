@@ -413,6 +413,9 @@ public class NetworkScheduler {
 			cancelIntervalConnect(context);
 			return;
 		}
+		
+		UserLog.log(TAG, context,
+				"Interval switch-on - Wi-Fi: " + intervalWifi + " - Mobile Data: " + intervalMobData);
 
 		Log.d(TAG, "intervalSwitchOn: Interval connect is ON.");
 		int connectTimeSec = 60 * settings.get_connectDuration();
@@ -446,8 +449,8 @@ public class NetworkScheduler {
 		boolean isDeviceLocked = kgMgr.inKeyguardRestrictedInputMode();
 
 		if (isScreenOn(context) && !isDeviceLocked) {
-			Log.d(TAG,
-					"intervalSwitchOff: Screen is ON and device is unlocked, not switching off...");
+			UserLog.log(TAG, context,
+					"Interval switch-off skipped (screen is ON and device is unlocked)");
 
 			scheduleIntervalSwitchOff(context, reTestIntervalSec, bundle);
 			return;
@@ -458,9 +461,9 @@ public class NetworkScheduler {
 			// back on
 			// NO user_present broadcast is received! Therefore only switch off
 			// if locked.
-			Log.d(TAG,
-					"intervalSwitchOff: Keyguard is not locked, not switching off...");
-
+			UserLog.log(TAG, context,
+					"Interval switch-off skipped (keyguard is not yet locked)");
+			
 			scheduleIntervalSwitchOff(context, reTestIntervalSec, bundle);
 			return;
 		}
@@ -481,8 +484,8 @@ public class NetworkScheduler {
 		if (intervalWifi) {
 			if (settings.is_keepWifiConnected()
 					&& ConnectionUtils.isWifiConnected(context)) {
-				Log.d(TAG,
-						"intervalSwitchOff: WIFI is connected, not switching off...");
+				UserLog.log(TAG, context,
+						"Interval switch-off skipped for Wi-Fi (due to option 'Keep Wi-Fi connected')");
 			} else {
 				ConnectionUtils.toggleWifi(context, false);
 			}

@@ -67,6 +67,8 @@ public class UserPresentBroadCastReceiver extends BroadcastReceiver {
 			}
 		}
 
+		UserLog.log(context, "Device unlocked - enabling Wi-Fi: " + wifiOn + " - enabling mobile data: " + mobDataOn);
+		
 		if (wifiOn) {
 			ConnectionUtils.toggleWifi(context, true);
 

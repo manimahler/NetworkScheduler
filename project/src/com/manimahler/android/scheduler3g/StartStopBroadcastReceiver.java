@@ -40,8 +40,10 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 			Log.d(TAG, "Received broadcast action " + action
 					+ " for period id " + periodId);
 
-			UserLog.log(context, String.format("Action %s for period id %s",
-					action, periodId));
+			if (periodId >= 0) {
+				UserLog.log(context, String.format(
+						"Action %s for period id %s", action, periodId));
+			}
 
 			SchedulerSettings settings = PersistenceUtils.readSettings(context);
 
@@ -107,7 +109,8 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 					scheduler.stopApproved(context, period, settings);
 				} else {
 					boolean manualActivation = false;
-					scheduler.start(period, context, settings, manualActivation);
+					scheduler
+							.start(period, context, settings, manualActivation);
 				}
 			}
 		} catch (Exception e) {

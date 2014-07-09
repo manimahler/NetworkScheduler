@@ -601,6 +601,17 @@ public class ScheduledPeriod {
 		}
 
 	}
+	
+	public String toString() {
+		String name;
+		if (_name == null) {
+			name = "<no name>";
+		} else {
+			name = _name;
+		}
+		
+		return name + " - ID: " + _id;
+	}
 
 	private Calendar getPreviousActivation(long beforeTimeMillis) {
 		Calendar lastActivation;

@@ -26,7 +26,15 @@ public class UserLog {
 	}
 	
 	public static void log(Context context, String text) {
+		log(null, context, text);
+	}
+	
+	public static void log(String tag, Context context, String text) {
 
+		if (tag != null) {
+			Log.d(tag, text);
+		}
+		
 		if (! _loggingEnabled) {
 			return;
 		}
