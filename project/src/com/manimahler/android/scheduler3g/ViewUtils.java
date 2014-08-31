@@ -1,5 +1,6 @@
 package com.manimahler.android.scheduler3g;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
@@ -28,7 +29,7 @@ public class ViewUtils {
 				}
 
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-					child.setAlpha(alpha);
+					setAlpha(child, alpha);
 				}
 				
 				if (includeClickable) {
@@ -38,7 +39,7 @@ public class ViewUtils {
 			}
 		}
 	}
-
+	
 	public static Drawable getTintedIcon(Context context, boolean tint,
 			int colorResId, int iconResId) {
 		int tintColor = context.getResources().getColor(colorResId);
@@ -55,5 +56,10 @@ public class ViewUtils {
 		}
 
 		return icon;
+	}
+	
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private static void setAlpha(View view, float alpha) {
+		view.setAlpha(alpha);
 	}
 }
