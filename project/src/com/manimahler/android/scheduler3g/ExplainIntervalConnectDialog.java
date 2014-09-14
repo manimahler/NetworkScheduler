@@ -59,12 +59,16 @@ public class ExplainIntervalConnectDialog extends DialogFragment {
 
 		LayoutInflater inflator = getActivity().getLayoutInflater();
 		View view = inflator.inflate(R.layout.alert_dialog, null);
-
+		
+		TextView introView = (TextView) view.findViewById(R.id.intro);
 		TextView messageView = (TextView) view.findViewById(R.id.message);
-
+		
+		String explainIntroFormat = getActivity().getResources().getString(
+				R.string.explain_interval_connection_intro);
+		introView.setText(String.format(explainIntroFormat, _radio));
+		
 		String explainTextFormat = getActivity().getResources().getString(
 				R.string.explain_interval_connection_text);
-
 		messageView.setText(String.format(explainTextFormat, _radio,
 				_connectInterval, _connectDuration));
 
