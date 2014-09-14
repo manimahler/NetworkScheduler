@@ -443,27 +443,23 @@ public class NetworkScheduler {
 		// locked:
 		int reTestIntervalSec = 120;
 
-		KeyguardManager kgMgr = (KeyguardManager) context
-				.getSystemService(Context.KEYGUARD_SERVICE);
-
-		boolean isDeviceLocked = kgMgr.inKeyguardRestrictedInputMode();
-
-		if (isScreenOn(context) && !isDeviceLocked) {
+		if (isScreenOn(context)) {
 			UserLog.log(TAG, context,
-					"Interval switch-off skipped (screen is ON and device is unlocked)");
+					"Interval switch-off skipped (screen is ON)");
 
 			scheduleIntervalSwitchOff(context, reTestIntervalSec, bundle);
 			return;
 		}
 
-		if (!isDeviceLocked) {
+		ScreenLockDetector screenLockDetector = new ScreenLockDetector();
+
+		if (!screenLockDetector.isUserAbsent(context)) {
 			// NOTE: if keyguard is not locked and the user switches the screen
-			// back on
-			// NO user_present broadcast is received! Therefore only switch off
-			// if locked.
+			// back on NO user_present broadcast is received! Therefore only
+			// switch off if locked.
 			UserLog.log(TAG, context,
 					"Interval switch-off skipped (keyguard is not yet locked)");
-			
+
 			scheduleIntervalSwitchOff(context, reTestIntervalSec, bundle);
 			return;
 		}
