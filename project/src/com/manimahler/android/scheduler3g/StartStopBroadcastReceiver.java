@@ -114,13 +114,9 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 				}
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 
 			UserLog.log(context, "Error starting / stopping radio/volume.", e);
-
-			Toast.makeText(context, "Error changing 3g setting",
-					Toast.LENGTH_SHORT).show();
 		}
 	}
 
