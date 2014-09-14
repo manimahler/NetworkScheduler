@@ -1,21 +1,32 @@
 package com.manimahler.android.scheduler3g;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.DecimalFormat;
 
+import android.annotation.TargetApi;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceCategory;
+import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.ViewParent;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 // TODO: turn into a PreferenceFragment once gingerbread support is dropped...
@@ -34,7 +45,7 @@ public class SettingsActivity extends PreferenceActivity implements
 			initSummary(getPreferenceScreen().getPreference(i));
 		}
 
-		Preference buttonShowLog = (Preference) findPreference(this
+		Preference buttonShowLog = findPreference(this
 				.getString(R.string.pref_key_logging_show));
 		buttonShowLog
 				.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -45,7 +56,7 @@ public class SettingsActivity extends PreferenceActivity implements
 					}
 				});
 
-		Preference buttonDeleteLog = (Preference) findPreference(this
+		Preference buttonDeleteLog = findPreference(this
 				.getString(R.string.pref_key_logging_delete));
 		buttonDeleteLog
 				.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -56,6 +67,104 @@ public class SettingsActivity extends PreferenceActivity implements
 						return true;
 					}
 				});
+	}
+
+	@Override
+	public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen,
+			Preference preference) {
+		super.onPreferenceTreeClick(preferenceScreen, preference);
+
+		// If the user has clicked on a preference screen, set up the action bar
+		// to have the up-navigation caret visible:
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH
+				&& preference instanceof PreferenceScreen) {
+			initializeSubScreen((PreferenceScreen) preference);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Sets up the action bar for a {@link PreferenceScreen} This enables the
+	 * caret (up-navigation on the preference's sub-screens) Taken from
+	 * http://stackoverflow
+	 * .com/questions/18155036/add-up-button-to-preferencescreen
+	 * */
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private void initializeSubScreen(PreferenceScreen preferenceScreen) {
+
+		Log.d(TAG, "Initializing action bar..");
+		final Dialog dialog = preferenceScreen.getDialog();
+
+		if (dialog != null) {
+
+			final boolean updateUnlockPolicy = preferenceScreen.getKey().equals(this
+					.getString(R.string.pref_key_unlock_policy_preferences));
+			
+			final boolean updateIntervalConnect = preferenceScreen.getKey().equals(this
+					.getString(R.string.pref_key_interval_connect_preferences));
+
+			OnDismissListener dismissListener = new OnDismissListener() {
+				@Override
+				public void onDismiss(DialogInterface dialog) {
+
+					if (updateUnlockPolicy) {
+						setGroupPreferenceSummaryUnlockPolicy();
+					}
+					
+					if (updateIntervalConnect) {
+						setGroupPreferenceSummaryIntervalConnect();
+					}
+				}
+			};
+
+			// first listen to onDismiss to update the summary of the
+			// unlock-policy in the main screen
+			dialog.setOnDismissListener(dismissListener);
+
+			// Inialize the action bar
+			dialog.getActionBar().setDisplayHomeAsUpEnabled(true);
+
+			// Apply custom home button area click listener to close the
+			// PreferenceScreen because PreferenceScreens are dialogs which
+			// swallow
+			// events instead of passing to the activity
+			// Related Issue:
+			// https://code.google.com/p/android/issues/detail?id=4611
+			View homeBtn = dialog.findViewById(android.R.id.home);
+
+			if (homeBtn != null) {
+				OnClickListener dismissDialogClickListener = new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						dialog.dismiss();
+					}
+				};
+
+				// Prepare yourselves for some hacky programming
+				ViewParent homeBtnContainer = homeBtn.getParent();
+
+				// The home button is an ImageView inside a FrameLayout
+				if (homeBtnContainer instanceof FrameLayout) {
+					ViewGroup containerParent = (ViewGroup) homeBtnContainer
+							.getParent();
+
+					if (containerParent instanceof LinearLayout) {
+						// This view also contains the title text, set the whole
+						// view as clickable
+						((LinearLayout) containerParent)
+								.setOnClickListener(dismissDialogClickListener);
+					} else {
+						// Just set it on the home button
+						((FrameLayout) homeBtnContainer)
+								.setOnClickListener(dismissDialogClickListener);
+					}
+				} else {
+					// The 'If all else fails' default case
+					homeBtn.setOnClickListener(dismissDialogClickListener);
+				}
+			}
+		}
 	}
 
 	private void openLogFile(Context context) {
@@ -107,18 +216,37 @@ public class SettingsActivity extends PreferenceActivity implements
 				.unregisterOnSharedPreferenceChangeListener(this);
 	}
 
+	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
 			String key) {
 
-		updatePrefAppearance(findPreference(key));
+		Preference preference = findPreference(key);
+		
+		if (preference == null) {
+			Log.e(TAG, String.format("Preference with key %s does not exist", key));
+			return;
+		}
+		
+		updatePrefAppearance(preference);
+		
+		// if connect interval has changed -> re-schedule alarm:
+		if (preference.getKey().equals(
+				this.getString(R.string.pref_key_connect_interval))) {
+			
+			// if no active interval-connecting period: the alarm will be cancelled on the first switch-on
+			NetworkScheduler scheduler = new NetworkScheduler();
+			scheduler.setupIntervalConnect(this, PersistenceUtils.readSettings(this));
+		}
 	}
 
 	private void initSummary(Preference p) {
-		if (p instanceof PreferenceCategory) {
-			PreferenceCategory pCat = (PreferenceCategory) p;
-			for (int i = 0; i < pCat.getPreferenceCount(); i++) {
-				initSummary(pCat.getPreference(i));
+		if (p instanceof PreferenceGroup) {
+			PreferenceGroup prefGroup = (PreferenceGroup) p;
+			for (int i = 0; i < prefGroup.getPreferenceCount(); i++) {
+				initSummary(prefGroup.getPreference(i));
 			}
+			// the sub-screen could also have a summary:
+			updatePrefAppearance(p);
 		} else {
 			updatePrefAppearance(p);
 		}
@@ -134,6 +262,21 @@ public class SettingsActivity extends PreferenceActivity implements
 		// and the current value does not get inserted! There does not seem to
 		// be a simple solution, so resort to hack:
 
+		if (p.getKey() == null) {
+			return;
+		}
+		
+		if (p.getKey().equals(
+				this.getString(R.string.pref_key_unlock_policy_preferences))) {
+			setGroupPreferenceSummaryUnlockPolicy(p);
+		}
+
+		if (p.getKey().equals(
+				this.getString(R.string.pref_key_interval_connect_preferences))) {
+
+			setGroupPreferenceSummaryIntervalConnect(p);
+		}
+
 		if (p.getKey().equals(
 				this.getString(R.string.pref_key_connect_interval))) {
 			ensurePreferenceLarger0(p);
@@ -144,10 +287,16 @@ public class SettingsActivity extends PreferenceActivity implements
 
 		if (p.getKey().equals(
 				this.getString(R.string.pref_key_connect_duration))) {
-			ensurePreferenceLarger0(p);
+
+			int duration = ensurePreferenceLarger0(p);
 
 			updatePreferenceTitle(p, R.string.pref_title_connect_duration);
-			updatePreferenceSummary(p, R.string.pref_summary_connect_duration);
+			
+			if (duration == 1) {
+				updatePreferenceSummary(p, R.string.pref_summary_connect_duration_singular);  
+			} else {
+				updatePreferenceSummary(p, R.string.pref_summary_connect_duration);
+			}
 		}
 
 		if (p.getKey().equals(this.getString(R.string.pref_key_delay_min))) {
@@ -184,7 +333,20 @@ public class SettingsActivity extends PreferenceActivity implements
 		}
 	}
 
-	private void ensurePreferenceLarger0(Preference p) {
+
+	private int tryParsePositiveInt(String stringValue) {
+
+		int result = -1;
+		try {
+			result = Integer.parseInt(stringValue);
+		} catch (Exception ex) {
+			// caught intentionally, the stored value is no integer
+		}
+
+		return result;
+	}
+
+	private int ensurePreferenceLarger0(Preference p) {
 		EditTextPreference editTextPref = (EditTextPreference) p;
 		String currentText = editTextPref.getText();
 		int currentValue = 0;
@@ -198,6 +360,8 @@ public class SettingsActivity extends PreferenceActivity implements
 			// minimum value:
 			editTextPref.setText("1");
 		}
+		
+		return currentValue;
 	}
 
 	private void updatePreferenceSummary(Preference p, int summaryResId) {
@@ -215,5 +379,74 @@ public class SettingsActivity extends PreferenceActivity implements
 		String titleFormat = this.getString(titleResId);
 
 		p.setTitle(String.format(titleFormat, editTextPref.getText()));
+	}
+
+
+	private void setGroupPreferenceSummaryUnlockPolicy() {
+		Preference prefUnlockGroup = findPreference(this
+				.getString(R.string.pref_key_unlock_policy_preferences));
+		
+		setGroupPreferenceSummaryUnlockPolicy(prefUnlockGroup);
+				
+	}
+
+	private void setGroupPreferenceSummaryUnlockPolicy(Preference unlockGroupPref) {
+		int prefWifiIndex = 1;
+		int prefMobiIndex = 2;
+		Preference wifiPref = ((PreferenceGroup) unlockGroupPref)
+				.getPreference(prefWifiIndex);
+		Preference mobiPref = ((PreferenceGroup) unlockGroupPref)
+				.getPreference(prefMobiIndex);
+	
+		String summaryFormat = "%s: %s";
+		String wifiSummary = String.format(summaryFormat,
+				this.getString(R.string.wifi), wifiPref.getSummary());
+		String mobSummary = String.format(summaryFormat,
+				this.getString(R.string.mobile_data), mobiPref.getSummary());
+	
+		String summary = wifiSummary + "\n" + mobSummary;
+	
+		unlockGroupPref.setSummary(summary);
+	
+		// otherwise the screen is not refreshed!
+		onContentChanged();
+	}
+	
+	
+
+	private void setGroupPreferenceSummaryIntervalConnect(
+			Preference intervalGroupPref) {
+		
+		int prefIdxConnectInterval = 1;
+		int prefIdxConnectDuration = 2;
+		EditTextPreference prefConnectInterval = (EditTextPreference) ((PreferenceGroup) intervalGroupPref)
+				.getPreference(prefIdxConnectInterval);
+		EditTextPreference prefConnectDuration = (EditTextPreference) ((PreferenceGroup) intervalGroupPref)
+				.getPreference(prefIdxConnectDuration);
+	
+		String interval = prefConnectInterval.getText();
+		String duration = prefConnectDuration.getText();
+	
+		String summaryFormat;
+		if (tryParsePositiveInt(duration) == 1) {
+			summaryFormat = this
+					.getString(R.string.pref_summary_intervalconnect_group_singular);
+		} else {
+			summaryFormat = this
+					.getString(R.string.pref_summary_intervalconnect_group);
+	
+		}
+		
+		intervalGroupPref.setSummary(String.format(summaryFormat, interval, duration));
+		
+		onContentChanged();
+	}
+
+	private void setGroupPreferenceSummaryIntervalConnect() {
+		Preference prefUnlockGroup = findPreference(this
+				.getString(R.string.pref_key_interval_connect_preferences));
+		
+		setGroupPreferenceSummaryIntervalConnect(prefUnlockGroup);
+				
 	}
 }

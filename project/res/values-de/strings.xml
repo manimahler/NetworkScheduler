@@ -9,8 +9,11 @@
     <string name="interval_text">Intervall-Verbindung</string>
     <string name="interval_connection_help_content_desc">Hilfe Anzeigen für Interval Connection</string>
     <string name="explain_interval_connection_title">Intervall-Verbindung</string>
-    <string name="explain_interval_connection_intro">Diese Option reduziert den Akkuverbrauch und die Datennutzung</string>
+    <string name="explain_interval_connection_intro">Diese Option reduziert den Akkuverbrauch und die Datennutzung bei aktiver %1$s Verbindung</string>
     <string name="explain_interval_connection_text">Die Option Intervall-Verbindung schaltet die %1$s Verbindung aus, wenn das Gerät nicht verwendet wird und verbindet erneut alle %2$s Min. für %3$s Min. um neue Nachrichten abzurufen (Intervall und Verbindungsdauer können in den Einstellungen geändert werden). Die Verbindung wird auch hergestellt, wenn das Gerät entriegelt wird.</string>
+    <string name="explain_interval_connection_prefs">Intervall-Verbindung reduziert den Akkuverbrauch zusätzlich während aktiver Perioden.\nDie WLAN / Mobile Daten Verbindung wird deaktiviert, wenn der Bildschirm ausgeschaltet ist. In regelmäßigen Intervallen wird kurz verbunden, um neue Nachrichten abzurufen.</string>
+    <string name="explain_unlock_policy_prefs">Konfigurieren Sie, ob die WLAN / Mobile Daten Sensoren automatisch eingeschaltet werden sollen, wenn der Bildschirm eingeschaltet und das Gerät entsperrt wird.</string>
+    
     <string name="close_dialog">Schließen</string>
     <string name="stop_text">aus</string>
     <string name="volume_with_vibrate">Vibrieren wenn lautlos</string>
@@ -64,7 +67,18 @@
     <string name="help">Hilfe</string>
     <string name="help_url">https://sites.google.com/site/networkscheduler/learn-more</string>
     
+    <string name="pref_title_unlock_policy">Aktivieren beim Entsperren</string>
+    <string name="pref_dialog_title_unlock_policy_wifi">WLAN aktivieren</string>
+    <string name="pref_dialog_title_unlock_policy_mob">Mobile Daten aktivieren</string>
+    <string name="unlock_policy_never">Nie</string>
+    <string name="unlock_policy_when_active">Während aktiver Perioden</string>
+    <string name="unlock_policy_always">Immer</string>
+    
+    
     <string name="settings_title_interval_connect">Intervall-Verbindung</string>
+    <string name="pref_summary_intervalconnect_group">Alle %1$s Minuten für %2$s Minuten verbinden (falls in aktiver Periode verwendet)</string>
+    <string name="pref_summary_intervalconnect_group_singular">Alle %1$s Minuten für %2$s Minute verbinden (falls in aktiver Periode verwendet)</string>
+    
     <string name="settings_title_notifications">Abschalt-Benachrichtigung</string>
     <string name="settings_title_logging">Logging</string>
     
@@ -89,6 +103,7 @@
 
     <string name="pref_title_connect_duration">Verbindungszeit: %s Min.</string>
     <string name="pref_summary_connect_duration">Für %s Minute(n) verbinden, um neue Nachrichten abzurufen</string>
+    <string name="pref_summary_connect_duration_singular">Für 1 Minute verbinden, um neue Nachrichten abzurufen</string>
     <string name="pref_dialog_title_connect_duration">Zeitdauer (Min.)</string>
     
     <string name="pref_title_logging_enable">Logging einschalten</string>

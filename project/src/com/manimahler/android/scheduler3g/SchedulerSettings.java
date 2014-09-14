@@ -1,5 +1,6 @@
 package com.manimahler.android.scheduler3g;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 
 public class SchedulerSettings {
@@ -44,7 +45,10 @@ public class SchedulerSettings {
 	
 	private boolean _loggingEnabled;
 	
-	public SchedulerSettings(SharedPreferences preferences)
+	private int _unlockPolicyWifi;
+	private int _unlockPolicyMobi;
+	
+	public SchedulerSettings(SharedPreferences preferences, Context context)
 	{
 		_globalOn = preferences.getBoolean(GLOBAL_ON, true);
 		
@@ -67,6 +71,9 @@ public class SchedulerSettings {
 		_keepWifiConnected = preferences.getBoolean(INTERVAL_CONNECT_WIFI_KEEP, false);
 		
 		_loggingEnabled = preferences.getBoolean(LOGGING_ON, false);
+		
+		_unlockPolicyWifi = tryReadIntLarger0(preferences, context.getString(R.string.pref_key_unlock_policy_wifi), 2);
+		_unlockPolicyMobi = tryReadIntLarger0(preferences, context.getString(R.string.pref_key_unlock_policy_mob), 2);
 	}
 	
 	private int tryReadIntLarger0(SharedPreferences preferences, String name, int defValue) {
@@ -125,7 +132,6 @@ public class SchedulerSettings {
 	public void set_playSound(boolean _playSound) {
 		this._playSound = _playSound;
 	}
-
 	
 	public int get_delay() {
 		return _delay;
@@ -206,4 +212,22 @@ public class SchedulerSettings {
 	public void set_loggingEnabled(boolean _loggingEnabled) {
 		this._loggingEnabled = _loggingEnabled;
 	}
+
+	public int get_unlockPolicyWifi() {
+		return _unlockPolicyWifi;
+	}
+
+	public void set_unlockPolicyWifi(int _unlockPolicyWifi) {
+		this._unlockPolicyWifi = _unlockPolicyWifi;
+	}
+
+	public int get_unlockPolicyMobi() {
+		return _unlockPolicyMobi;
+	}
+
+	public void set_unlockPolicyMobi(int _unlockPolicyMobi) {
+		this._unlockPolicyMobi = _unlockPolicyMobi;
+	}
+	
+	
 }

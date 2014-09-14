@@ -7,7 +7,6 @@ import java.util.Date;
 
 import android.app.AlarmManager;
 import android.app.NotificationManager;
-import android.app.KeyguardManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -42,6 +41,10 @@ public class NetworkScheduler {
 
 	private static final String INTERVAL_MOBILEDATA = "MOBILEDATA";
 	private static final String INTERVAL_WIFI = "WIFI";
+
+	private static final int UNLOCK_POLICY_SWITCH_ON_NEVER = 1;
+	private static final int UNLOCK_POLICY_SWITCH_ON_WHEN_ACTIVE = 2;
+	private static final int UNLOCK_POLICY_SWITCH_ON_ALWAYS = 3;
 
 	private enum NetworkType {
 		WiFi, MobileData, Bluetooth, Volume
@@ -213,7 +216,9 @@ public class NetworkScheduler {
 
 		if (!isChangeRequired(context, period)) {
 			Log.d(TAG, "No action required.");
-			UserLog.log(context, "No enabling/disabling required because all radios and volume are in the desired state");
+			UserLog.log(
+					context,
+					"No enabling/disabling required because all radios and volume are in the desired state");
 
 			// still cancel interval connect
 			stop(period, context);
@@ -242,8 +247,9 @@ public class NetworkScheduler {
 					makeAutoDelayNotification(context, period, settings);
 					scheduleSwitchOff(context, delayInSec, ACTION_OFF_DELAYED,
 							period);
-					
-					UserLog.log(context, "Switch-off automatically delayed by " + settings.get_delay() + "min");
+
+					UserLog.log(context, "Switch-off automatically delayed by "
+							+ settings.get_delay() + "min");
 				} else {
 					Log.d(TAG, "Screen is on: notification.");
 					makeDisableNotification(context, period, settings);
@@ -375,10 +381,59 @@ public class NetworkScheduler {
 		}
 	}
 
-	public void intervalSwitchOn(Context context, SchedulerSettings settings)
-			throws ClassNotFoundException, NoSuchFieldException,
-			IllegalArgumentException, IllegalAccessException,
-			NoSuchMethodException, InvocationTargetException {
+	public void intervalSwitchOnDueToUnlock(Context context,
+			SchedulerSettings settings) {
+
+		boolean switchOnWifi = false;
+		boolean switchOnMobi = false;
+
+		ArrayList<ScheduledPeriod> allPeriods = null;
+
+		int unlockPolicyWifi = settings.get_unlockPolicyWifi();
+		int unlockPolicyMobi = settings.get_unlockPolicyMobi();
+
+		UserLog.log(context,
+				"Device unlocked, applying unlock policy for Wi-Fi ("
+						+ unlockPolicyWifi + ") and for mobile data ("
+						+ unlockPolicyMobi + ")");
+
+		switch (unlockPolicyWifi) {
+		case UNLOCK_POLICY_SWITCH_ON_NEVER:
+			switchOnWifi = false;
+			break;
+		case UNLOCK_POLICY_SWITCH_ON_WHEN_ACTIVE:
+			allPeriods = PersistenceUtils.readFromPreferences(PersistenceUtils
+					.getSchedulesPreferences(context));
+
+			switchOnWifi = isWifiIntervalConnectActive(allPeriods);
+			break;
+		case UNLOCK_POLICY_SWITCH_ON_ALWAYS:
+			switchOnWifi = true;
+			break;
+		}
+
+		switch (unlockPolicyMobi) {
+		case UNLOCK_POLICY_SWITCH_ON_NEVER:
+			switchOnMobi = false;
+			break;
+		case UNLOCK_POLICY_SWITCH_ON_WHEN_ACTIVE:
+			if (allPeriods == null) {
+				allPeriods = PersistenceUtils
+						.readFromPreferences(PersistenceUtils
+								.getSchedulesPreferences(context));
+			}
+
+			switchOnMobi = isMobiIntervalConnectActive(allPeriods);
+			break;
+		case UNLOCK_POLICY_SWITCH_ON_ALWAYS:
+			switchOnMobi = true;
+			break;
+		}
+
+		intervalSwitchOn(context, settings, switchOnWifi, switchOnMobi);
+	}
+
+	public void intervalSwitchOn(Context context, SchedulerSettings settings) {
 
 		// any period could be active and require interval connect
 		// if 2 periods are active at the time, the later started period
@@ -393,43 +448,47 @@ public class NetworkScheduler {
 				.readFromPreferences(PersistenceUtils
 						.getSchedulesPreferences(context));
 
-		ScheduledPeriod lastActivatedWifiPeriod = getLastActivatedActivePeriod(
-				allPeriods, NetworkType.WiFi);
-		ScheduledPeriod lastActivatedMobDataPeriod = getLastActivatedActivePeriod(
-				allPeriods, NetworkType.MobileData);
-
-		boolean intervalWifi = lastActivatedWifiPeriod != null
-				&& lastActivatedWifiPeriod.is_enableRadios()
-				&& lastActivatedWifiPeriod.is_intervalConnectWifi()
-				&& !lastActivatedWifiPeriod.is_overrideIntervalWifi();
-
-		boolean intervalMobData = lastActivatedMobDataPeriod != null
-				&& lastActivatedMobDataPeriod.is_enableRadios()
-				&& lastActivatedMobDataPeriod.is_intervalConnectMobData()
-				&& !lastActivatedMobDataPeriod.is_overrideIntervalMob();
+		boolean intervalWifi = isWifiIntervalConnectActive(allPeriods);
+		boolean intervalMobData = isMobiIntervalConnectActive(allPeriods);
 
 		if (!intervalWifi && !intervalMobData) {
 			// no relevant active interval-connect period at all
 			cancelIntervalConnect(context);
 			return;
 		}
-		
-		UserLog.log(TAG, context,
-				"Interval switch-on - Wi-Fi: " + intervalWifi + " - Mobile Data: " + intervalMobData);
 
-		Log.d(TAG, "intervalSwitchOn: Interval connect is ON.");
+		intervalSwitchOn(context, settings, intervalWifi, intervalMobData);
+	}
+
+	private void intervalSwitchOn(Context context, SchedulerSettings settings,
+			boolean intervalWifi, boolean intervalMobData) {
+
+		UserLog.log(TAG, context, "Interval switch-on - Wi-Fi: " + intervalWifi
+				+ " - Mobile Data: " + intervalMobData);
+
+		if (!intervalWifi && !intervalMobData) {
+			return;
+		}
+
 		int connectTimeSec = 60 * settings.get_connectDuration();
 
 		scheduleIntervalSwitchOff(context, connectTimeSec,
 				createIntervalSwitchOffExtras(intervalWifi, intervalMobData));
 
-		// first toggle-on Wi-Fi, it takes slightly longer to start
-		if (intervalWifi) {
-			ConnectionUtils.toggleWifi(context, true);
-		}
+		try {
+			// first toggle-on Wi-Fi, it takes slightly longer to start
+			if (intervalWifi) {
+				ConnectionUtils.toggleWifi(context, true);
+			}
 
-		if (intervalMobData) {
-			ConnectionUtils.toggleMobileData(context, true);
+			if (intervalMobData) {
+				ConnectionUtils.toggleMobileData(context, true);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			UserLog.log(context, "Error starting wi-fi or mobile data.", e);
 		}
 	}
 
@@ -480,12 +539,56 @@ public class NetworkScheduler {
 		if (intervalWifi) {
 			if (settings.is_keepWifiConnected()
 					&& ConnectionUtils.isWifiConnected(context)) {
-				UserLog.log(TAG, context,
-						"Interval switch-off skipped for Wi-Fi (due to option 'Keep Wi-Fi connected')");
+
+				ArrayList<ScheduledPeriod> allPeriods = PersistenceUtils
+						.readFromPreferences(PersistenceUtils
+								.getSchedulesPreferences(context));
+
+				boolean isWifiIntervalOn = isWifiIntervalConnectActive(allPeriods);
+
+				if (!isWifiIntervalOn) {
+					// typically when outside any period and Wi-Fi was enabled
+					// by unlock-policy ALWAYS:
+					Log.d(TAG,
+							"Keep Wi-Fi connected will not be respected because there is no active Wi-Fi interval connection");
+					ConnectionUtils.toggleWifi(context, false);
+				} else {
+
+					UserLog.log(TAG, context,
+							"Interval switch-off skipped for Wi-Fi (due to option 'Keep Wi-Fi connected')");
+				}
 			} else {
 				ConnectionUtils.toggleWifi(context, false);
 			}
 		}
+	}
+
+	private boolean isWifiIntervalConnectActive(
+			ArrayList<ScheduledPeriod> allPeriods) {
+
+		ScheduledPeriod lastActivatedWifiPeriod = getLastActivatedActivePeriod(
+				allPeriods, NetworkType.WiFi);
+
+		boolean intervalWifi = lastActivatedWifiPeriod != null
+				&& lastActivatedWifiPeriod.is_enableRadios()
+				&& lastActivatedWifiPeriod.is_intervalConnectWifi()
+				&& !lastActivatedWifiPeriod.is_overrideIntervalWifi();
+
+		return intervalWifi;
+	}
+
+	private boolean isMobiIntervalConnectActive(
+			ArrayList<ScheduledPeriod> allPeriods) {
+
+		ScheduledPeriod lastActivatedMobDataPeriod = getLastActivatedActivePeriod(
+				allPeriods, NetworkType.MobileData);
+
+		boolean intervalMobData = lastActivatedMobDataPeriod != null
+				&& lastActivatedMobDataPeriod.is_enableRadios()
+				&& lastActivatedMobDataPeriod.is_intervalConnectMobData()
+				&& !lastActivatedMobDataPeriod.is_overrideIntervalMob();
+
+		return intervalMobData;
 	}
 
 	private void scheduleSwitchOff(Context context, int seconds,
