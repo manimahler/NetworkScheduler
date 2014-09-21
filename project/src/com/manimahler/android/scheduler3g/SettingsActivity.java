@@ -88,7 +88,8 @@ public class SettingsActivity extends PreferenceActivity implements
 	 * Sets up the action bar for a {@link PreferenceScreen} This enables the
 	 * caret (up-navigation on the preference's sub-screens) Taken from
 	 * http://stackoverflow
-	 * .com/questions/18155036/add-up-button-to-preferencescreen
+	 * .com/questions/18155036/add-up-button-to-preferencescreen and adapted
+	 * with additional onDismiss listener
 	 * */
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private void initializeSubScreen(PreferenceScreen preferenceScreen) {
@@ -98,11 +99,15 @@ public class SettingsActivity extends PreferenceActivity implements
 
 		if (dialog != null) {
 
-			final boolean updateUnlockPolicy = preferenceScreen.getKey().equals(this
-					.getString(R.string.pref_key_unlock_policy_preferences));
-			
-			final boolean updateIntervalConnect = preferenceScreen.getKey().equals(this
-					.getString(R.string.pref_key_interval_connect_preferences));
+			final boolean updateUnlockPolicy = preferenceScreen
+					.getKey()
+					.equals(this
+							.getString(R.string.pref_key_unlock_policy_preferences));
+
+			final boolean updateIntervalConnect = preferenceScreen
+					.getKey()
+					.equals(this
+							.getString(R.string.pref_key_interval_connect_preferences));
 
 			OnDismissListener dismissListener = new OnDismissListener() {
 				@Override
@@ -111,7 +116,7 @@ public class SettingsActivity extends PreferenceActivity implements
 					if (updateUnlockPolicy) {
 						setGroupPreferenceSummaryUnlockPolicy();
 					}
-					
+
 					if (updateIntervalConnect) {
 						setGroupPreferenceSummaryIntervalConnect();
 					}
@@ -221,21 +226,24 @@ public class SettingsActivity extends PreferenceActivity implements
 			String key) {
 
 		Preference preference = findPreference(key);
-		
+
 		if (preference == null) {
-			Log.e(TAG, String.format("Preference with key %s does not exist", key));
+			Log.e(TAG,
+					String.format("Preference with key %s does not exist", key));
 			return;
 		}
-		
+
 		updatePrefAppearance(preference);
-		
+
 		// if connect interval has changed -> re-schedule alarm:
 		if (preference.getKey().equals(
 				this.getString(R.string.pref_key_connect_interval))) {
-			
-			// if no active interval-connecting period: the alarm will be cancelled on the first switch-on
+
+			// if no active interval-connecting period: the alarm will be
+			// cancelled on the first switch-on
 			NetworkScheduler scheduler = new NetworkScheduler();
-			scheduler.setupIntervalConnect(this, PersistenceUtils.readSettings(this));
+			scheduler.setupIntervalConnect(this,
+					PersistenceUtils.readSettings(this));
 		}
 	}
 
@@ -265,7 +273,7 @@ public class SettingsActivity extends PreferenceActivity implements
 		if (p.getKey() == null) {
 			return;
 		}
-		
+
 		if (p.getKey().equals(
 				this.getString(R.string.pref_key_unlock_policy_preferences))) {
 			setGroupPreferenceSummaryUnlockPolicy(p);
@@ -291,11 +299,13 @@ public class SettingsActivity extends PreferenceActivity implements
 			int duration = ensurePreferenceLarger0(p);
 
 			updatePreferenceTitle(p, R.string.pref_title_connect_duration);
-			
+
 			if (duration == 1) {
-				updatePreferenceSummary(p, R.string.pref_summary_connect_duration_singular);  
+				updatePreferenceSummary(p,
+						R.string.pref_summary_connect_duration_singular);
 			} else {
-				updatePreferenceSummary(p, R.string.pref_summary_connect_duration);
+				updatePreferenceSummary(p,
+						R.string.pref_summary_connect_duration);
 			}
 		}
 
@@ -333,7 +343,6 @@ public class SettingsActivity extends PreferenceActivity implements
 		}
 	}
 
-
 	private int tryParsePositiveInt(String stringValue) {
 
 		int result = -1;
@@ -360,7 +369,7 @@ public class SettingsActivity extends PreferenceActivity implements
 			// minimum value:
 			editTextPref.setText("1");
 		}
-		
+
 		return currentValue;
 	}
 
@@ -368,65 +377,72 @@ public class SettingsActivity extends PreferenceActivity implements
 
 		EditTextPreference editTextPref = (EditTextPreference) p;
 
+		String textValue = editTextPref.getText();
+
+		updatePreferenceSummary(p, summaryResId, textValue);
+	}
+
+	private void updatePreferenceSummary(Preference p, int summaryResId,
+			String value) {
+
 		String summaryFormat = this.getString(summaryResId);
 
-		p.setSummary(String.format(summaryFormat, editTextPref.getText()));
+		p.setSummary(String.format(summaryFormat, value));
 	}
 
 	private void updatePreferenceTitle(Preference p, int titleResId) {
 		EditTextPreference editTextPref = (EditTextPreference) p;
+		String textValue = editTextPref.getText();
 
 		String titleFormat = this.getString(titleResId);
 
-		p.setTitle(String.format(titleFormat, editTextPref.getText()));
+		p.setTitle(String.format(titleFormat, textValue));
 	}
-
 
 	private void setGroupPreferenceSummaryUnlockPolicy() {
 		Preference prefUnlockGroup = findPreference(this
 				.getString(R.string.pref_key_unlock_policy_preferences));
-		
+
 		setGroupPreferenceSummaryUnlockPolicy(prefUnlockGroup);
-				
+
 	}
 
-	private void setGroupPreferenceSummaryUnlockPolicy(Preference unlockGroupPref) {
+	private void setGroupPreferenceSummaryUnlockPolicy(
+			Preference unlockGroupPref) {
 		int prefWifiIndex = 1;
 		int prefMobiIndex = 2;
 		Preference wifiPref = ((PreferenceGroup) unlockGroupPref)
 				.getPreference(prefWifiIndex);
 		Preference mobiPref = ((PreferenceGroup) unlockGroupPref)
 				.getPreference(prefMobiIndex);
-	
+
 		String summaryFormat = "%s: %s";
 		String wifiSummary = String.format(summaryFormat,
 				this.getString(R.string.wifi), wifiPref.getSummary());
 		String mobSummary = String.format(summaryFormat,
 				this.getString(R.string.mobile_data), mobiPref.getSummary());
-	
+
 		String summary = wifiSummary + "\n" + mobSummary;
-	
+
 		unlockGroupPref.setSummary(summary);
-	
+
 		// otherwise the screen is not refreshed!
 		onContentChanged();
 	}
-	
-	
 
 	private void setGroupPreferenceSummaryIntervalConnect(
 			Preference intervalGroupPref) {
-		
+
 		int prefIdxConnectInterval = 1;
 		int prefIdxConnectDuration = 2;
 		EditTextPreference prefConnectInterval = (EditTextPreference) ((PreferenceGroup) intervalGroupPref)
 				.getPreference(prefIdxConnectInterval);
 		EditTextPreference prefConnectDuration = (EditTextPreference) ((PreferenceGroup) intervalGroupPref)
 				.getPreference(prefIdxConnectDuration);
-	
+
 		String interval = prefConnectInterval.getText();
 		String duration = prefConnectDuration.getText();
-	
+
 		String summaryFormat;
 		if (tryParsePositiveInt(duration) == 1) {
 			summaryFormat = this
@@ -434,19 +450,20 @@ public class SettingsActivity extends PreferenceActivity implements
 		} else {
 			summaryFormat = this
 					.getString(R.string.pref_summary_intervalconnect_group);
-	
+
 		}
-		
-		intervalGroupPref.setSummary(String.format(summaryFormat, interval, duration));
-		
+
+		intervalGroupPref.setSummary(String.format(summaryFormat, interval,
+				duration));
+
 		onContentChanged();
 	}
 
 	private void setGroupPreferenceSummaryIntervalConnect() {
 		Preference prefUnlockGroup = findPreference(this
 				.getString(R.string.pref_key_interval_connect_preferences));
-		
+
 		setGroupPreferenceSummaryIntervalConnect(prefUnlockGroup);
-				
+
 	}
 }
