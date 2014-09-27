@@ -245,6 +245,13 @@ public class SettingsActivity extends PreferenceActivity implements
 			scheduler.setupIntervalConnect(this,
 					PersistenceUtils.readSettings(this));
 		}
+		
+		// if logging was disabled or enabled:
+		if (preference.getKey().equals(
+				this.getString(R.string.pref_key_logging_enable))) {
+
+			UserLog.logEnabledChanged(this);
+		}
 	}
 
 	private void initSummary(Preference p) {

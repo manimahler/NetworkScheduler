@@ -80,6 +80,17 @@ public class UserLog {
 		}
 	}
 	
+	public static void logEnabledChanged(Context context) {
+		
+		if (_loggingEnabled) {
+			log(context, "Disabled logging, stopping log...");
+		}
+		else
+		{
+			log(context, "Logging enabled, starting log...");
+		}
+	}
+	
 	public static File getLogFile(Context context) {
 		File logFile = new File(context.getExternalFilesDir(null),
 				"NetworkScheduler.log");
