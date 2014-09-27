@@ -13,6 +13,8 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 
 	private static final String TAG = StartStopBroadcastReceiver.class
 			.getSimpleName();
+	
+	private static final long NOW_FUZZINESS_MILLIS = 120000;
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
@@ -89,12 +91,12 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 				// -> alarm is re-set for right now and appears to be received
 				// twice!
 				if (on) {
-					scheduler.setNextAlarmStart(context, period, settings);
+					scheduler.setNextAlarmStart(context, period, settings, NOW_FUZZINESS_MILLIS);
 				} else {
-					scheduler.setNextAlarmStop(context, period);
+					scheduler.setNextAlarmStop(context, period, NOW_FUZZINESS_MILLIS);
 				}
 
-				if (!period.appliesToday(on)) {
+				if (!period.appliesToday(on, NOW_FUZZINESS_MILLIS)) {
 					String actionText = "Scheduled action " + action
 							+ " for scheduled period "
 							+ period.toString(context)

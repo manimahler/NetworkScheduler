@@ -45,7 +45,7 @@ public class NetworkScheduler {
 	private static final int UNLOCK_POLICY_SWITCH_ON_NEVER = 1;
 	private static final int UNLOCK_POLICY_SWITCH_ON_WHEN_ACTIVE = 2;
 	private static final int UNLOCK_POLICY_SWITCH_ON_ALWAYS = 3;
-
+	
 	private enum NetworkType {
 		WiFi, MobileData, Bluetooth, Volume
 	}
@@ -92,10 +92,15 @@ public class NetworkScheduler {
 	}
 
 	public void setNextAlarmStart(Context context, ScheduledPeriod period,
-			SchedulerSettings settings) throws ClassNotFoundException,
-			NoSuchFieldException, IllegalArgumentException,
-			IllegalAccessException, NoSuchMethodException,
-			InvocationTargetException {
+			SchedulerSettings settings) {
+		
+		// for interactively setting dates we want to be exact:
+		long considerNowWithinMillis = 0;
+		setNextAlarmStart(context, period, settings, considerNowWithinMillis);
+	}
+	
+	public void setNextAlarmStart(Context context, ScheduledPeriod period,
+			SchedulerSettings settings, long considerNowWithinMillis) {
 		AlarmManager am = (AlarmManager) context
 				.getSystemService(Context.ALARM_SERVICE);
 
@@ -109,7 +114,7 @@ public class NetworkScheduler {
 
 		if (period.is_scheduleStart()) {
 			long startMillis = DateTimeUtils.getNextTimeIn24hInMillis(period
-					.get_startTimeMillis());
+					.get_startTimeMillis(), considerNowWithinMillis);
 
 			AlarmUtils.setAlarm(context, pendingIntentOn, startMillis);
 
@@ -119,29 +124,38 @@ public class NetworkScheduler {
 		}
 
 		if (period.is_active() && period.useIntervalConnect()) {
-			startIntervalConnect(context, settings);
+			
+			try {
+				startIntervalConnect(context, settings);
+			} catch (Exception e) {
+				UserLog.log(context, "Error setting up interval connect: " + e.getMessage());
+				e.printStackTrace();
+			}
 		}
 	}
+	
+	public void setNextAlarmStop(Context context, ScheduledPeriod period) {
+		
+		long considerNowWithinMillis = 0;
+		setNextAlarmStop(context, period, considerNowWithinMillis);
+	}
 
-	public void setNextAlarmStop(Context context, ScheduledPeriod period)
-			throws ClassNotFoundException, NoSuchFieldException,
-			IllegalArgumentException, IllegalAccessException,
-			NoSuchMethodException, InvocationTargetException {
+	public void setNextAlarmStop(Context context, ScheduledPeriod period, long considerNowWithinMillis) {
+		
 		AlarmManager am = (AlarmManager) context
 				.getSystemService(Context.ALARM_SERVICE);
-
-		PendingIntent pendingIntentOff = getPendingIntent(context, period,
-				false);
+		
+		PendingIntent pendingIntentOff = getPendingIntent(context, period, false);
 
 		if (!period.is_schedulingEnabled()) {
 			am.cancel(pendingIntentOff);
 
 			return;
 		}
-
+		
 		if (period.is_scheduleStop()) {
 			long stopMillis = DateTimeUtils.getNextTimeIn24hInMillis(period
-					.get_endTimeMillis());
+					.get_endTimeMillis(), considerNowWithinMillis);
 
 			AlarmUtils.setAlarm(context, pendingIntentOff, stopMillis);
 		} else {

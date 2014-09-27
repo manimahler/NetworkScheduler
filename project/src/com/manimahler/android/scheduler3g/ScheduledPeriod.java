@@ -522,7 +522,7 @@ public class ScheduledPeriod {
 		return result;
 	}
 
-	public boolean appliesToday(boolean enable) throws Exception {
+	public boolean appliesToday(boolean enable, long considerNowWithinMillis) throws Exception {
 
 		// do not use todays time but the official end time because the
 		// broadcast might arrive late (esp. with inexact repeating on kitkat)
@@ -543,11 +543,11 @@ public class ScheduledPeriod {
 		} else {
 			alarmTime = get_endTimeMillis();
 		}
-
+		
 		// TODO: contains fuzziness regarding midnight - remove duplication with
 		// isOnActiveWeekday
 		long actualAlarmTime = DateTimeUtils
-				.getPreviousTimeIn24hInMillis(alarmTime);
+				.getCurrentOrPreviousTimeIn24hInMillis(alarmTime, considerNowWithinMillis);
 		
 		Log.d(TAG, "actualAlarmTime: " + actualAlarmTime);
 		
@@ -653,7 +653,7 @@ public class ScheduledPeriod {
 	
 		if (calendarAt.getTimeInMillis() > timeMillis) {
 			// the previous occurrence is the day before
-			calendarAt.add(Calendar.HOUR, -24);
+			DateTimeUtils.addDays(calendarAt, -1);
 		}
 	
 		return calendarAt;

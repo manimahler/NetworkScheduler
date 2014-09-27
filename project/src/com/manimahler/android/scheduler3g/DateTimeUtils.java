@@ -6,8 +6,11 @@ import java.util.Locale;
 
 import android.content.Context;
 import android.text.format.DateFormat;
+import android.util.Log;
 
 public class DateTimeUtils {
+	
+	private static final String TAG = DateTimeUtils.class.getSimpleName();
 
 	public static long getTimeFromNowInMillis(int secondsFromNow) {
 		int delayMillis = secondsFromNow * 1000;
@@ -16,15 +19,50 @@ public class DateTimeUtils {
 
 		return result;
 	}
-
+	
 	public static long getNextTimeIn24hInMillis(int hourOfDay, int minute) {
+		
+		long considerNowWithinMillis = 0;
+		
+		return getNextTimeIn24hInMillis(hourOfDay, minute, considerNowWithinMillis);
+	}
 
+	public static long getNextTimeIn24hInMillis(int hourOfDay, int minute,
+			long considerNowWithinMillis) {
+		
 		Calendar calendarNow = Calendar.getInstance();
 		calendarNow.setTimeInMillis(System.currentTimeMillis());
-
+		
 		Calendar calendar = setTime(hourOfDay, minute);
-
-		if (!calendar.after(calendarNow)) {
+		boolean now = considerAsNow(calendar, considerNowWithinMillis, calendarNow);
+		
+		// avoid missing / duplicate events issues for example:
+		// - hourOfDay, minute is midnight, current time just before 
+		//	 -> last midnight + 24 results in this midnight (which might have passed by then)
+		// - hourOfDay, minute is just before current time, by adding another day we miss this event!
+		
+		// Midnight issue: Early arrival of alarm
+		// --------------------------------------
+		// - milliseconds : 0:00 -> hourOfDay 0, minute 0
+		// - current time 23:59:59.99
+		// -> calendar is yesterday at midnight (0:00) -> 24h before now, 48h before desired time!
+		//    -> check before first, add 1 day, check now afterwards, add another day if needed
+		
+		if (!now && calendar.before(calendarNow)) {
+			// NOTE: add 1 day rather than 24 hours because of summer time
+			// change -> + 1 d is 23 or 25 hours!
+			addDays(calendar, 1);
+		}
+		
+		// Midnight issue: Late arrival of alarm
+		// -------------------------------------
+		// - milliseconds: 23:59:59.99 -> hourOfDay 23, minute 59
+		// - current time 0:00 (arriving late) 
+		// -> calendar is is already today at 23:59 -> not now, but in ca. 24h -> correct, do nothing
+		
+		// General issues: slightly early / late arrival: handled by now-fuzziness
+		
+		if (calendar.before(calendarNow) || now) {
 			// NOTE: add 1 day rather than 24 hours because of summer time
 			// change -> + 1 d is 23 or 25 hours!
 			addDays(calendar, 1);
@@ -33,18 +71,20 @@ public class DateTimeUtils {
 		return calendar.getTimeInMillis();
 	}
 
-	public static long getNextTimeIn24hInMillis(long milliseconds) {
+	
+	public static long getNextTimeIn24hInMillis(long milliseconds, long considerNowWithinMillis) {
 		Calendar calendar = Calendar.getInstance();
-
+		
 		calendar.setTimeInMillis(milliseconds);
-
+		
 		int hour = calendar.get(Calendar.HOUR_OF_DAY);
 		int minute = calendar.get(Calendar.MINUTE);
-
-		return getNextTimeIn24hInMillis(hour, minute);
+		
+		return getNextTimeIn24hInMillis(hour, minute, considerNowWithinMillis);
 	}
 
-	public static long getPreviousTimeIn24hInMillis(int hourOfDay, int minute) {
+	public static long getCurrentOrPreviousTimeIn24hInMillis(int hourOfDay, int minute,
+			long considerNowWithinMillis) {
 
 		Calendar calendarNow = Calendar.getInstance();
 		calendarNow.setTimeInMillis(System.currentTimeMillis());
@@ -54,24 +94,55 @@ public class DateTimeUtils {
 		// it seems that starting with 4.3 'now' is sometimes (a couple of
 		// millis) earlier than the set time!
 		// we just want to make sure a delayed alarm (on kitkat) is not skipped
-		// because the wrong
-		// day is taken
-
-		// TODO: adapt to inexact repeating
-		long maxDifferenceConsideredSameDay = 600000; // 10 min
-
-		long absDifference = Math.abs(calendar.getTimeInMillis()
-				- calendarNow.getTimeInMillis());
-
-		if (absDifference > maxDifferenceConsideredSameDay) {
-			// subtract one day
-			addDays(calendar, -1);
+		// because the wrong day is taken
+		
+		// NOTE: considerNowWithinMillis must be > 1 minute because the resolution is only minutes!
+		// 5 minutes:
+		
+		boolean considerSameTime = considerAsNow(calendar, considerNowWithinMillis, calendarNow);
+		
+		// Situation 1:
+		// -----------
+		// - hourOfDay == 0, minute == 0
+		// - current time: 23:59:59.99 (arriving early, just the day before we wanted)
+		//   -> considerSameTime == false (calendar is 24h ahead, add 1 day)
+		
+		// Situation 2:
+		// -----------
+		// - hourOfDay == 23, minute == 59
+		// - current time: 00:00:00 (arriving late, the day after we wanted it)
+		//   -> considerSameTime == false (calendar is 24h behind, subtract 1 day)
+		if (! considerSameTime) {
+			
+			if (calendar.before(calendarNow))
+			{
+				Log.w(TAG, "Provided time is before now. Adding one day. Hour: " + hourOfDay + " Minute: " + minute);
+				addDays(calendar, 1);
+			}
+			else
+			{
+				Log.w(TAG, "Provided time is after now. Subtracting one day. Hour: " + hourOfDay + " Minute: " + minute);
+				// subtract one day
+				addDays(calendar, -1);	
+			}
 		}
 
 		return calendar.getTimeInMillis();
 	}
 
-	public static long getPreviousTimeIn24hInMillis(long milliseconds) {
+	private static boolean considerAsNow(Calendar calendar, long considerNowWithinMillis,
+			Calendar calendarNow) {
+		
+		long absDifference = Math.abs(calendar.getTimeInMillis()
+				- calendarNow.getTimeInMillis());
+
+		boolean considerSameTime = absDifference <= considerNowWithinMillis;
+		
+		return considerSameTime;
+	}
+
+	public static long getCurrentOrPreviousTimeIn24hInMillis(long milliseconds,
+			long considerNowWithinMillis) {
 		Calendar calendar = Calendar.getInstance();
 
 		calendar.setTimeInMillis(milliseconds);
@@ -79,7 +150,7 @@ public class DateTimeUtils {
 		int hour = calendar.get(Calendar.HOUR_OF_DAY);
 		int minute = calendar.get(Calendar.MINUTE);
 
-		return getPreviousTimeIn24hInMillis(hour, minute);
+		return getCurrentOrPreviousTimeIn24hInMillis(hour, minute, considerNowWithinMillis);
 	}
 
 	public static boolean isEarlierInTheDay(long millis, long thanMillis) {
