@@ -70,13 +70,13 @@ public class UserLog {
 		boolean valueChanged = _loggingEnabled != loggingEnabled;
 		
 		if (valueChanged && ! loggingEnabled){
-			log(context, "Logging disabled");
+			Log.d(TAG, "Logging is currently disabled");
 		}
 		
 		_loggingEnabled = loggingEnabled;
 		
 		if (valueChanged && loggingEnabled) {
-			log(context, "Logging enabled");
+			log(context, String.format("Logging is currently enabled using file %s", getLogPath(context)));
 		}
 	}
 	
@@ -97,7 +97,7 @@ public class UserLog {
 			if (logFile.createNewFile()) {
 				Log.d(TAG, "Created logfile " + logFile);
 			} else {
-				Log.d(TAG, "Logfile already existed: " + logFile);
+				Log.d(TAG, "Using existing logfile: " + logFile);
 			}
 
 		} catch (IOException e) {
@@ -114,5 +114,18 @@ public class UserLog {
 	    e.printStackTrace(w);
 	    w.close();
 	    return cw.toString();
+	}
+	
+	private static String getLogPath(Context context) {
+		File logFile = getLogFile(context);
+		
+		String result;
+		if (logFile.exists()) {
+			result = logFile.getAbsolutePath();
+		} else {
+			result = null;
+		}
+		
+		return result;
 	}
 }
