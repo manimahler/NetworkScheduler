@@ -11,8 +11,8 @@
     <string name="interval_connection_help_content_desc">Show help on interval connection</string>
     <string name="explain_interval_connection_title">Interval Connection</string>
     <string name="explain_interval_connection_intro">This option saves battery and reduces data usage while %1$s is enabled</string>
-    <string name="explain_interval_connection_text">Interval connection turns off %1$s when the device sleeps and only re-connects every %2$s min for %3$s min (interval and duration can be changed in settings) to fetch new messages. It is also turned on when the device is unlocked.</string>
-    <string name="explain_interval_connection_prefs">Interval connection saves battery during active periods.\nIt turns off Wi-Fi / mobile data when the device sleeps and only re-connects at regular intervals for a short while to fetch new messages.</string>
+    <string name="explain_interval_connection_text">Interval connection turns off %1$s when the device sleeps and only re-connects every %2$s min for %3$s min (interval and duration can be changed in settings) to fetch new messages. Depending on the \'Switch-on when unlocking\' setting it is also turned on when the device is unlocked.</string>
+    <string name="explain_interval_connection_prefs">Interval connection saves battery during active periods. It turns off Wi-Fi / mobile data when the device sleeps and only re-connects at regular intervals for a short while to fetch new messages.</string>
     <string name="explain_unlock_policy_prefs">Configure whether Wi-Fi / mobile data should be automatically enabled when the screen is turned on and unlocked</string>
     
     <string name="close_dialog">Close</string>
