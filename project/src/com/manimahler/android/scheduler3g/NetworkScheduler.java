@@ -183,9 +183,7 @@ public class NetworkScheduler {
 
 	public void start(ScheduledPeriod period, Context context,
 			SchedulerSettings settings, boolean manualActivation)
-			throws ClassNotFoundException, NoSuchFieldException,
-			IllegalArgumentException, IllegalAccessException,
-			NoSuchMethodException, InvocationTargetException {
+			throws Exception {
 
 		boolean skip = period.is_skipped();
 
@@ -241,10 +239,7 @@ public class NetworkScheduler {
 	}
 
 	public void stopApproved(Context context, ScheduledPeriod period,
-			SchedulerSettings settings) throws ClassNotFoundException,
-			NoSuchFieldException, IllegalArgumentException,
-			IllegalAccessException, NoSuchMethodException,
-			InvocationTargetException {
+			SchedulerSettings settings) throws Exception {
 
 		if (!isChangeRequired(context, period)) {
 			Log.d(TAG, "No action required.");
@@ -295,9 +290,7 @@ public class NetworkScheduler {
 	}
 
 	public void stop(int periodId, Context context)
-			throws ClassNotFoundException, NoSuchFieldException,
-			IllegalArgumentException, IllegalAccessException,
-			NoSuchMethodException, InvocationTargetException {
+			throws Exception {
 		SharedPreferences sharedPrefs = PersistenceUtils
 				.getSchedulesPreferences(context);
 
@@ -308,16 +301,12 @@ public class NetworkScheduler {
 	}
 
 	public void stop(ScheduledPeriod period, Context context)
-			throws ClassNotFoundException, NoSuchFieldException,
-			IllegalArgumentException, IllegalAccessException,
-			NoSuchMethodException, InvocationTargetException {
+			throws Exception {
 		stop(period, context, false);
 	}
 
 	public void stop(ScheduledPeriod period, Context context, boolean manualStop)
-			throws ClassNotFoundException, NoSuchFieldException,
-			IllegalArgumentException, IllegalAccessException,
-			NoSuchMethodException, InvocationTargetException {
+			throws Exception {
 
 		if (period == null) {
 			Log.d(TAG, "switchOffNow: Period is null. Assuming deleted");
