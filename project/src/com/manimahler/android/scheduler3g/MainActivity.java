@@ -278,113 +278,113 @@ public class MainActivity extends FragmentActivity implements
 
 		String msg;
 
-		switch (item.getItemId()) {
-		case R.id.delete:
-			Log.d(TAG, "Delete pressed");
+		try {
 
-			// cancel the alarm;
-			NetworkScheduler scheduler = new NetworkScheduler();
-			try {
+			switch (item.getItemId()) {
+			case R.id.delete:
+				Log.d(TAG, "Delete pressed");
+
+				// cancel the alarm;
+				NetworkScheduler scheduler = new NetworkScheduler();
 				scheduler.deleteAlarm(this, selectedPeriod);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+
+				_adapter.removeAt(info.position);
+				saveSettings();
+
+				_adapter.notifyDataSetChanged();
+
+				return true;
+			case R.id.modify:
+
+				Log.d(TAG, "Edit pressed");
+
+				showPeriodDetails(selectedPeriod);
+				return true;
+			case R.id.activate_now:
+				UserLog.log(this, "Manual activation for period "
+						+ selectedPeriod);
+				toggleActivation(selectedPeriod, true, true);
+				_adapter.notifyDataSetChanged();
+				return true;
+			case R.id.deactivate_now:
+				UserLog.log(this, "Manual deactivation for period "
+						+ selectedPeriod);
+				toggleActivation(selectedPeriod, false, true);
+				_adapter.notifyDataSetChanged();
+				return true;
+			case R.id.skip_next:
+				selectedPeriod.set_skipped(!selectedPeriod.is_skipped());
+				saveSettings();
+				_adapter.notifyDataSetChanged();
+
+				if (selectedPeriod.is_skipped()) {
+					msg = getResources().getString(R.string.skipped_period);
+				} else {
+					msg = getResources().getString(R.string.unskipped_period);
+				}
+
+				UserLog.log(this, msg + " Period: " + selectedPeriod);
+				Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+
+				return true;
+			case R.id.is_enabled:
+				toggleEnabled(selectedPeriod);
+
+				return true;
+			case R.integer.context_menu_id_interval_wifi:
+				toggleCurrentIntervalWifi(selectedPeriod);
+
+				if (selectedPeriod.is_overrideIntervalWifi()) {
+					msg = getResources().getString(
+							R.string.overridden_wifi_interval);
+				} else {
+					msg = getResources().getString(
+							R.string.unoverridden_wifi_interval);
+				}
+
+				UserLog.log(this, msg + " Period: " + selectedPeriod);
+				Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+
+				return true;
+			case R.integer.context_menu_id_interval_mob:
+				toggleCurrentIntervalMobData(selectedPeriod);
+
+				if (selectedPeriod.is_overrideIntervalMob()) {
+					msg = getResources().getString(
+							R.string.overridden_mob_interval);
+				} else {
+					msg = getResources().getString(
+							R.string.unoverridden_mob_interval);
+				}
+
+				UserLog.log(this, msg + " Period: " + selectedPeriod);
+				Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+
+				return true;
+			case R.integer.context_menu_id_up:
+
+				_adapter.moveUp(info.position);
+				// PeriodListAdapter.moveItemUp(_enabledPeriods, info.position);
+				// and save new list order - TODO: add property listPosition to
+				// be
+				// more explicit
+				saveSettings();
+				return true;
+			case R.integer.context_menu_id_down:
+				_adapter.moveDown(info.position);
+				saveSettings();
+				return true;
+			default:
+				return super.onContextItemSelected(item);
 			}
 
-			_adapter.removeAt(info.position);
-			saveSettings();
-
-			_adapter.notifyDataSetChanged();
-
-			return true;
-		case R.id.modify:
-
-			Log.d(TAG, "Edit pressed");
-
-			showPeriodDetails(selectedPeriod);
-			return true;
-		case R.id.activate_now:
-			UserLog.log(this, "Manual activation for period " + selectedPeriod);
-			toggleActivation(selectedPeriod, true, true);
-			_adapter.notifyDataSetChanged();
-			return true;
-		case R.id.deactivate_now:
-			UserLog.log(this, "Manual deactivation for period " + selectedPeriod);
-			toggleActivation(selectedPeriod, false, true);
-			_adapter.notifyDataSetChanged();
-			return true;
-		case R.id.skip_next:
-			selectedPeriod.set_skipped(!selectedPeriod.is_skipped());
-			saveSettings();
-			_adapter.notifyDataSetChanged();
+		} catch (Exception e) {
+			UserLog.log(this, "Error in context menu", e);
+			Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
 			
-			if (selectedPeriod.is_skipped()) {
-				msg = getResources().getString(R.string.skipped_period);
-			} else {
-				msg = getResources().getString(R.string.unskipped_period);
-			}
-			
-			UserLog.log(this, msg + " Period: " + selectedPeriod);
-			Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-
-			return true;
-		case R.id.is_enabled:
-			selectedPeriod.set_schedulingEnabled(!selectedPeriod.is_schedulingEnabled());
-			
-			if (! selectedPeriod.is_schedulingEnabled())
-			{
-				UserLog.log(this, "Disabling period " + selectedPeriod);
-				selectedPeriod.set_active(false);
-			}
-			
-			saveSettings();
-			_adapter.notifyDataSetChanged();
-			
-			return true;
-		case R.integer.context_menu_id_interval_wifi:
-			toggleCurrentIntervalWifi(selectedPeriod);
-
-			if (selectedPeriod.is_overrideIntervalWifi()) {
-				msg = getResources().getString(
-						R.string.overridden_wifi_interval);
-			} else {
-				msg = getResources().getString(
-						R.string.unoverridden_wifi_interval);
-			}
-
-			UserLog.log(this, msg + " Period: " + selectedPeriod);
-			Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-
-			return true;
-		case R.integer.context_menu_id_interval_mob:
-			toggleCurrentIntervalMobData(selectedPeriod);
-
-			if (selectedPeriod.is_overrideIntervalMob()) {
-				msg = getResources()
-						.getString(R.string.overridden_mob_interval);
-			} else {
-				msg = getResources().getString(
-						R.string.unoverridden_mob_interval);
-			}
-			
-			UserLog.log(this, msg + " Period: " + selectedPeriod);
-			Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-
-			return true;
-		case R.integer.context_menu_id_up:
-			
-			_adapter.moveUp(info.position);
-			// PeriodListAdapter.moveItemUp(_enabledPeriods, info.position);
-			// and save new list order - TODO: add property listPosition to be
-			// more explicit
-			saveSettings();
-			return true;
-		case R.integer.context_menu_id_down:
-			_adapter.moveDown(info.position);
-			saveSettings();
-		default:
-			return super.onContextItemSelected(item);
+			e.printStackTrace();
 		}
+		return false;
 	}
 
 	private void initializePersistedFields() {
@@ -537,6 +537,31 @@ public class MainActivity extends FragmentActivity implements
 		NetworkScheduler scheduler = new NetworkScheduler();
 		scheduler.setupIntervalConnect(this, _settings);
 
+		_adapter.notifyDataSetChanged();
+	}
+
+	private void toggleEnabled(ScheduledPeriod selectedPeriod) throws Exception {
+		selectedPeriod.set_schedulingEnabled(!selectedPeriod
+				.is_schedulingEnabled());
+	
+		if (!selectedPeriod.is_schedulingEnabled()) {
+			UserLog.log(this, "Disabling period " + selectedPeriod);
+			selectedPeriod.set_active(false);
+		} else {
+			if (selectedPeriod.is_scheduleStart()
+					&& selectedPeriod.is_scheduleStop()
+					&& selectedPeriod.is_schedulingEnabled()
+					&& selectedPeriod.isActiveNow()) {
+	
+				NetworkScheduler networkScheduler = new NetworkScheduler();
+	
+				networkScheduler.toggleActivation(this, selectedPeriod,
+						true, _settings, false);
+			}
+		}
+	
+		saveSettings();
+		
 		_adapter.notifyDataSetChanged();
 	}
 
