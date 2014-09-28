@@ -212,16 +212,11 @@ public class NetworkScheduler {
 			boolean enable = true;
 			if (isPeriodActivation) {
 				ConnectionUtils.toggleNetworkState(context, period, enable);
-
-				if (period.useIntervalConnect()) {
-					startIntervalConnect(context, settings);
-				} else {
-					cancelIntervalConnect(context);
-				}
-
 			} else {
 				endToggleSensors(context, period, settings, enable);
 			}
+			
+			setupIntervalConnectIfRequired(context, settings, period, manualActivation);
 
 
 		} else {
@@ -339,14 +334,64 @@ public class NetworkScheduler {
 				// it's the stop, but it happens before the start, so the period
 				// becomes active
 				ConnectionUtils.toggleNetworkState(context, period, false);
-				// stop interval connect if not necessary, or re-start it with
-				// the
-				// relevant sensors (from other periods)
-				startIntervalConnect(context, settings);
+				
 			} else {
 				endToggleSensors(context, period, settings, false);
 			}
+			
+			// any other period might still be enabled and require interval connect:
+			setupIntervalConnectIfRequired(context, settings, period, manualStop);
 
+		}
+	}
+	
+	private void setupIntervalConnectIfRequired(Context context, SchedulerSettings settings,
+			ScheduledPeriod thisPeriod, boolean manualSwitch) {
+		
+		ArrayList<ScheduledPeriod> allPeriods = PersistenceUtils
+				.readFromPreferences(PersistenceUtils
+						.getSchedulesPreferences(context));
+		
+		boolean intervalWifi = isWifiIntervalConnectActive(allPeriods);
+		boolean intervalMobData = isMobiIntervalConnectActive(allPeriods);
+		
+		// if this period was switched on / off manually and overrides interval connect from
+		// any other period -> cancel interval connect. This is not very robust because
+		// for example if this period does not have mobile data and some other active period has
+		// mobile data interval connect, it will still be required to set up, but when the
+		// broadcast is received the manual activation will be forgotten...
+		if (manualSwitch)
+		{
+			boolean intervalConnectRequiredByLastPeriod = intervalWifi || intervalMobData;
+			
+			boolean intervalWifiSetManually = false, intervalMobiSetManually = false;
+			
+			if (thisPeriod.is_wifi()) {
+				// the Wi-Fi interval setting of the manually activated period shall win
+				intervalWifi = isWifiIntervalConnectActive(thisPeriod);
+				intervalWifiSetManually = true;
+			}
+			
+			if (thisPeriod.is_mobileData()) {
+				// the mobile data interval setting of the manually activated period shall win
+				intervalMobData = isMobiIntervalConnectActive(thisPeriod);
+				intervalMobiSetManually = true;
+			}
+			
+			if (intervalConnectRequiredByLastPeriod && (intervalWifiSetManually || intervalMobiSetManually))
+			{
+				// mixed interval connect requirements from both last period and manual period
+				if (intervalWifi || intervalMobData) {
+					UserLog.log(context, "Manual activation / deactivation of period with other active period: Interval connection might or might not be honoured.");
+				}
+			}
+		}
+
+		if (intervalWifi || intervalMobData) {
+			setupIntervalConnect(context, settings);
+		} else {
+			// no relevant active interval-connect period at all
+			cancelIntervalConnect(context);
 		}
 	}
 
@@ -395,7 +440,7 @@ public class NetworkScheduler {
 		try {
 			startIntervalConnect(context, settings);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			UserLog.log(context, "Error setting up interval connect: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -587,11 +632,17 @@ public class NetworkScheduler {
 
 		ScheduledPeriod lastActivatedWifiPeriod = getLastActivatedActivePeriod(
 				allPeriods, NetworkType.WiFi);
+		
+		return isWifiIntervalConnectActive(lastActivatedWifiPeriod);
+	}
+	
+	private boolean isWifiIntervalConnectActive(ScheduledPeriod period) {
 
-		boolean intervalWifi = lastActivatedWifiPeriod != null
-				&& lastActivatedWifiPeriod.is_enableRadios()
-				&& lastActivatedWifiPeriod.is_intervalConnectWifi()
-				&& !lastActivatedWifiPeriod.is_overrideIntervalWifi();
+		boolean intervalWifi = period != null
+				&& period.is_enableRadios()
+				&& period.is_wifi()
+				&& period.is_intervalConnectWifi()
+				&& !period.is_overrideIntervalWifi();
 
 		return intervalWifi;
 	}
@@ -602,10 +653,17 @@ public class NetworkScheduler {
 		ScheduledPeriod lastActivatedMobDataPeriod = getLastActivatedActivePeriod(
 				allPeriods, NetworkType.MobileData);
 
-		boolean intervalMobData = lastActivatedMobDataPeriod != null
-				&& lastActivatedMobDataPeriod.is_enableRadios()
-				&& lastActivatedMobDataPeriod.is_intervalConnectMobData()
-				&& !lastActivatedMobDataPeriod.is_overrideIntervalMob();
+		return isMobiIntervalConnectActive(lastActivatedMobDataPeriod);
+	}
+	
+	private boolean isMobiIntervalConnectActive(
+			ScheduledPeriod period) {
+
+		boolean intervalMobData = period != null
+				&& period.is_enableRadios()
+				&& period.is_mobileData()
+				&& period.is_intervalConnectMobData()
+				&& !period.is_overrideIntervalMob();
 
 		return intervalMobData;
 	}
@@ -646,7 +704,8 @@ public class NetworkScheduler {
 			IllegalAccessException, NoSuchMethodException,
 			InvocationTargetException {
 
-		// if previously started, still active period has interval connect
+		// NOTE: interval connect should be handled by caller now.
+		// If previously started, still active period has interval connect
 		// and this period has constant-connect: cancel interval connect
 		// and this period does not specify the sensor: keep interval connect
 		// -> if in doubt (active period requires interval connect) start it
@@ -658,7 +717,6 @@ public class NetworkScheduler {
 				.readFromPreferences(PersistenceUtils
 						.getSchedulesPreferences(context));
 
-		boolean intervalConnectRequired = false;
 		if (period.is_wifi()) {
 			ScheduledPeriod previousActiveWifi = getLastActivatedActivePeriod(
 					allPeriods, NetworkType.WiFi);
@@ -672,12 +730,6 @@ public class NetworkScheduler {
 						&& previousActiveWifi.is_enableRadios();
 			}
 			ConnectionUtils.toggleWifi(context, enableWifi);
-
-			if (enableWifi && previousActiveWifi != null
-					&& previousActiveWifi.is_enableRadios()
-					&& previousActiveWifi.is_intervalConnectWifi()) {
-				intervalConnectRequired = true;
-			}
 		}
 
 		if (period.is_mobileData()) {
@@ -694,12 +746,6 @@ public class NetworkScheduler {
 			}
 
 			ConnectionUtils.toggleMobileData(context, enableMobData);
-
-			if (enableMobData && previousActiveMobData != null
-					&& previousActiveMobData.is_enableRadios()
-					&& previousActiveMobData.is_intervalConnectMobData()) {
-				intervalConnectRequired = true;
-			}
 		}
 
 		if (period.is_bluetooth()) {
@@ -734,15 +780,6 @@ public class NetworkScheduler {
 			ConnectionUtils.toggleVolume(context, enableVolume,
 					period.is_vibrateWhenSilent());
 		}
-
-		if (intervalConnectRequired) {
-			startIntervalConnect(context, settings);
-		} else {
-			cancelIntervalConnect(context);
-		}
-		//
-		// // for the sensors which have not interval-connect activated
-		// ConnectionUtils.toggleNetworkState(context, period, true);
 	}
 
 	private void setAlarm(Context context, ScheduledPeriod period,
