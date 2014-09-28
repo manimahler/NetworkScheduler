@@ -21,9 +21,6 @@ public class UserPresentBroadCastReceiver extends BroadcastReceiver {
 			Log.d(TAG, "Receiving action " + action);
 
 			if (action.equals(USER_PRESENT_ACTION)) {
-
-				Log.d(TAG, "Receiving action USER PRESENT");
-
 				startSensorsInIntervalConnect(context);
 			}
 		} catch (Exception e) {
@@ -33,13 +30,14 @@ public class UserPresentBroadCastReceiver extends BroadcastReceiver {
 
 	private void startSensorsInIntervalConnect(Context context)
 			throws Exception {
-		
-		Log.d(TAG, "Device unlocked - enabling Wi-Fi / mobile data according to unlock policy...");
-		
+
 		SchedulerSettings settings = PersistenceUtils.readSettings(context);
-		
-		NetworkScheduler scheduler = new NetworkScheduler();
-		
-		scheduler.intervalSwitchOnDueToUnlock(context, settings);
+
+		if (settings.is_globalOn()) {
+			
+			NetworkScheduler scheduler = new NetworkScheduler();
+
+			scheduler.intervalSwitchOnDueToUnlock(context, settings);
+		}
 	}
 }
