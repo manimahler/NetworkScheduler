@@ -90,6 +90,24 @@ public class NetworkScheduler {
 			}
 		}
 	}
+	
+	public void toggleActivation(Context context, ScheduledPeriod selectedPeriod,
+			boolean activate, SchedulerSettings settings, boolean ignoreSkip)
+	throws Exception {
+
+			boolean start;
+			if (selectedPeriod.is_enableRadios()) {
+				start = activate;
+			} else {
+				start = !activate;
+			}
+
+			if (start) {
+				start(selectedPeriod, context, settings, ignoreSkip);
+			} else {
+				stop(selectedPeriod, context, ignoreSkip);
+			}
+	}
 
 	public void setNextAlarmStart(Context context, ScheduledPeriod period,
 			SchedulerSettings settings) {

@@ -101,7 +101,7 @@ public class PersistenceUtils {
 		SchedulerSettings result = new SchedulerSettings(sharedPrefs, context);
 		
 		// static cache in user log
-		UserLog.set_loggingEnabled(result.is_loggingEnabled(), context);
+		UserLog.set_loggingEnabled(result.is_globalOn() && result.is_loggingEnabled(), context);
 		
 		return result;
 	}

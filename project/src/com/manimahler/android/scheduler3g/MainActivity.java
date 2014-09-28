@@ -176,27 +176,66 @@ public class MainActivity extends FragmentActivity implements
 
 		showPeriodDetails(newPeriod);
 	}
-	
 
 	public void onGlobalOnClicked(CompoundButton buttonView) {
 
-		PersistenceUtils.saveGlobalOnState(this, buttonView.isChecked());
+		try {
+			boolean isGlobalOn = buttonView.isChecked();
 
-		String toastText;
+			if (!isGlobalOn) {
+				// log as long as it is still enabled:
+				UserLog.log(this,
+						"Network Scheduler completely disabled by user.");
+			}
 
-		NetworkScheduler scheduler = new NetworkScheduler();
+			PersistenceUtils.saveGlobalOnState(this, isGlobalOn);
+			// re-read the settings, this also re-initializes the user log
+			_settings = PersistenceUtils.readSettings(this);
 
-		if (buttonView.isChecked()) {
-			scheduler.setAlarms(this, _adapter.getPeriods(), _settings);
-			toastText = getResources().getString(R.string.global_switch_on_toast);
-		} else {
-			scheduler.deleteAlarms(this, _adapter.getPeriods());
-			toastText = getResources().getString(R.string.global_switch_off_toast);
+			String toastText;
+
+			NetworkScheduler scheduler = new NetworkScheduler();
+
+			if (isGlobalOn) {
+
+				UserLog.log(this, "Network Scheduler enabled by user!");
+				
+				for (ScheduledPeriod period : _adapter.getPeriods()) {
+					if (period.is_scheduleStart() && period.is_scheduleStop() 
+							&& period.is_schedulingEnabled()
+							&& period.isActiveNow()) {
+						
+						toggleActivation(period, true, false);
+					}
+				}
+				
+				// save the updated period's active property and also sets the alarms for all periods:
+				saveSettings();
+
+				toastText = getResources().getString(
+						R.string.global_switch_on_toast);
+			} else {
+
+				for (ScheduledPeriod period : _adapter.getPeriods()) {
+					period.set_active(false);
+				}
+				
+				// also schedules the alarms -> delete below
+				saveSettings();
+				
+				scheduler.deleteAlarms(this, _adapter.getPeriods());
+				toastText = getResources().getString(
+						R.string.global_switch_off_toast);
+			}
+
+			updateEnabledAppearance(isGlobalOn);
+
+			Toast.makeText(this, toastText, Toast.LENGTH_SHORT).show();
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
-		updateEnabledAppearance(buttonView.isChecked());
-
-		Toast.makeText(this, toastText, Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
@@ -266,12 +305,12 @@ public class MainActivity extends FragmentActivity implements
 			return true;
 		case R.id.activate_now:
 			UserLog.log(this, "Manual activation for period " + selectedPeriod);
-			toggleActivation(selectedPeriod, true);
+			toggleActivation(selectedPeriod, true, true);
 			_adapter.notifyDataSetChanged();
 			return true;
 		case R.id.deactivate_now:
 			UserLog.log(this, "Manual deactivation for period " + selectedPeriod);
-			toggleActivation(selectedPeriod, false);
+			toggleActivation(selectedPeriod, false, true);
 			_adapter.notifyDataSetChanged();
 			return true;
 		case R.id.skip_next:
@@ -502,24 +541,13 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	private void toggleActivation(ScheduledPeriod selectedPeriod,
-			boolean activate) {
+			boolean activate, boolean ignoreSkip) {
 		try {
 
 			NetworkScheduler scheduler = new NetworkScheduler();
 
-			boolean start;
-			if (selectedPeriod.is_enableRadios()) {
-				start = activate;
-			} else {
-				start = !activate;
-			}
-
-			boolean ignoreSkip = true;
-			if (start) {
-				scheduler.start(selectedPeriod, this, _settings, ignoreSkip);
-			} else {
-				scheduler.stop(selectedPeriod, this, ignoreSkip);
-			}
+			scheduler.toggleActivation(this, selectedPeriod, activate, _settings, ignoreSkip);
+			
 		} catch (Exception e) {
 			Toast.makeText(this, "Error (de-)activating selected profile",
 					Toast.LENGTH_SHORT).show();
