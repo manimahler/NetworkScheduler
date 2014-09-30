@@ -47,8 +47,9 @@ public class AutostartNotifyReceiver extends BroadcastReceiver {
 					"Error re-scheduling time periods after re-boot.", e);
 		}
 	}
+	
 
-	public boolean restartAlarmAfterBoot(Context context, SchedulerSettings settings) {
+	public boolean restartAlarmAfterBoot(Context context, SchedulerSettings settings) throws Exception {
 		
 		NetworkScheduler networkScheduler = new NetworkScheduler();
 		
@@ -57,7 +58,24 @@ public class AutostartNotifyReceiver extends BroadcastReceiver {
 
 		ArrayList<ScheduledPeriod> enabledPeriods = PersistenceUtils
 				.readFromPreferences(prefs);
+		
+		// update the active property on the periods
+		for (ScheduledPeriod period : enabledPeriods) {
+			if (period.is_scheduleStart() && period.is_scheduleStop() 
+					&& period.is_schedulingEnabled()
+					&& period.isActiveNow()) {
+				
+				networkScheduler.toggleActivation(context, period, true, settings, false);
+			}
+			else
+			{
+				// might have been active on shutdown:
+				period.set_active(false);
+			}
+		}
 
+		PersistenceUtils.saveToPreferences(prefs, enabledPeriods);
+		
 		networkScheduler.setAlarms(context, enabledPeriods, settings);
 		
 		return true;
