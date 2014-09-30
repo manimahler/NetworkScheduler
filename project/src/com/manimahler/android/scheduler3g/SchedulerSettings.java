@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class SchedulerSettings {
-	// TODO: duplicated keys
+	// TODO: duplicated keys, handle in the same way as unlock-policy (accessing the keys in the strings)
 	private static final String VIBRATE = "pref_key_warn_vibrate";
 	private static final String PLAY_SOUND = "pref_key_warn_sound";
 	private static final String WARN_DEACTIVATION_ONLY_SCREEN_ON = "pref_key_warn_only_screen_on";
