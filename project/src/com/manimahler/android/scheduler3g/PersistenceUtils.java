@@ -21,7 +21,7 @@ public class PersistenceUtils {
 	
 
 	public static void saveToPreferences(SharedPreferences preferences,
-			ArrayList<ScheduledPeriod> periods) {
+			ArrayList<ScheduledPeriod> periods) throws Exception {
 		// Rough idea: EnabledPeriod could implement some interface
 		// 'IKeyValuePersistable'
 		// that has a Save(Writer writer) method. A Writer has the common
@@ -58,12 +58,12 @@ public class PersistenceUtils {
 		} catch (Exception ex) {
 			Log.e(TAG, "Error saving settings: " + ex.toString());
 
-			// throw ex;
+			throw ex;
 		}
 	}
 
 	public static void saveToPreferences(SharedPreferences preferences,
-			ScheduledPeriod period) {
+			ScheduledPeriod period) throws Exception {
 		try {
 
 			// Brute force. TODO: Sqlite
@@ -87,7 +87,7 @@ public class PersistenceUtils {
 		} catch (Exception ex) {
 			Log.e(TAG, "Error saving settings: " + ex.toString());
 
-			// throw ex;
+			throw ex;
 		}
 	}
 
