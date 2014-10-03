@@ -157,10 +157,37 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onPeriodUpdated(ScheduledPeriod period) {
 
-		_adapter.updateItem(period);
+		try {
 
-		saveSettings();
+			_adapter.updateItem(period);
 
+			// must be saved before activating, otherwise it has ID -1 which is
+			// illegal!
+			saveSettings();
+
+			if (period.is_scheduleStart() && period.is_scheduleStop()
+					&& period.is_schedulingEnabled() && period.isActiveNow()) {
+
+				NetworkScheduler networkScheduler = new NetworkScheduler();
+
+				boolean switchOn = period.is_enableRadios();
+
+				// NOTE: switching off is a bit risky, the user might want this to be an exception
+				//		 plus it does not work properly! It is not active despite it should and it 
+				//		 starts all the sensors it should stop.
+				if (switchOn) {
+
+					makeActivePeriodCheckingSensorsToast(period);
+
+					networkScheduler.toggleActivation(this, period, switchOn,
+							_settings, false);
+				}
+			}
+
+		} catch (Exception e) {
+			UserLog.log(this, "Error storing new period", e);
+			e.printStackTrace();
+		}
 	}
 
 	public void onAddClicked(View view) {
@@ -199,17 +226,18 @@ public class MainActivity extends FragmentActivity implements
 			if (isGlobalOn) {
 
 				UserLog.log(this, "Network Scheduler enabled by user!");
-				
+
 				for (ScheduledPeriod period : _adapter.getPeriods()) {
-					if (period.is_scheduleStart() && period.is_scheduleStop() 
+					if (period.is_scheduleStart() && period.is_scheduleStop()
 							&& period.is_schedulingEnabled()
 							&& period.isActiveNow()) {
-						
+
 						toggleActivation(period, true, false);
 					}
 				}
-				
-				// save the updated period's active property and also sets the alarms for all periods:
+
+				// save the updated period's active property and also sets the
+				// alarms for all periods:
 				saveSettings();
 
 				toastText = getResources().getString(
@@ -219,10 +247,10 @@ public class MainActivity extends FragmentActivity implements
 				for (ScheduledPeriod period : _adapter.getPeriods()) {
 					period.set_active(false);
 				}
-				
+
 				// also schedules the alarms -> delete below
 				saveSettings();
-				
+
 				scheduler.deleteAlarms(this, _adapter.getPeriods());
 				toastText = getResources().getString(
 						R.string.global_switch_off_toast);
@@ -233,7 +261,7 @@ public class MainActivity extends FragmentActivity implements
 			Toast.makeText(this, toastText, Toast.LENGTH_SHORT).show();
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			UserLog.log(this, "Error toggling global on / off switch", e);
 			e.printStackTrace();
 		}
 	}
@@ -380,16 +408,18 @@ public class MainActivity extends FragmentActivity implements
 
 		} catch (Exception e) {
 			UserLog.log(this, "Error in context menu", e);
-			Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-			
+			Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG)
+					.show();
+
 			e.printStackTrace();
 		}
 		return false;
 	}
 
 	private void initializePersistedFields() {
-		SharedPreferences schedulesPreferences = PersistenceUtils.getSchedulesPreferences(MainActivity.this);
-		
+		SharedPreferences schedulesPreferences = PersistenceUtils
+				.getSchedulesPreferences(MainActivity.this);
+
 		ArrayList<ScheduledPeriod> periods = PersistenceUtils
 				.readFromPreferences(schedulesPreferences);
 
@@ -444,11 +474,11 @@ public class MainActivity extends FragmentActivity implements
 
 				MenuItem skipItem = menu.findItem(R.id.skip_next);
 				skipItem.setChecked(selectedPeriod.is_skipped());
-				
-				if (! selectedPeriod.is_schedulingEnabled()) {
+
+				if (!selectedPeriod.is_schedulingEnabled()) {
 					menu.removeItem(R.id.skip_next);
 				}
-				
+
 				MenuItem enabledItem = menu.findItem(R.id.is_enabled);
 				enabledItem.setChecked(selectedPeriod.is_schedulingEnabled());
 
@@ -517,7 +547,8 @@ public class MainActivity extends FragmentActivity implements
 		startActivity(intent);
 	}
 
-	private void toggleCurrentIntervalWifi(ScheduledPeriod periodWifi) {
+	private void toggleCurrentIntervalWifi(ScheduledPeriod periodWifi)
+			throws Exception {
 		periodWifi.set_overrideIntervalWifi(!periodWifi
 				.is_overrideIntervalWifi());
 		saveSettings();
@@ -528,7 +559,8 @@ public class MainActivity extends FragmentActivity implements
 		_adapter.notifyDataSetChanged();
 	}
 
-	private void toggleCurrentIntervalMobData(ScheduledPeriod periodMobData) {
+	private void toggleCurrentIntervalMobData(ScheduledPeriod periodMobData)
+			throws Exception {
 		periodMobData.set_overrideIntervalMob(!periodMobData
 				.is_overrideIntervalMob());
 
@@ -543,7 +575,7 @@ public class MainActivity extends FragmentActivity implements
 	private void toggleEnabled(ScheduledPeriod selectedPeriod) throws Exception {
 		selectedPeriod.set_schedulingEnabled(!selectedPeriod
 				.is_schedulingEnabled());
-	
+
 		if (!selectedPeriod.is_schedulingEnabled()) {
 			UserLog.log(this, "Disabling period " + selectedPeriod);
 			selectedPeriod.set_active(false);
@@ -552,17 +584,47 @@ public class MainActivity extends FragmentActivity implements
 					&& selectedPeriod.is_scheduleStop()
 					&& selectedPeriod.is_schedulingEnabled()
 					&& selectedPeriod.isActiveNow()) {
-	
+
+				makeActivePeriodCheckingSensorsToast(selectedPeriod);
+
 				NetworkScheduler networkScheduler = new NetworkScheduler();
-	
-				networkScheduler.toggleActivation(this, selectedPeriod,
-						true, _settings, false);
+
+				networkScheduler.toggleActivation(this, selectedPeriod, true,
+						_settings, false);
 			}
 		}
-	
+
 		saveSettings();
-		
+
 		_adapter.notifyDataSetChanged();
+	}
+
+	private void makeActivePeriodCheckingSensorsToast(
+			ScheduledPeriod selectedPeriod) {
+
+		NetworkScheduler networkScheduler = new NetworkScheduler();
+
+		ArrayList<String> sensorList = networkScheduler
+				.getSensorsInPeriodArrayList(selectedPeriod, this);
+		String sensorListMsg = networkScheduler.getSensorStringList(sensorList,
+				this);
+
+		if (sensorListMsg == null) {
+			return;
+		}
+		
+		String formatString;
+		if (selectedPeriod.is_enableRadios()) {
+			formatString = getResources().getString(R.string.enabled_period_checking);
+		} else {
+			formatString = getResources().getString(R.string.disabled_period_checking);
+		}
+		
+		String msg = String.format(formatString, sensorListMsg);
+		
+		UserLog.log(this, msg);
+
+		Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 	}
 
 	private void toggleActivation(ScheduledPeriod selectedPeriod,
@@ -571,8 +633,9 @@ public class MainActivity extends FragmentActivity implements
 
 			NetworkScheduler scheduler = new NetworkScheduler();
 
-			scheduler.toggleActivation(this, selectedPeriod, activate, _settings, ignoreSkip);
-			
+			scheduler.toggleActivation(this, selectedPeriod, activate,
+					_settings, ignoreSkip);
+
 		} catch (Exception e) {
 			Toast.makeText(this, "Error (de-)activating selected profile",
 					Toast.LENGTH_SHORT).show();
@@ -612,8 +675,9 @@ public class MainActivity extends FragmentActivity implements
 		return widthPixels;
 	}
 
-	private void saveSettings() {
-		SharedPreferences preferences = PersistenceUtils.getSchedulesPreferences(MainActivity.this);
+	private void saveSettings() throws Exception {
+		SharedPreferences preferences = PersistenceUtils
+				.getSchedulesPreferences(MainActivity.this);
 
 		Log.d(TAG, "Saving to preferences...");
 		PersistenceUtils.saveToPreferences(preferences, _adapter.getPeriods());
@@ -634,20 +698,21 @@ public class MainActivity extends FragmentActivity implements
 
 		schedulePeriodFragment.show(fm, "fragment_schedule_period");
 	}
-	
+
 	public void showIntervalConnectExplanation(View view) {
 		FragmentManager fm = getSupportFragmentManager();
-		
+
 		String radio;
 		if (view.getId() == R.id.buttonIntervalWifiHelp) {
 			radio = this.getResources().getString(R.string.wifi);
 		} else {
 			radio = this.getResources().getString(R.string.mobile_data);
 		}
-			
-		ExplainIntervalConnectDialog explainDlg = ExplainIntervalConnectDialog.newInstance(
-				radio, _settings.get_connectInterval(), _settings.get_connectDuration());
-		
+
+		ExplainIntervalConnectDialog explainDlg = ExplainIntervalConnectDialog
+				.newInstance(radio, _settings.get_connectInterval(),
+						_settings.get_connectDuration());
+
 		explainDlg.show(fm, "fragment_explain_intervalconnect");
 	}
 }

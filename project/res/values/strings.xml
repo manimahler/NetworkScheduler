@@ -42,6 +42,9 @@
     <string name="unoverridden_wifi_interval">Wi-Fi interval connection was resumed</string>
     <string name="overridden_mob_interval">For this period mobile data interval connection was stopped</string>
     <string name="unoverridden_mob_interval">Mobile data interval connection was resumed</string>
+    <string name="enabled_period_checking">The period is active, enabling %1$s</string>
+    <string name="disabled_period_checking">The period is active, disabling %1$s</string>
+    
     
     <string name="name_hint">Name (optional)</string>
     <string name="mobile_data">Mobile data</string>

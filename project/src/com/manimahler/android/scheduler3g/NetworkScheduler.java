@@ -812,7 +812,7 @@ public class NetworkScheduler {
 	private void makeAutoDelayNotification(Context context,
 			ScheduledPeriod period, SchedulerSettings settings) {
 
-		ArrayList<String> sensorsToSwitchOff = getConnectionSwitchOffList(
+		ArrayList<String> sensorsToSwitchOff = getEnabledSensorsInPeriodArrayList(
 				period, context);
 
 		if (sensorsToSwitchOff.isEmpty()) {
@@ -894,7 +894,7 @@ public class NetworkScheduler {
 	private void makeDisableNotification(Context context,
 			ScheduledPeriod period, SchedulerSettings settings) {
 
-		String tickerText = getTickerText(period, context);
+		String tickerText = getSwitchOffTickerText(period, context);
 
 		if (tickerText == null) {
 			Log.d(TAG, "No action needed");
@@ -981,7 +981,7 @@ public class NetworkScheduler {
 		notificationManager.notify(period.get_id(), builder.build());
 	}
 
-	private ArrayList<String> getConnectionSwitchOffList(
+	public ArrayList<String> getEnabledSensorsInPeriodArrayList(
 			ScheduledPeriod period, Context context) {
 		ArrayList<String> result = new ArrayList<String>(3);
 
@@ -1003,18 +1003,56 @@ public class NetworkScheduler {
 
 		return result;
 	}
+	
+	public ArrayList<String> getSensorsInPeriodArrayList(
+			ScheduledPeriod period, Context context) {
+		
+		ArrayList<String> result = new ArrayList<String>(3);
 
-	private String getTickerText(ScheduledPeriod period, Context context) {
+		if (period.is_mobileData()) {
+			result.add(context.getString(R.string.mobile_data));
+		}
 
-		ArrayList<String> sensorsToSwitchOff = getConnectionSwitchOffList(
-				period, context);
+		if (period.is_wifi()) {
+			result.add(context.getString(R.string.wifi));
+		}
 
+		if (period.is_bluetooth()) {
+			result.add(context.getString(R.string.bluetooth));
+		}
+
+		if (period.is_volume()) {
+			result.add(context.getString(R.string.volume_on));
+		}
+
+		return result;
+	}
+
+	public String getSensorStringList(ArrayList<String> sensorsToSwitchOff, Context context) {
+		
+	
 		if (sensorsToSwitchOff.isEmpty()) {
 			return null;
 		}
+	
+		String sensorList = join(sensorsToSwitchOff, ", ");
+		
+		return sensorList;
+	}
 
+	private String getSwitchOffTickerText(ScheduledPeriod period, Context context) {
+
+		ArrayList<String> sensorsToSwitchOff = getEnabledSensorsInPeriodArrayList(
+				period, context);
+		
+		String sensorList = getSensorStringList(sensorsToSwitchOff, context);
+		
+		if (sensorList == null) {
+			return null;
+		}
+		
 		String tickerText = context.getString(R.string.switch_off_shortly)
-				+ join(sensorsToSwitchOff, ", ");
+				+ sensorList;
 
 		return tickerText;
 	}

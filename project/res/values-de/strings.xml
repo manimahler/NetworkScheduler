@@ -41,6 +41,8 @@
     <string name="unoverridden_wifi_interval">WLAN Intervall-Verbindung wurde wieder aufgenommen</string>
     <string name="overridden_mob_interval">Für die aktuelle Periode wurde die Mobile Daten Intervall-Verbindung gestoppt</string>
     <string name="unoverridden_mob_interval">Mobile Daten Intervall-Verbindung wurde wieder aufgenommen</string>
+    <string name="enabled_period_checking">Periode ist aktiv, Einschaltung von %1$s</string>
+    <string name="disabled_period_checking">The period is active, Abschaltung von %1$s</string>
     
     <string name="name_hint">Name (optional)</string>
     <string name="mobile_data">Mobile Daten</string>
