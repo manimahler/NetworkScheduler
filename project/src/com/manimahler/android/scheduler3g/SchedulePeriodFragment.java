@@ -271,11 +271,8 @@ public class SchedulePeriodFragment extends DialogFragment {
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView,
 							boolean isChecked) {
-						boolean isChecked1 = ((CheckBox) buttonView)
-								.isChecked();
-						_enabledPeriod.set_bluetooth(isChecked1);
-						updateCheckboxAppearance((CheckBox) buttonView,
-								R.drawable.ic_action_bluetooth1);
+
+						onToggleBluetooth(buttonView, isChecked);
 					}
 				});
 
@@ -522,6 +519,17 @@ public class SchedulePeriodFragment extends DialogFragment {
 		}
 
 		updateCheckBoxIntervalConnectWifi(checkBox);
+	}
+	
+	private void onToggleBluetooth(CompoundButton checkBox, boolean isChecked) {
+		
+		// to avoid the scroll view from jumping back up
+		checkBox.requestFocusFromTouch();
+		
+		_enabledPeriod.set_bluetooth(isChecked);
+		
+		updateCheckboxAppearance((CheckBox) checkBox,
+				R.drawable.ic_action_bluetooth1);
 	}
 
 	private void onToggleVolume(CompoundButton checkBox, boolean isChecked) {
