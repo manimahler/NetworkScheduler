@@ -623,7 +623,7 @@ public class MainActivity extends FragmentActivity implements
 		String msg = String.format(formatString, sensorListMsg);
 		
 		UserLog.log(this, msg);
-
+		
 		Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 	}
 
