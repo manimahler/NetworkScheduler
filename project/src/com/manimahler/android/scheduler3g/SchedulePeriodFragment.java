@@ -27,6 +27,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -344,6 +345,29 @@ public class SchedulePeriodFragment extends DialogFragment {
 
 		updateCheckBoxVibrateWhenSilent(checkBoxVibrate);
 
+		// question marks - explain dialog
+		ImageButton explainMobBtn = (ImageButton) _view
+				.findViewById(R.id.buttonIntervalMobDataHelp);
+		explainMobBtn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				((MainActivity) getActivity())
+						.showIntervalConnectExplanation(v);
+			}
+		});
+
+		ImageButton explainWifiBtn = (ImageButton) _view
+				.findViewById(R.id.buttonIntervalWifiHelp);
+		explainWifiBtn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				((MainActivity) getActivity())
+						.showIntervalConnectExplanation(v);
+			}
+		});
+
 		AlertDialog dialog = builder.create();
 
 		return dialog;
@@ -486,9 +510,9 @@ public class SchedulePeriodFragment extends DialogFragment {
 		if (!_enabledPeriod.is_mobileData()
 				|| !_enabledPeriod.is_enableRadios()) {
 			// disabled, ignore
-			
+
 			checkBox.setChecked(false);
-			
+
 			if (!_enabledPeriod.is_enableRadios()) {
 				makeIntervalConnectNotSupportedToast();
 			}
@@ -507,9 +531,9 @@ public class SchedulePeriodFragment extends DialogFragment {
 
 		if (!_enabledPeriod.is_wifi() || !_enabledPeriod.is_enableRadios()) {
 			// disabled, ignore
-			
+
 			checkBox.setChecked(false);
-			
+
 			if (!_enabledPeriod.is_enableRadios()) {
 				makeIntervalConnectNotSupportedToast();
 			}
@@ -520,14 +544,14 @@ public class SchedulePeriodFragment extends DialogFragment {
 
 		updateCheckBoxIntervalConnectWifi(checkBox);
 	}
-	
+
 	private void onToggleBluetooth(CompoundButton checkBox, boolean isChecked) {
-		
+
 		// to avoid the scroll view from jumping back up
 		checkBox.requestFocusFromTouch();
-		
+
 		_enabledPeriod.set_bluetooth(isChecked);
-		
+
 		updateCheckboxAppearance((CheckBox) checkBox,
 				R.drawable.ic_action_bluetooth1);
 	}
