@@ -16,6 +16,8 @@ public class SchedulerSettings {
 	private static final String INTERVAL_CONNECT_WIFI = "pref_key_interval_connect_wifi";
 	private static final String INTERVAL_CONNECT_WIFI_KEEP = "pref_key_interval_connect_wifi_keep_connected";
 	private static final String INTERVAL_CONNECT_MOBILEDATA = "pref_key_interval_connect_mobiledata";
+	private static final String INTERVAL_CONNECT_SUSPEND_WHEN_CHARGING = "pref_key_interval_connect_suspend_when_charging";
+	
 	private static final String CONNECT_INTERVAL = "pref_key_connect_interval";
 	private static final String CONNECT_DURATION = "pref_key_connect_duration";
 	
@@ -39,6 +41,7 @@ public class SchedulerSettings {
 	private boolean _intervalConnectMobileData;
 	
 	private boolean _keepWifiConnected;
+	private boolean _suspendIntervalConnectWhenCharging;
 	
 	private int _connectInterval;
 	private int _connectDuration;
@@ -69,6 +72,7 @@ public class SchedulerSettings {
 		_connectDuration = tryReadIntLarger0(preferences, CONNECT_DURATION, 1);
 		
 		_keepWifiConnected = preferences.getBoolean(INTERVAL_CONNECT_WIFI_KEEP, false);
+		_suspendIntervalConnectWhenCharging = preferences.getBoolean(INTERVAL_CONNECT_SUSPEND_WHEN_CHARGING, false);
 		
 		_loggingEnabled = preferences.getBoolean(LOGGING_ON, false);
 		
@@ -187,6 +191,15 @@ public class SchedulerSettings {
 
 	public void set_keepWifiConnected(boolean _keepWifiConnected) {
 		this._keepWifiConnected = _keepWifiConnected;
+	}
+	
+	public boolean is_suspendIntervalConnectWhenCharging() {
+		return _suspendIntervalConnectWhenCharging;
+	}
+
+	public void set_suspendIntervalConnectWhenCharging(
+			boolean _suspendIntervalConnectWhenCharging) {
+		this._suspendIntervalConnectWhenCharging = _suspendIntervalConnectWhenCharging;
 	}
 
 	public int get_connectInterval() {

@@ -117,6 +117,8 @@
     <string name="pref_title_interval_connect_wifi_keep_connected">Keep Wi-Fi connected</string>
     <string name="pref_summary_interval_connect_wifi_keep_connected">Interval connection will not switch-off Wi-Fi when connected to a hot-spot (e.g. at home)</string>
     
+    <string name="pref_title_interval_connect_suspend_charging">Suspend when charging</string>
+    <string name="pref_summary_interval_connect_suspend_charging">Interval connection will be suspended and not switch-off Wi-Fi or mobile data when charging</string>
     <!-- 
  	<string name="pref_title_interval_connect_mobiledata">Mobile data interval connection</string>
     <string name="pref_summary_interval_connect_mobiledata">Switch on mobile data only every %s minutes to fetch messages (only when active)</string>  -->

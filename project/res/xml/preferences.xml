@@ -56,6 +56,12 @@
             android:key="pref_key_interval_connect_wifi_keep_connected"
             android:summary="@string/pref_summary_interval_connect_wifi_keep_connected"
             android:title="@string/pref_title_interval_connect_wifi_keep_connected" />
+        
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_key_interval_connect_suspend_when_charging"
+            android:summary="@string/pref_summary_interval_connect_suspend_charging"
+            android:title="@string/pref_title_interval_connect_suspend_charging" />
     </PreferenceScreen>
 
     <PreferenceCategory android:title="@string/settings_title_notifications" />

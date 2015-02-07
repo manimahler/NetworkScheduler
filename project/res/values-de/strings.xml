@@ -99,6 +99,9 @@
     <string name="pref_title_interval_connect_wifi_keep_connected">WLAN bleibt verbunden</string>
     <string name="pref_summary_interval_connect_wifi_keep_connected">Intervall-Verbindung schaltet WLAN nicht aus, wenn mit Hotspot verbunden (z.B. zu Hause)</string>
 
+    <string name="pref_title_interval_connect_suspend_charging">Laden: Verbunden bleiben</string>
+    <string name="pref_summary_interval_connect_suspend_charging">Beim Laden des Akkus wird die Intervall-Verbindung unterdrückt und die Verbindungen bleiben durchgehend erhalten</string>
+    
     <string name="pref_title_connect_interval">Verbindungs-Intervall: %s Min.</string>
     <string name="pref_summary_connect_interval">Alle %s Minuten für kurze Zeit (s. unten) verbinden</string>
     <string name="pref_dialog_title_connect_interval">Intervall (Min.)</string>
