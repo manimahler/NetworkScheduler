@@ -18,7 +18,7 @@ public class ExplainIntervalConnectDialog extends DialogFragment {
 
 	private String _radio;
 	private int _connectInterval;
-	private int _connectDuration;
+	private double _connectDuration;
 
 	// Factory method
 	public static ExplainIntervalConnectDialog newInstance(String radio,
@@ -53,7 +53,7 @@ public class ExplainIntervalConnectDialog extends DialogFragment {
 		// read from bundle
 		_radio = savedData.getString(RADIO);
 		_connectInterval = savedData.getInt(INTERVAL);
-		_connectDuration = savedData.getInt(DURATION);
+		_connectDuration = savedData.getDouble(DURATION);
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
