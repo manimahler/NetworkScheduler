@@ -475,11 +475,6 @@ public class NetworkScheduler {
 		int unlockPolicyWifi = settings.get_unlockPolicyWifi();
 		int unlockPolicyMobi = settings.get_unlockPolicyMobi();
 
-		UserLog.log(context,
-				"Device unlocked, applying unlock policy for Wi-Fi ("
-						+ unlockPolicyWifi + ") and for mobile data ("
-						+ unlockPolicyMobi + ")");
-
 		switch (unlockPolicyWifi) {
 		case UNLOCK_POLICY_SWITCH_ON_NEVER:
 			switchOnWifi = false;
@@ -506,7 +501,8 @@ public class NetworkScheduler {
 								.getSchedulesPreferences(context));
 			}
 
-			// TODO: not only when interval-connect is active but genarally the period is active? (could have been switched off!)
+			// TODO: not only when interval-connect is active but genarally the
+			// period is active? (could have been switched off!)
 			switchOnMobi = isMobiIntervalConnectActive(allPeriods);
 			break;
 		case UNLOCK_POLICY_SWITCH_ON_ALWAYS:
@@ -514,7 +510,53 @@ public class NetworkScheduler {
 			break;
 		}
 
-		intervalSwitchOn(context, settings, switchOnWifi, switchOnMobi);
+		boolean changeRequired = (switchOnWifi && !ConnectionUtils
+				.isWifiOn(context))
+				|| (switchOnMobi && !ConnectionUtils.isMobileDataOn(context));
+
+		String changeText = "";
+
+		if (!changeRequired) {
+			changeText = "No change needed.";
+		}
+		
+		UserLog.log(context,
+				"Device unlocked, applying unlock policy for Wi-Fi ("
+						+ translateUnlockPolicy(unlockPolicyWifi) + 
+						") and for mobile data ("
+						+ translateUnlockPolicy(unlockPolicyMobi) + 
+						") " + changeText);
+
+		// This protects us from saving the incorrect 'original' state in the
+		// bundle
+		// in case the previous unlock has switched on a sensor and stored the
+		// original 'off'
+		// state in a bundle in a switch-off intent would be overwritten by the
+		// current unlock
+		// TODO: To be more robust against user-changes while being connected,
+		// write the original
+		// unlock bundle to a file and only delete it once an actual switch-off
+		// intent is handled
+		if (changeRequired) {
+			intervalSwitchOn(context, settings, switchOnWifi, switchOnMobi);
+		}
+	}
+
+	private String translateUnlockPolicy(int unlockPolicy) {
+
+		String result = null;
+		switch (unlockPolicy) {
+		case 1:
+			result = "Never";
+			break;
+		case 2:
+			result = "When period active";
+			break;
+		case 3:
+			result = "Always";
+		}
+
+		return result;
 	}
 
 	public void intervalSwitchOn(Context context, SchedulerSettings settings) {
@@ -626,52 +668,53 @@ public class NetworkScheduler {
 		boolean suspendIntervalConnect = settings.is_suspendIntervalConnectWhenCharging() && isCharging(context);
 		
 		if (intervalMobData) {
+			boolean mobiIntervalConnectActive = isMobiIntervalConnectActive(allPeriods);
 			boolean mobDataWasOn = bundle.getBoolean(MOBILEDATA_ORIGINALLY_ON);
-
-			boolean mobiIntervalConnectActive = isMobiIntervalConnectActive(allPeriods) && !suspendIntervalConnect;
 			
-			if (mobiIntervalConnectActive || !mobDataWasOn) {
-				ConnectionUtils.toggleMobileData(context, false);
-			}
-			else
-			{
-				UserLog.log(TAG, context,
-						"Interval switch-off skipped (No interval connection is active and mobile data was previously enabled)");
+			if (!mobiIntervalConnectActive) {
+				// enabled by unlock policy ALWAYS - disregard suspend while charging
+				if (!mobDataWasOn) {
+					ConnectionUtils.toggleMobileData(context, false);
+				} else {
+					UserLog.log(TAG, context,
+							"Mobile data switch-off skipped (No interval connection is active and mobile data was previously enabled)");
+				}	
+			} else {
+				if (suspendIntervalConnect) {
+					UserLog.log(TAG, context,
+							"Interval switch-off skipped for mobile data due to option suspend interval connection while charging");
+				} else {
+					ConnectionUtils.toggleMobileData(context, false);
+				}
 			}
 		}
 
 		if (intervalWifi) {
-
-			if (isWifiIntervalConnectActive(allPeriods) && !suspendIntervalConnect) {
-
-				if (settings.is_keepWifiConnected()
-						&& ConnectionUtils.isWifiConnected(context)) {
-
-					boolean isWifiIntervalOn = isWifiIntervalConnectActive(allPeriods);
-
-					if (!isWifiIntervalOn) {
-						// typically when outside any period and Wi-Fi was
-						// enabled
-						// by unlock-policy ALWAYS:
-						Log.d(TAG,
-								"Keep Wi-Fi connected will not be respected because there is no active Wi-Fi interval connection");
-						ConnectionUtils.toggleWifi(context, false);
-					} else {
-
-						UserLog.log(TAG, context,
-								"Interval switch-off skipped for Wi-Fi (due to option 'Keep Wi-Fi connected')");
-					}
-				} else {
-					ConnectionUtils.toggleWifi(context, false);
-				}
-			} else {
-				boolean wifiWasOn = bundle.getBoolean(WIFI_ORIGINALLY_ON);
+			
+			boolean isWifiIntervalActive = isWifiIntervalConnectActive(allPeriods);
+			boolean wifiWasOn = bundle.getBoolean(WIFI_ORIGINALLY_ON);
+			
+			
+			if (!isWifiIntervalActive) {
+				// enabled by unlock-policy ALWAYS - disregard suspend while charging and keep connected
 				if (!wifiWasOn) {
 					ConnectionUtils.toggleWifi(context, false);
+				} else {
+					UserLog.log(TAG, context,
+							"Wi-Fi Interval switch-off skipped (No interval connection is active and wifi was previously enabled)");
+				}
+			} else {
+				if (suspendIntervalConnect) {
+					UserLog.log(TAG, context,
+							"Interval switch-off skipped for Wi-Fi due to option suspend interval connection while charging");
+				}
+				else if (settings.is_keepWifiConnected()
+						&& ConnectionUtils.isWifiConnected(context)) {
+					UserLog.log(TAG, context,
+							"Interval switch-off skipped for Wi-Fi (due to option 'Keep Wi-Fi connected')");
 				}
 				else {
-					UserLog.log(TAG, context,
-							"Interval switch-off skipped (No interval connection is active and wifi was previously enabled)");
+					ConnectionUtils.toggleWifi(context, false);
 				}
 			}
 		}
