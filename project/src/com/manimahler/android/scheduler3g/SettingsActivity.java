@@ -138,6 +138,8 @@ public class SettingsActivity extends PreferenceActivity implements
 			// https://code.google.com/p/android/issues/detail?id=4611
 			View homeBtn = dialog.findViewById(android.R.id.home);
 
+			// TODO: on lollipop homeBtn is NULL!
+			// -> http://developer.android.com/guide/topics/ui/settings.html#BackCompatHeaders
 			if (homeBtn != null) {
 				OnClickListener dismissDialogClickListener = new OnClickListener() {
 					@Override
