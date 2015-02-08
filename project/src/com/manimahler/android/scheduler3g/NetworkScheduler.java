@@ -467,6 +467,12 @@ public class NetworkScheduler {
 	public void intervalSwitchOnDueToUnlock(Context context,
 			SchedulerSettings settings) {
 
+		if (ConnectionUtils.isTethering(context)) {
+			UserLog.log(context,
+					"Device is tethering, no Wi-Fi / mobile data action performed when unlocking to avoid interrupting tethering!");
+			return;
+		}
+
 		boolean switchOnWifi = false;
 		boolean switchOnMobi = false;
 
@@ -582,6 +588,12 @@ public class NetworkScheduler {
 			cancelIntervalConnect(context);
 			return;
 		}
+		
+		if (ConnectionUtils.isTethering(context)) {
+			UserLog.log(context,
+					"Device is tethering, interval connection is suspended to avoid interrupting tethering!");
+			return;
+		}
 
 		intervalSwitchOn(context, settings, intervalWifi, intervalMobData);
 	}
@@ -636,6 +648,12 @@ public class NetworkScheduler {
 					"Interval switch-off skipped (screen is ON)");
 
 			scheduleIntervalSwitchOff(context, reTestIntervalSec, bundle);
+			return;
+		}
+		
+		if (ConnectionUtils.isTethering(context)) {
+			UserLog.log(context,
+					"Device is tethering, no Wi-Fi / mobile data switch-off performed to avoid cutting off tethering!");
 			return;
 		}
 

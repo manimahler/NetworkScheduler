@@ -115,6 +115,30 @@ public class ConnectionUtils {
 
 		return (mWifi.isConnected());
 	}
+	
+	public static boolean isTethering(Context context) {
+
+		boolean isWifiAPenabled = false;
+		WifiManager wifi = (WifiManager) context
+				.getSystemService(Context.WIFI_SERVICE);
+
+		Method[] wmMethods = wifi.getClass().getDeclaredMethods();
+		for (Method method : wmMethods) {
+			if (method.getName().equals("isWifiApEnabled")) {
+
+				try {
+					isWifiAPenabled = (Boolean) method.invoke(wifi);
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return isWifiAPenabled;
+	}
 
 	public static boolean isMobileDataOn(Context context) {
 
