@@ -43,11 +43,11 @@
             android:summary="@string/pref_summary_connect_interval"
             android:title="@string/pref_title_connect_interval" />
         <EditTextPreference
-            android:defaultValue="1"
+            android:defaultValue="1.0"
             android:dialogTitle="@string/pref_dialog_title_connect_duration"
             android:key="@string/pref_key_connect_duration"
-            android:maxLength="2"
-            android:numeric="integer"
+            android:maxLength="5"
+            android:inputType="numberDecimal"
             android:summary="@string/pref_summary_connect_duration"
             android:title="@string/pref_title_connect_duration" />
 

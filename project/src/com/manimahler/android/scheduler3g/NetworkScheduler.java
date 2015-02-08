@@ -596,7 +596,7 @@ public class NetworkScheduler {
 			return;
 		}
 
-		int connectTimeSec = 60 * settings.get_connectDuration();
+		int connectTimeSec = (int) (60 * settings.get_connectDuration());
 
 		scheduleIntervalSwitchOff(
 				context,

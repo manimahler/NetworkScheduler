@@ -44,7 +44,7 @@ public class SchedulerSettings {
 	private boolean _suspendIntervalConnectWhenCharging;
 	
 	private int _connectInterval;
-	private int _connectDuration;
+	private double _connectDuration;
 	
 	private boolean _loggingEnabled;
 	
@@ -69,7 +69,7 @@ public class SchedulerSettings {
 		_intervalConnectWifi = preferences.getBoolean(INTERVAL_CONNECT_WIFI, false);
 		_intervalConnectMobileData = preferences.getBoolean(INTERVAL_CONNECT_MOBILEDATA, false);
 		_connectInterval = tryReadIntLarger0(preferences, CONNECT_INTERVAL, 15);
-		_connectDuration = tryReadIntLarger0(preferences, CONNECT_DURATION, 1);
+		_connectDuration = tryReadDoubleLarger0(preferences, CONNECT_DURATION, 1);
 		
 		_keepWifiConnected = preferences.getBoolean(INTERVAL_CONNECT_WIFI_KEEP, false);
 		_suspendIntervalConnectWhenCharging = preferences.getBoolean(INTERVAL_CONNECT_SUSPEND_WHEN_CHARGING, false);
@@ -104,6 +104,30 @@ public class SchedulerSettings {
 		return result;
 	}
 	
+
+	private double tryReadDoubleLarger0(SharedPreferences preferences, String name, double defValue) {
+		
+		String defValueString = "default";
+		String stringValue = preferences.getString(name, defValueString);
+		
+		double result = defValue;
+		if (! stringValue.equals(defValueString)) {
+			try {
+				result = Double.parseDouble(stringValue);
+				
+				// safety net, we don't want 0
+				if (result == 0)
+				{
+					result = 1;
+				}
+			}
+			catch (Exception ex) {
+				// caught intentionally, the stored value is no double
+			}
+		}
+		
+		return result;
+	}
 	
 	public boolean is_globalOn() {
 		return _globalOn;
@@ -210,11 +234,11 @@ public class SchedulerSettings {
 		this._connectInterval = _connectInterval;
 	}
 
-	public int get_connectDuration() {
+	public double get_connectDuration() {
 		return _connectDuration;
 	}
 
-	public void set_connectDuration(int _connectDuration) {
+	public void set_connectDuration(double _connectDuration) {
 		this._connectDuration = _connectDuration;
 	}
 

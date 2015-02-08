@@ -303,7 +303,7 @@ public class SettingsActivity extends PreferenceActivity implements
 		if (p.getKey().equals(
 				this.getString(R.string.pref_key_connect_duration))) {
 
-			int duration = ensurePreferenceLarger0(p);
+			double duration = ensurePreferenceIsDoubleLarger0(p);
 
 			updatePreferenceTitle(p, R.string.pref_title_connect_duration);
 
@@ -350,11 +350,11 @@ public class SettingsActivity extends PreferenceActivity implements
 		}
 	}
 
-	private int tryParsePositiveInt(String stringValue) {
+	private double tryParsePositiveDouble(String stringValue) {
 
-		int result = -1;
+		double result = -1;
 		try {
-			result = Integer.parseInt(stringValue);
+			result = Double.parseDouble(stringValue);
 		} catch (Exception ex) {
 			// caught intentionally, the stored value is no integer
 		}
@@ -368,6 +368,24 @@ public class SettingsActivity extends PreferenceActivity implements
 		int currentValue = 0;
 		try {
 			currentValue = Integer.parseInt(currentText);
+		} catch (Exception e) {
+			// caught intentionally
+		}
+
+		if (currentValue == 0) {
+			// minimum value:
+			editTextPref.setText("1");
+		}
+
+		return currentValue;
+	}
+	
+	private double ensurePreferenceIsDoubleLarger0(Preference p) {
+		EditTextPreference editTextPref = (EditTextPreference) p;
+		String currentText = editTextPref.getText();
+		double currentValue = 0;
+		try {
+			currentValue = Double.parseDouble(currentText);
 		} catch (Exception e) {
 			// caught intentionally
 		}
@@ -451,7 +469,7 @@ public class SettingsActivity extends PreferenceActivity implements
 		String duration = prefConnectDuration.getText();
 
 		String summaryFormat;
-		if (tryParsePositiveInt(duration) == 1) {
+		if (tryParsePositiveDouble(duration) == 1) {
 			summaryFormat = this
 					.getString(R.string.pref_summary_intervalconnect_group_singular);
 		} else {

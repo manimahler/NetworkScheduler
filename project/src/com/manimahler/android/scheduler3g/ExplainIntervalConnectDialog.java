@@ -22,7 +22,7 @@ public class ExplainIntervalConnectDialog extends DialogFragment {
 
 	// Factory method
 	public static ExplainIntervalConnectDialog newInstance(String radio,
-			int connectInterval, int connectDuration) {
+			int connectInterval, double connectDuration) {
 
 		ExplainIntervalConnectDialog f = new ExplainIntervalConnectDialog();
 
@@ -114,9 +114,9 @@ public class ExplainIntervalConnectDialog extends DialogFragment {
 	}
 
 	private static void saveToBundle(Bundle args, String radio,
-			int connectInterval, int connectDuration) {
+			int connectInterval, double connectDuration) {
 		args.putString(RADIO, radio);
 		args.putInt(INTERVAL, connectInterval);
-		args.putInt(DURATION, connectDuration);
+		args.putDouble(DURATION, connectDuration);
 	}
 }
