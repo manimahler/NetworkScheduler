@@ -163,16 +163,15 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 				// add notification
 				scheduler.stopApproved(context, referencedPeriod, settings);
 			} else {
-
+				
 				// cancel interval connect
 				scheduler.stop(referencedPeriod, context);
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 
-			Toast.makeText(context, "Error changing 3g setting",
-					Toast.LENGTH_SHORT).show();
+			UserLog.log(context,
+					"Error stopping period: " + e.getMessage());
 		}
 	}
 }
