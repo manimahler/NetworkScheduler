@@ -978,7 +978,7 @@ public class NetworkScheduler {
 				.addAction(R.drawable.clock_notification,
 						context.getString(R.string.switch_off_now),
 						deactivateNowIntentPending)
-				.addAction(R.drawable.clock_notification,
+				.addAction(android.R.drawable.ic_menu_close_clear_cancel,
 						context.getString(R.string.not_today),
 						skipIntentPending).setAutoCancel(true);
 
@@ -1055,9 +1055,9 @@ public class NetworkScheduler {
 				.setTicker(tickerText)
 				.setPriority(NotificationCompat.PRIORITY_MAX)
 				// increases the chance to see the buttons
-				.addAction(R.drawable.clock_notification, delayText,
+				.addAction(android.R.drawable.ic_menu_add, delayText,
 						delayIntentPending)
-				.addAction(R.drawable.clock_notification,
+				.addAction(android.R.drawable.ic_menu_close_clear_cancel,
 						context.getString(R.string.not_today),
 						skipIntentPending).setAutoCancel(true);
 
