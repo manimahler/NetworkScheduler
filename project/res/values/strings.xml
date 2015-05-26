@@ -90,7 +90,7 @@
     <string name="pref_summary_intervalconnect_group">Connect every %1$s minutes for %2$s minutes (if specified in active period)</string>
     <string name="pref_summary_intervalconnect_group_singular">Connect every %1$s minutes for %2$s minute (if specified in active period)</string>
     
-    <string name="settings_title_notifications">Switch-Off Notification</string>
+    <string name="settings_title_notifications">Switch-Off Notification when Screen on</string>
     <string name="settings_title_logging">Logging</string>
 
 <!--     <string name="pref_title_warn_switchoff">Switch-off warning</string>
