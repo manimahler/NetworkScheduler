@@ -45,8 +45,7 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/bluetooth"
             android:src="@drawable/ic_action_bluetooth1" />
-        
-                
+            
         <ImageView
             android:id="@+id/imageViewVolume"
             android:layout_width="wrap_content"
