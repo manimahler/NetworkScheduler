@@ -215,15 +215,15 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 
 		if (vibrate) {
 			Drawable vibrateDrawable = context.getResources().getDrawable(
-					R.drawable.ic_action_vibrate);
+					R.drawable.ic_action_vibrate_mini);
 
-			int insetLeft = (int) Math.round(icon.getIntrinsicWidth() * 0.6);
-			int insetTop = (int) Math.round(icon.getIntrinsicHeight() * 0.6);
-			int insetBottom = 0;
-			InsetDrawable smallVibrator = new InsetDrawable(vibrateDrawable,
-					insetLeft, insetTop, 0, insetBottom);
+			//int insetLeft = (int) Math.round(icon.getIntrinsicWidth() * 0.6);
+			//int insetTop = (int) Math.round(icon.getIntrinsicHeight() * 0.6);
+			//int insetBottom = 0;
+			//InsetDrawable smallVibrator = new InsetDrawable(vibrateDrawable,
+			//		insetLeft, insetTop, 0, insetBottom);
 
-			iconList.add(smallVibrator);
+			iconList.add(vibrateDrawable);
 		}
 
 		if (!tintIt && strikeThrough) {
