@@ -19,10 +19,10 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     
-    
     <uses-permission android:name="android.permission.MODIFY_PHONE_STATE" />
-     
-
+    
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
+    
     <!-- Change LED state: -->
     <!-- uses-permission android:name="android.permission.WRITE_SETTINGS" -->
 
