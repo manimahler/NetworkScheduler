@@ -250,12 +250,15 @@ public class SchedulePeriodFragment extends DialogFragment {
 		View mobDataViewExplanation = _view.findViewById(R.id.buttonMissingMobData);
 
 		if (!ConnectionUtils.canToggleMobileData(context)) {
+			// the default is true:
+			_enabledPeriod.set_mobileData(false);
+			
+			// remove mobile data check box
 			View mobDataView = _view.findViewById(R.id.mobData);
 			sensorsLayout.removeView(mobDataView);
 
 			if (ConnectionUtils.hasMobileDataSensor(context)) {
-
-				// Cannot toggle 3g but there is a sensor - show explanation regarding lollipop
+				// There is a sensor but we cannot toggle 3g due to missing root - show explanation regarding lollipop
 				mobDataViewExplanation
 						.setOnClickListener(new OnClickListener() {
 							@Override
@@ -272,6 +275,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 			}
 		} else {
 
+			// can toggle mobile data, remove the explanation regarding root & lollipop
 			sensorsLayout.removeView(mobDataViewExplanation);
 
 			CheckBox toggleMobileData = (CheckBox) _view
@@ -298,6 +302,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 				onToggleWifi(v);
 			}
 		});
+		
 		updateCheckboxAppearance(toggleWifi, R.drawable.ic_action_wifi);
 
 		// bt
@@ -722,6 +727,11 @@ public class SchedulePeriodFragment extends DialogFragment {
 			boolean checkBoxEnabled, boolean strikeThrough) {
 
 		int tintColorId;
+		
+		if (v == null) {
+			// for example if no mobile data is available -> check box is null
+			return;
+		}
 
 		boolean isChecked = v.isChecked();
 
