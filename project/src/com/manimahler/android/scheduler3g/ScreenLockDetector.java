@@ -1,5 +1,6 @@
 package com.manimahler.android.scheduler3g;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import android.app.KeyguardManager;
@@ -32,12 +33,19 @@ public class ScreenLockDetector {
 	
 	private static final String TAG = ScreenLockDetector.class.getSimpleName();
 	
-	public ScreenLockDetector() {	
-	}
+	public ScreenLockDetector() {}
 
 	private boolean isLocked(Context context) {
 		KeyguardManager kgMgr = (KeyguardManager) context
 				.getSystemService(Context.KEYGUARD_SERVICE);
+		
+		// Added at API level 16:
+//		boolean isKeyguardLocked = kgMgr.isKeyguardLocked();
+//		Log.d(TAG, "isKeyguardLocked: " + isKeyguardLocked);
+//		
+		// Added at API level 22:
+//		boolean isDeviceLocked = kgMgr.isDeviceLocked();
+//		Log.d(TAG, "isDeviceLocked: " + isDeviceLocked);
 		
 		// NOTE: isKeyguardLocked() was only added at API level 16, but this seems to work ok:
 		boolean isLocked = kgMgr.inKeyguardRestrictedInputMode();
@@ -57,7 +65,7 @@ public class ScreenLockDetector {
 			// there was no 'None' option for screen lock
 			return isDeviceLocked;
 		}
-
+		
 		if (isLockScreenDisabled(context)) {
 			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
 				// android 3.0 - 4.1: we have a problem with 'None' because
@@ -69,7 +77,6 @@ public class ScreenLockDetector {
 		} else {
 			return isDeviceLocked;
 		}
-
 	}
 	
 	private boolean isScreenOn(Context context) {
@@ -77,26 +84,46 @@ public class ScreenLockDetector {
 				.getSystemService(Context.POWER_SERVICE);
 		return powerManager.isScreenOn();
 	}
-		
+	
 	private boolean isLockScreenDisabled(Context context)
 	{
 	    String LOCKSCREEN_UTILS = "com.android.internal.widget.LockPatternUtils";
 
 	    try
-	    { 
+	    {
 	        Class<?> lockUtilsClass = Class.forName(LOCKSCREEN_UTILS);
-	        // "this" is a Context, in my case an Activity
+	        
 	        Object lockUtils = lockUtilsClass.getConstructor(Context.class).newInstance(context);
-
+	        
 	        Method method = lockUtilsClass.getMethod("isLockScreenDisabled");
-
-	        boolean isDisabled = Boolean.valueOf(String.valueOf(method.invoke(lockUtils)));
-
+	        
+	        // Starting with android 5.x this fails with InvocationTargetException 
+	        // (caused by SecurityException - MANAGE_USERS permission is required because
+	        //  internally some additional logic was added to return false if one can switch between several users)
+	        // if (Screen Lock is None) { 
+	        //	 ... exception caused by getting all users (if user count)
+	        // } else {
+	        //	 return false;
+	        // }
+	        // -> therefore if no exception is thrown, we know the screen lock setting is
+	        //    set to Swipe, Pattern, PIN/PW or something else other than 'None'
+	        
+	        boolean isDisabled;
+	        try {
+	        
+	        	isDisabled = Boolean.valueOf(String.valueOf(method.invoke(lockUtils)));
+	        }
+	        catch (InvocationTargetException ex) {
+	        	Log.w(TAG, "Expected exception with screen lock type equals 'None': " + ex);
+	        	isDisabled = true;
+	        }
 	        return isDisabled;
 	    }
 	    catch (Exception e)
 	    {
-	        Log.e("reflectInternalUtils", "ex:"+e);
+	        Log.e(TAG, "Error detecting whether screen lock is disabled: " + e);
+	        
+	        e.printStackTrace();
 	    }
 
 	    return false;
