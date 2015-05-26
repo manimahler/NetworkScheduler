@@ -8,8 +8,10 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -238,19 +240,55 @@ public class SchedulePeriodFragment extends DialogFragment {
 
 		// TODO: make custom check box with the desired behavior
 		// network sensors
-		CheckBox toggleMobileData = (CheckBox) _view
-				.findViewById(R.id.checkBoxMobileData);
-		toggleMobileData.setChecked(_enabledPeriod.is_mobileData());
-		toggleMobileData.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				onToggleMobileData(v);
+		
+		LinearLayout sensorsLayout = (LinearLayout)_view
+				.findViewById(R.id.flowlayout_sensors);
+		
+		Context context = getActivity();
+		
+		View mobDataViewExplanation = _view.findViewById(R.id.buttonMissingMobData);
+
+		if (!ConnectionUtils.canToggleMobileData(context)) {
+			View mobDataView = _view.findViewById(R.id.mobData);
+			sensorsLayout.removeView(mobDataView);
+
+			if (ConnectionUtils.hasMobileDataSensor(context)) {
+
+				// Cannot toggle 3g but there is a sensor - show explanation regarding lollipop
+				mobDataViewExplanation
+						.setOnClickListener(new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								String url = getResources().getString(
+										R.string.help_url_knownissues);
+								Intent i = new Intent(Intent.ACTION_VIEW);
+								i.setData(Uri.parse(url));
+								startActivity(i);
+							}
+						});
+			} else {
+				sensorsLayout.removeView(mobDataViewExplanation);
 			}
-		});
-		updateCheckboxAppearance(toggleMobileData,
-				R.drawable.ic_action_mobile_data);
+		} else {
 
+			sensorsLayout.removeView(mobDataViewExplanation);
+
+			CheckBox toggleMobileData = (CheckBox) _view
+					.findViewById(R.id.checkBoxMobileData);
+
+			toggleMobileData.setChecked(_enabledPeriod.is_mobileData());
+			toggleMobileData.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					onToggleMobileData(v);
+				}
+			});
+			updateCheckboxAppearance(toggleMobileData,
+					R.drawable.ic_action_mobile_data);
+		}
+		
 		CheckBox toggleWifi = (CheckBox) _view.findViewById(R.id.checkBoxWifi);
 		toggleWifi.setChecked(_enabledPeriod.is_wifi());
 		toggleWifi.setOnClickListener(new OnClickListener() {
@@ -315,20 +353,24 @@ public class SchedulePeriodFragment extends DialogFragment {
 		// check box interval connect mob data
 		CheckBox checkBoxIntervalConnectMobData = (CheckBox) _view
 				.findViewById(R.id.checkBoxScheduleIntervalMob);
-		checkBoxIntervalConnectMobData.setChecked(_enabledPeriod
-				.is_intervalConnectMobData());
-		checkBoxIntervalConnectMobData
-				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-					@Override
-					public void onCheckedChanged(CompoundButton buttonView,
-							boolean isChecked) {
-						onToggleMobileDataInterval((CheckBox) buttonView,
-								isChecked);
-					}
-				});
 
-		updateCheckBoxIntervalConnectMobData(checkBoxIntervalConnectMobData);
+		// null if no mobile data toggling is possible
+		if (checkBoxIntervalConnectMobData != null) {
+			checkBoxIntervalConnectMobData.setChecked(_enabledPeriod
+					.is_intervalConnectMobData());
+			checkBoxIntervalConnectMobData
+					.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+						@Override
+						public void onCheckedChanged(CompoundButton buttonView,
+								boolean isChecked) {
+							onToggleMobileDataInterval((CheckBox) buttonView,
+									isChecked);
+						}
+					});
 
+			updateCheckBoxIntervalConnectMobData(checkBoxIntervalConnectMobData);
+		}
+		
 		// check box vibrate when silent
 		CheckBox checkBoxVibrate = (CheckBox) _view
 				.findViewById(R.id.checkBoxVolumeVibrate);
@@ -348,15 +390,19 @@ public class SchedulePeriodFragment extends DialogFragment {
 		// question marks - explain dialog
 		ImageButton explainMobBtn = (ImageButton) _view
 				.findViewById(R.id.buttonIntervalMobDataHelp);
-		explainMobBtn.setOnClickListener(new OnClickListener() {
+		
+		// null if mob data toggling is not possible
+		if (explainMobBtn != null) {
+			explainMobBtn.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				((MainActivity) getActivity())
-						.showIntervalConnectExplanation(v);
-			}
-		});
-
+				@Override
+				public void onClick(View v) {
+					((MainActivity) getActivity())
+							.showIntervalConnectExplanation(v);
+				}
+			});
+		}
+		
 		ImageButton explainWifiBtn = (ImageButton) _view
 				.findViewById(R.id.buttonIntervalWifiHelp);
 		explainWifiBtn.setOnClickListener(new OnClickListener() {

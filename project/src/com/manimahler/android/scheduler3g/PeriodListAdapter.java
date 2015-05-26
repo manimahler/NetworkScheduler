@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.InsetDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
@@ -102,14 +102,23 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 				intervalWifi, period.is_overrideIntervalWifi(),
 				!period.is_enableRadios());
 
-		boolean intervalMob = period.is_mobileData()
-				&& period.is_intervalConnectMobData();
+		// Mobile Data: only below lollipop or if rooted:
 		ImageView mobileDataView = (ImageView) rowView
 				.findViewById(R.id.imageViewMobileData);
-		tintViewIcon(mobileDataView, R.drawable.ic_action_mobile_data,
-				!period.is_mobileData(), intervalMob,
-				period.is_overrideIntervalMob(), !period.is_enableRadios());
-
+		
+		if (ConnectionUtils.canToggleMobileData(context)) {
+			boolean intervalMob = period.is_mobileData()
+					&& period.is_intervalConnectMobData();
+			
+			tintViewIcon(mobileDataView, R.drawable.ic_action_mobile_data,
+					!period.is_mobileData(), intervalMob,
+					period.is_overrideIntervalMob(), !period.is_enableRadios());
+		}
+		else {
+			LinearLayout topLine = (LinearLayout) rowView.findViewById(R.id.topLine);
+			topLine.removeView(mobileDataView);
+		}
+		
 		ImageView btView = (ImageView) rowView
 				.findViewById(R.id.imageViewBluetooth);
 		tintViewIcon(btView, R.drawable.ic_action_bluetooth1,

@@ -100,7 +100,6 @@
                 android:paddingRight="8dp"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@android:color/white" />
-
         </RelativeLayout>
 
         <com.manimahler.android.scheduler3g.FlowLayout
@@ -109,111 +108,139 @@
             android:layout_height="wrap_content" >
         </com.manimahler.android.scheduler3g.FlowLayout>
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/flowlayout_sensors"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
 
-            <CheckBox
-                android:id="@+id/checkBoxWifi"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:button="@drawable/ic_action_wifi"
-                android:text="@string/wifi"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@drawable/toggle_button_textcolor" />
+            <RelativeLayout
+                android:id="@+id/wifi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
 
-            <CheckBox
-                android:id="@+id/checkBoxMobileData"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/checkBoxScheduleIntervalWifi"
-                android:button="@drawable/ic_action_mobile_data"
-                android:text="@string/mobile_data"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@drawable/toggle_button_textcolor" />
+                <CheckBox
+                    android:id="@+id/checkBoxWifi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/ic_action_wifi"
+                    android:text="@string/wifi"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@drawable/toggle_button_textcolor" />
 
-            <CheckBox
-                android:id="@+id/checkBoxScheduleIntervalMob"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/checkBoxScheduleIntervalWifi"
-                android:layout_below="@+id/checkBoxMobileData"
-                android:button="@drawable/ic_action_interval"
-                android:text="@string/interval_text"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@drawable/toggle_button_textcolor" />
+                <CheckBox
+                    android:id="@+id/checkBoxScheduleIntervalWifi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@+id/checkBoxWifi"
+                    android:layout_marginLeft="38dp"
+                    android:button="@drawable/ic_action_interval"
+                    android:text="@string/interval_text"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@drawable/toggle_button_textcolor" />
 
-            <ImageButton
-                android:id="@+id/buttonIntervalMobDataHelp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@id/checkBoxScheduleIntervalMob"
-                android:layout_alignParentRight="true"
-                android:layout_alignTop="@id/checkBoxScheduleIntervalMob"
-                android:background="@drawable/time_button"
-                android:contentDescription="@string/interval_connection_help_content_desc"
-                android:src="@drawable/ic_action_help"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/white" />
+                <ImageButton
+                    android:id="@+id/buttonIntervalWifiHelp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/checkBoxScheduleIntervalWifi"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignTop="@id/checkBoxScheduleIntervalWifi"
+                    android:background="@drawable/time_button"
+                    android:contentDescription="@string/interval_connection_help_content_desc"
+                    android:src="@drawable/ic_action_help"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/white" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/mobData"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <CheckBox
+                    android:id="@+id/checkBoxMobileData"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/ic_action_mobile_data"
+                    android:text="@string/mobile_data"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@drawable/toggle_button_textcolor" />
+
+                <CheckBox
+                    android:id="@+id/checkBoxScheduleIntervalMob"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@+id/checkBoxMobileData"
+                    android:layout_marginLeft="38dp"
+                    android:button="@drawable/ic_action_interval"
+                    android:text="@string/interval_text"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@drawable/toggle_button_textcolor" />
+
+                <ImageButton
+                    android:id="@+id/buttonIntervalMobDataHelp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/checkBoxScheduleIntervalMob"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignTop="@id/checkBoxScheduleIntervalMob"
+                    android:background="@drawable/time_button"
+                    android:contentDescription="@string/interval_connection_help_content_desc"
+                    android:src="@drawable/ic_action_help"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/white" />
+            </RelativeLayout>
 
             <CheckBox
                 android:id="@+id/checkBoxBluetooth"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/checkBoxScheduleIntervalMob"
                 android:button="@drawable/ic_action_bluetooth1"
                 android:text="@string/bluetooth"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@drawable/toggle_button_textcolor" />
 
-            <CheckBox
-                android:id="@+id/checkBoxScheduleIntervalWifi"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@+id/checkBoxWifi"
-                android:layout_marginLeft="38dp"
-                android:button="@drawable/ic_action_interval"
-                android:text="@string/interval_text"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@drawable/toggle_button_textcolor" />
+            <RelativeLayout
+                android:id="@+id/volume"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
 
-            <ImageButton
-                android:id="@+id/buttonIntervalWifiHelp"
+                <CheckBox
+                    android:id="@+id/checkBoxVolume"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/ic_action_volume_up"
+                    android:text="@string/volume_on"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@drawable/toggle_button_textcolor" />
+
+                <CheckBox
+                    android:id="@+id/checkBoxVolumeVibrate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@+id/checkBoxVolume"
+                    android:layout_marginLeft="38dp"
+                    android:button="@drawable/ic_action_vibrate"
+                    android:text="@string/volume_with_vibrate"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@drawable/toggle_button_textcolor" />
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/buttonMissingMobData"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@id/checkBoxScheduleIntervalWifi"
-                android:layout_alignParentRight="true"
-                android:layout_alignTop="@id/checkBoxScheduleIntervalWifi"
-                android:background="@drawable/time_button"
                 android:contentDescription="@string/interval_connection_help_content_desc"
-                android:src="@drawable/ic_action_help"
+                android:drawableLeft="@drawable/ic_action_help"
+                android:background="@android:color/transparent"
+                android:text="@string/missing_MobData"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@android:color/white" />
-
-            <CheckBox
-                android:id="@+id/checkBoxVolume"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/checkBoxBluetooth"
-                android:button="@drawable/ic_action_volume_up"
-                android:text="@string/volume_on"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@drawable/toggle_button_textcolor" />
-
-            <CheckBox
-                android:id="@+id/checkBoxVolumeVibrate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@+id/checkBoxVolume"
-                android:layout_marginLeft="38dp"
-                android:button="@drawable/ic_action_vibrate"
-                android:text="@string/volume_with_vibrate"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@drawable/toggle_button_textcolor" />
-        </RelativeLayout>
+        </LinearLayout>
     </LinearLayout>
 
 </ScrollView>
