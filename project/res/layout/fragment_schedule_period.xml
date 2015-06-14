@@ -40,7 +40,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fillViewport="true"
-                    android:text="@string/start_text"
+                    android:text="@string/on"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/on_green" />
 
@@ -70,7 +70,7 @@
                     android:id="@+id/checkBoxScheduleStop"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/stop_text"
+                    android:text="@string/off"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/off_red" />
 

@@ -30,7 +30,7 @@
     <string name="explain_interval_connection_text">Interval connection turns off %1$s when the device sleeps and only re-connects every %2$s min for %3$s min (interval and duration can be changed in settings) to fetch new messages. Depending on the \'Switch-on when unlocking\' setting it is also turned on when the device is unlocked.</string>
     <string name="close_dialog">Close</string>
 
-    <!-- Context menu actions -->
+    <!-- Context menu actions (long press) -->
     <string name="modify">Edit</string>
     <string name="is_period_enabled">Enabled</string>
     <string name="activate_now">Activate now (switch ON)</string>
@@ -64,19 +64,12 @@
     <string name="switch_off_auto_delayed">Switch-off auto-delayed</string>
     <string name="switch_off_delayed_until">Switch off delayed until %s</string>
     <string name="switch_off_auto_delayed_until">Delayed until %s because device was in use</string>
-
-    <!-- Help -->
-    <string name="help">Help</string>
-    <string name="help_url">https://sites.google.com/site/networkscheduler/learn-more</string>
-    <string name="help_url_knownissues">https://sites.google.com/site/networkscheduler/known-issues</string>
-
+    
     <!-- Settings -->
     <string name="settings">Settings</string>
+    <string name="help">Help</string>
 
     <!-- Unlock policy -->
-    <string name="pref_key_unlock_policy_preferences">pref_key_unlock_policy_preferences</string>
-    <string name="pref_key_unlock_policy_wifi">pref_key_unlock_policy_wifi</string>
-    <string name="pref_key_unlock_policy_mob">pref_key_unlock_policy_mob</string>
     <string name="pref_title_unlock_policy">Switch-on when unlocking</string>
     <string name="explain_unlock_policy_prefs">Configure whether Wi-Fi / mobile data should be automatically enabled when the screen is turned on and unlocked</string>
     <string name="pref_dialog_title_unlock_policy_wifi">Switch-on Wi-Fi</string>
@@ -86,16 +79,13 @@
     <string name="unlock_policy_always">Always</string>
 
     <!-- Interval Connection -->
-    <string name="pref_key_interval_connect_preferences">pref_key_interval_connect_preferences</string>
     <string name="settings_title_interval_connect">Interval Connection</string>
     <string name="explain_interval_connection_prefs">Interval connection saves battery during active periods. It turns off Wi-Fi / mobile data when the device sleeps and only re-connects at regular intervals for a short while to fetch new messages.</string>
     <string name="pref_summary_intervalconnect_group">Connect every %1$s minutes for %2$s minutes (if specified in active period)</string>
     <string name="pref_summary_intervalconnect_group_singular">Connect every %1$s minutes for %2$s minute (if specified in active period)</string>
-    <string name="pref_key_connect_interval">pref_key_connect_interval</string>
     <string name="pref_title_connect_interval">Connect interval: %s min</string>
     <string name="pref_summary_connect_interval">Only connect every %s minutes for the short connection duration specified below</string>
     <string name="pref_dialog_title_connect_interval">Interval (min)</string>
-    <string name="pref_key_connect_duration">pref_key_connect_duration</string>
     <string name="pref_title_connect_duration">Connection duration: %s min</string>
     <string name="pref_summary_connect_duration">Connect for %s minutes to fetch messages</string>
     <string name="pref_summary_connect_duration_singular">Connect for 1 minute to fetch messages</string>
@@ -111,7 +101,6 @@
     <string name="pref_summary_warn_vibrate">Vibrate to make sure the switch-off warning is not missed e.g. when watching a full-screen video</string>
     <string name="pref_title_warn_sound">Play sound</string>
     <string name="pref_summary_warn_sound">Play the notification sound to make sure the switch-off warning is not missed</string>
-    <string name="pref_key_delay_min">pref_key_delay_min</string>
     <string name="pref_title_delay_min">Switch-off delay: %s min</string>
     <string name="pref_summary_delay_min">Deactivation can be delayed by %s minutes in the switch-off notification</string>
     <string name="pref_dialog_title_delay_min">Switch-off delay (minutes)</string>
@@ -120,13 +109,10 @@
 
     <!-- Logging -->
     <string name="settings_title_logging">Logging</string>
-    <string name="pref_key_logging_enable">pref_key_logging_enable</string>
     <string name="pref_title_logging_enable">Enable logging</string>
     <string name="pref_summary_logging_enable">Write all actions to a log file</string>
-    <string name="pref_key_logging_show">pref_key_logging_show</string>
     <string name="pref_title_logging_show">Show log</string>
     <string name="pref_summary_logging_show">Open the log file with the text editor of your choice</string>
-    <string name="pref_key_logging_delete">pref_key_logging_delete</string>
     <string name="pref_title_logging_delete">Delete log</string>
     <string name="pref_summary_logging_delete">Delete the log file (%sKB)</string>
     <string name="log_file_deleted">Log file deleted</string>

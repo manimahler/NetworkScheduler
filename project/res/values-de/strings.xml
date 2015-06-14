@@ -4,8 +4,11 @@
     <string name="global_switch_on_toast">Netzwerk Scheduler aktiviert</string>
     <string name="global_switch_off_toast">Netzwerk Scheduler vollständig deaktiviert</string>
     
-    <string name="start_text">ein</string>
+    <string name="on">ein</string>
+    <string name="off">aus</string>
     <string name="next_day">Folgetag</string>
+        <string name="everyday">Jeden Tag</string>
+    <string name="never">Nie</string>
     <string name="interval_text">Intervall-Verbindung</string>
     <string name="interval_connection_help_content_desc">Hilfe Anzeigen für Interval Connection</string>
     <string name="explain_interval_connection_title">Intervall-Verbindung</string>
@@ -15,7 +18,7 @@
     <string name="explain_unlock_policy_prefs">Konfigurieren Sie, ob die WLAN / Mobile Daten Sensoren automatisch eingeschaltet werden sollen, wenn der Bildschirm eingeschaltet und das Gerät entsperrt wird.</string>
     
     <string name="close_dialog">Schließen</string>
-    <string name="stop_text">aus</string>
+
     <string name="volume_with_vibrate">Vibrieren wenn lautlos</string>
     <string name="missing_MobData">Mobile Daten?</string>
     
@@ -35,7 +38,7 @@
     <string name="move_up">Nach oben</string>
     <string name="move_down">Nach unten</string>
     
-    <!-- Context menu actions -->
+    <!-- Context menu toasts -->
     <string name="skipped_period">Die nächste Periode wird übersprungen</string>
     <string name="unskipped_period">Die nächste Periode wird regulär aktiviert</string>
     <string name="overridden_wifi_interval">Für die aktuelle Periode wurde die WLAN Intervall-Verbindung gestoppt</string>
@@ -57,10 +60,8 @@
     <string name="switch_off_auto_delayed_until">Aufgeschoben bis %s, da Gerät verwendet wird</string>
     <string name="switch_off_skipped_today">Abschaltung wird heute nicht durchgeführt</string>
     
-    <string name="everyday">Jeden Tag</string>
-    <string name="never">Nie</string>
-    <string name="on">ein</string>
-    <string name="off">aus</string>
+
+
     <string name="switch_off_notification_title">Netzwerk Trennung</string>
     <string name="not_today">heute nicht</string>
     <string name="switch_off_now">jetzt trennen</string>
