@@ -1,34 +1,35 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <string name="app_name">Network Scheduler</string>
-
     <!-- Global switch on/off -->
-    <string name="global_switch_on_toast">Network Scheduler is enabled</string>
-    <string name="global_switch_off_toast">Network Scheduler is completely disabled</string>
+
+    <string name="global_switch_on_toast">Network Scheduler engedélyezve</string>
+    <string name="global_switch_off_toast">Network Scheduler letiltva</string>
 
     <!-- Edit period -->
-    <string name="name_hint">Name (optional)</string>
+    <string name="name_hint">Név (nem kötelező)</string>
     <string name="on">be</string>
     <string name="off">ki</string>
-    <string name="next_day">next day</string>
-    <string name="everyday">Everyday</string>
+    <string name="next_day">Következő nap</string>
+    <string name="everyday">Minden nap</string>
     <string name="never">Soha</string>
-    <string name="interval_text">szakaszos kapcsolat</string>
+    <string name="interval_text">Szakaszos kapcsolat</string>
     <string name="mobile_data">Mobil adat</string>
     <string name="wifi">Wi-Fi</string>
     <string name="bluetooth">Bluetooth</string>
     <string name="volume_on">Csengőhang</string>
     <string name="volume_with_vibrate">Rezgés néma módban</string>
-    <string name="missing_MobData">Missing Mobile Data?</string>
-    <string name="interval_connect_disabling_period">Interval connection is not possible when switch-off is before switch-on</string>
+    <string name="missing_MobData">Hiányzó Mobile adat?</string>
+    <string name="interval_connect_disabling_period">Szakaszos kapcsolat nem lehetséges amennyiben a kikapcsolás ideje korábbi a bekapcsolásénál.</string>
 
     <!-- ? next to interval connection in edit period: -->
-    <string name="interval_connection_help_content_desc">Show help on interval connection</string>
-    <string name="explain_interval_connection_title">szakaszos kapcsolat</string>
-    <string name="explain_interval_connection_intro">This option saves battery and reduces data usage while %1$s is enabled</string>
-    <string name="explain_interval_connection_text">Interval connection turns off %1$s when the device sleeps and only re-connects every %2$s min for %3$s min (interval and duration can be changed in settings) to fetch new messages. Depending on the \'Switch-on when unlocking\' setting it is also turned on when the device is unlocked.</string>
-    <string name="close_dialog">Close</string>
+
+    <string name="interval_connection_help_content_desc">A szakaszos kapcsolat súgója</string>
+    <string name="explain_interval_connection_title">Szakaszos kapcsolat</string>
+    <string name="explain_interval_connection_intro">Ez az opció energiát és adathasználatot takarít meg amíg a %1$s engedélyezve van.</string>
+    <string name="explain_interval_connection_text">A szakaszos kapcsolat mód lakapcsolja a %1$s amikor az eszköz készenlétben van és minden %2$s . percben %3$s perc időtartamban kapcsolódik újból (gyakoriság és időtartam beállítható) az üzenetek fogadásához.</string>
+    <string name="close_dialog">Bezár</string>
 
     <!-- Context menu actions -->
     <string name="modify">Szerkesztés</string>
@@ -45,25 +46,25 @@
     <string name="move_down">Mozgatás le</string>
 
     <!-- Context menu toasts -->
-    <string name="skipped_period">The next time period will be skipped</string>
-    <string name="unskipped_period">The next time period will be activated normally</string>
-    <string name="overridden_wifi_interval">For this period Wi-Fi interval connection was stopped</string>
-    <string name="unoverridden_wifi_interval">Wi-Fi interval connection was resumed</string>
-    <string name="overridden_mob_interval">For this period mobile data interval connection was stopped</string>
-    <string name="unoverridden_mob_interval">Mobile data interval connection was resumed</string>
-    <string name="enabled_period_checking">The period is active, enabling %1$s</string>
-    <string name="disabled_period_checking">The period is active, disabling %1$s</string>
+    <string name="skipped_period">A következő időzített esemény kihagyása.</string>
+    <string name="unskipped_period">A következő időzített esemény aktiválva.</string>
+    <string name="overridden_wifi_interval">Ezen előfordulásra a Wi-Fi kapcsolat időzített engedélyezése letiltva.</string>
+    <string name="unoverridden_wifi_interval">Wi-Fi szakaszos kapcsolat mód folytatása</string>
+    <string name="overridden_mob_interval">Ezen előfordulásra a Mobil adatkapcsolat időzített engedélyezése letiltva.</string>
+    <string name="unoverridden_mob_interval">Mobil adatkapcsolat szakaszos kapcsolat mód folytatása</string>
+    <string name="enabled_period_checking">Ez az esemény aktív, %1$s engedélyezve.</string>
+    <string name="disabled_period_checking">Ez az esemény aktív, %1$s tiltva.</string>
 
     <!-- Switch-off notifications when screen is on -->
-    <string name="switch_off_notification_title">Switching off network</string>
-    <string name="switch_off_shortly">"Switching off shortly: "</string>
-    <string name="not_today">not today</string>
-    <string name="switch_off_skipped_today">Switch off skipped today</string>
-    <string name="switch_off_now">switch off now</string>
-    <string name="connections_switched_off">Network connections switched off</string>
-    <string name="switch_off_auto_delayed">Switch-off auto-delayed</string>
-    <string name="switch_off_delayed_until">Switch off delayed until %s</string>
-    <string name="switch_off_auto_delayed_until">Delayed until %s because device was in use</string>
+    <string name="switch_off_notification_title">Hálózati kapcsolat megszakítása</string>
+    <string name="switch_off_shortly">"Kapcsolat bontása: "</string>
+    <string name="not_today">Ma nem</string>
+    <string name="switch_off_skipped_today">Ma ne bontsa a kapcsolatot</string>
+    <string name="switch_off_now">Kapcsolat bontása</string>
+    <string name="connections_switched_off">Hálózati kapcsolatok engedélyezve.</string>
+    <string name="switch_off_auto_delayed">A kapcsolat bontása késleltetésre került.</string>
+    <string name="switch_off_delayed_until">A kapcsolat bontása késleltetve %s -ig.</string>
+    <string name="switch_off_auto_delayed_until">A kapcsolat bontása késleltetve %s -ig, mert az eszköz használatban van.</string>
 
     <!-- Settings -->
     <string name="settings">Beállítások</string>
@@ -87,7 +88,7 @@
     <string name="pref_summary_connect_interval">Csak minden %s percben csatlakozzon az alábbi időtartamban</string>
     <string name="pref_dialog_title_connect_interval">Gyakoriság (perc)</string>
     <string name="pref_title_connect_duration">Csatlakozási időtartam: %s perc</string>
-    <string name="pref_summary_connect_duration">Csatlakozás %s percben időtartamban</string>
+    <string name="pref_summary_connect_duration">Csatlakozás %s perc időtartamban.</string>
     <string name="pref_summary_connect_duration_singular">Csatlakozás 1 perc időtartamban.</string>
     <string name="pref_dialog_title_connect_duration">Időtartam (perc)</string>
     <string name="pref_title_interval_connect_wifi_keep_connected">Wi-Fi bekapcsolva tartása</string>
@@ -97,7 +98,6 @@
 
     <!-- Switch-off Notification -->
     <string name="settings_title_notifications">Kikapcsolás figyelmeztetés ha képernyő aktív</string>
-
     <!--
     TOOD: Move switch-off notifications to separate dialog, and add the long description at the top:
     Figyelmeztetés a kapcsolat bontása előtt. (Hasznos lehet például video nézés esetén.)
@@ -107,11 +107,10 @@
     <string name="pref_title_warn_sound">Hang</string>
     <string name="pref_summary_warn_sound">Figyelmeztetés hanggal</string>
     <string name="pref_title_delay_min">Kikapcsolás késleltetés: %s perc</string>
-    <string name="pref_summary_delay_min">A kikapcsolás késleltetésre kerül %s perccel a kikapcsolás figyelmeztetéstől számolva</string>
+    <string name="pref_summary_delay_min">A kikapcsolás késleltetésre kerül %s perccel a kikapcsolás figyelmeztetéstől számolva.</string>
     <string name="pref_dialog_title_delay_min">Kikapcsolás késleltetés (perc)</string>
     <string name="pref_title_no_switchoff_unlocked">Bekapcsolva tartás aktív képernyőnél</string>
     <string name="pref_summary_no_switchoff_unlocked">Kerüljön késleltetésre az automatikus kikapcsolás, ha a képernyő aktív</string>
-
     <!-- Logging -->
     <string name="settings_title_logging">Naplózás</string>
     <string name="pref_title_logging_enable">Naplózás engedélyezése</string>
