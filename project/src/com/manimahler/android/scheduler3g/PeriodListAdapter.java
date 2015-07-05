@@ -93,7 +93,7 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 
 		weekDayView.setText(weekdayText);
 
-		// tinting the icons
+		// Wi-Fi - tinting the icons
 		boolean intervalWifi = period.is_wifi()
 				&& period.is_intervalConnectWifi();
 		ImageView wifiImgView = (ImageView) rowView
@@ -119,11 +119,15 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 			topLine.removeView(mobileDataView);
 		}
 		
+		// Bluetooth
 		ImageView btView = (ImageView) rowView
 				.findViewById(R.id.imageViewBluetooth);
+		boolean intervalBt = period.is_bluetooth()
+				&& period.is_intervalConnectBluetooth();
 		tintViewIcon(btView, R.drawable.ic_action_bluetooth1,
-				!period.is_bluetooth(), false, false, !period.is_enableRadios());
+				!period.is_bluetooth(), intervalBt, false, !period.is_enableRadios());
 
+		// Ringer sound
 		ImageView volView = (ImageView) rowView
 				.findViewById(R.id.imageViewVolume);
 		tintVolumeIcon(volView, !period.is_volume(),
@@ -374,6 +378,9 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 		itemToUpdate.set_intervalConnectWifi(fromItem.is_intervalConnectWifi());
 		itemToUpdate.set_intervalConnectMobData(fromItem
 				.is_intervalConnectMobData());
+		
+		itemToUpdate.set_intervalConnectBluetooth(fromItem
+				.is_intervalConnectBluetooth());
 
 		itemToUpdate.set_vibrateWhenSilent(fromItem.is_vibrateWhenSilent());
 

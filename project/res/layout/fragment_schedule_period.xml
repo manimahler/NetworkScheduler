@@ -193,16 +193,45 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@android:color/white" />
             </RelativeLayout>
+            
+           <RelativeLayout
+                android:id="@+id/bluetooth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" ><CheckBox
+                    android:id="@+id/checkBoxBluetooth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/ic_action_bluetooth1"
+                    android:text="@string/bluetooth"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@drawable/toggle_button_textcolor" />
 
-            <CheckBox
-                android:id="@+id/checkBoxBluetooth"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:button="@drawable/ic_action_bluetooth1"
-                android:text="@string/bluetooth"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@drawable/toggle_button_textcolor" />
-
+                <CheckBox
+                    android:id="@+id/checkBoxScheduleIntervalBt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@+id/checkBoxBluetooth"
+                    android:layout_marginLeft="38dp"
+                    android:button="@drawable/ic_action_interval"
+                    android:text="@string/interval_text"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@drawable/toggle_button_textcolor" />
+                
+                <ImageButton
+                    android:id="@+id/buttonIntervalBtHelp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/checkBoxScheduleIntervalBt"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignTop="@id/checkBoxScheduleIntervalBt"
+                    android:background="@drawable/time_button"
+                    android:contentDescription="@string/interval_connection_help_content_desc"
+                    android:src="@drawable/ic_action_help"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/white" />
+            </RelativeLayout>
+            
             <RelativeLayout
                 android:id="@+id/volume"
                 android:layout_width="match_parent"

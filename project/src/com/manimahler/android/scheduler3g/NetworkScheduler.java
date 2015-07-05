@@ -43,6 +43,7 @@ public class NetworkScheduler {
 
 	private static final String INTERVAL_MOBILEDATA = "MOBILEDATA";
 	private static final String INTERVAL_WIFI = "WIFI";
+	private static final String INTERVAL_BT = "BLUETOOTH";
 
 	private static final String WIFI_ORIGINALLY_ON = "WIFI_ORIGINALLY_ON";
 	private static final String MOBILEDATA_ORIGINALLY_ON = "MOBILEDATA_ORIGINALLY_ON";
@@ -90,8 +91,9 @@ public class NetworkScheduler {
 			try {
 				setAlarm(context, enabledPeriod, settings);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				
+				UserLog.log(context, "Error setting alarm for period " + enabledPeriod.toString(context), e);
 			}
 		}
 	}
@@ -533,9 +535,19 @@ public class NetworkScheduler {
 			break;
 		}
 		
+		// BT: always in active periods:
+		if (allPeriods == null) {
+			allPeriods = PersistenceUtils
+					.readFromPreferences(PersistenceUtils
+							.getSchedulesPreferences(context));
+		}
+		
+		boolean switchOnBt = isBtIntervalConnectActive(allPeriods);
+
 		boolean changeRequired = (switchOnWifi && !ConnectionUtils
 				.isWifiOn(context))
-				|| (switchOnMobi && !ConnectionUtils.isMobileDataOn(context));
+				|| (switchOnMobi && !ConnectionUtils.isMobileDataOn(context))
+				|| (switchOnBt && !ConnectionUtils.isBluetoothOn());
 
 		String changeText = "";
 
@@ -548,7 +560,7 @@ public class NetworkScheduler {
 						+ translateUnlockPolicy(unlockPolicyWifi) + 
 						") and for mobile data ("
 						+ translateUnlockPolicy(unlockPolicyMobi) + 
-						") " + changeText);
+						") and for bluetooth (when period active) " + changeText);
 
 		// This protects us from saving the incorrect 'original' state in the
 		// bundle
@@ -561,7 +573,7 @@ public class NetworkScheduler {
 		// unlock bundle to a file and only delete it once an actual switch-off
 		// intent is handled
 		if (changeRequired) {
-			intervalSwitchOn(context, settings, switchOnWifi, switchOnMobi);
+			intervalSwitchOn(context, settings, switchOnWifi, switchOnMobi, switchOnBt);
 		}
 	}
 
@@ -599,29 +611,33 @@ public class NetworkScheduler {
 
 		boolean intervalWifi = isWifiIntervalConnectActive(allPeriods);
 		boolean intervalMobData = isMobiIntervalConnectActive(allPeriods);
+		boolean intervalBt = isBtIntervalConnectActive(allPeriods);
 
-		if (!intervalWifi && !intervalMobData) {
+		if (!intervalWifi && !intervalMobData && !intervalBt) {
 			// no relevant active interval-connect period at all
 			cancelIntervalConnect(context);
 			return;
 		}
 		
-		if (ConnectionUtils.isTethering(context)) {
+		if ((intervalWifi || intervalMobData) && ConnectionUtils.isTethering(context)) {
 			UserLog.log(context,
 					"Device is tethering, interval connection is suspended to avoid interrupting tethering!");
-			return;
+
+			intervalWifi = false;
+			intervalMobData = false;
 		}
 
-		intervalSwitchOn(context, settings, intervalWifi, intervalMobData);
+		intervalSwitchOn(context, settings, intervalWifi, intervalMobData, intervalBt);
 	}
 
 	private void intervalSwitchOn(Context context, SchedulerSettings settings,
-			boolean intervalWifi, boolean intervalMobData) {
+			boolean intervalWifi, boolean intervalMobData, boolean intervalBt) {
 
 		UserLog.log(TAG, context, "Interval switch-on - Wi-Fi: " + intervalWifi
-				+ " - Mobile Data: " + intervalMobData);
+				+ " - Mobile Data: " + intervalMobData
+				+ " - Bluetooth: " + intervalBt);
 
-		if (!intervalWifi && !intervalMobData) {
+		if (!intervalWifi && !intervalMobData && !intervalBt) {
 			return;
 		}
 
@@ -631,7 +647,7 @@ public class NetworkScheduler {
 				context,
 				connectTimeSec,
 				createIntervalSwitchOffExtras(context, intervalWifi,
-						intervalMobData));
+						intervalMobData, intervalBt));
 
 		try {
 			// first toggle-on Wi-Fi, it takes slightly longer to start
@@ -643,6 +659,10 @@ public class NetworkScheduler {
 				ConnectionUtils.toggleMobileData(context, true);
 			}
 			
+			if (intervalBt) {
+				ConnectionUtils.toggleBluetooth(context, true);
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -651,9 +671,7 @@ public class NetworkScheduler {
 	}
 
 	public void intervalSwitchOff(Context context, SchedulerSettings settings,
-			Bundle bundle) throws ClassNotFoundException, NoSuchFieldException,
-			IllegalArgumentException, IllegalAccessException,
-			NoSuchMethodException, InvocationTargetException {
+			Bundle bundle) {
 
 		// TODO: also here, loop through all active periods!
 		// schedule another 2-minute period if screen is on or keyguard not
@@ -668,10 +686,23 @@ public class NetworkScheduler {
 			return;
 		}
 		
-		if (ConnectionUtils.isTethering(context)) {
+		if (bundle == null) {
+			Log.d(TAG, "No bundle");
+		}
+
+		boolean intervalWifi = bundle == null
+				|| bundle.getBoolean(INTERVAL_WIFI);
+		boolean intervalMobData = bundle == null
+				|| bundle.getBoolean(INTERVAL_MOBILEDATA);
+		boolean intervalBt = bundle == null
+				|| bundle.getBoolean(INTERVAL_BT);
+		
+		if ((intervalWifi || intervalMobData) && ConnectionUtils.isTethering(context)) {
 			UserLog.log(context,
 					"Device is tethering, no Wi-Fi / mobile data switch-off performed to avoid cutting off tethering!");
-			return;
+			
+			intervalWifi = false;
+			intervalMobData = false;
 		}
 		
 		ScreenLockDetector screenLockDetector = new ScreenLockDetector();
@@ -686,15 +717,6 @@ public class NetworkScheduler {
 			scheduleIntervalSwitchOff(context, reTestIntervalSec, bundle);
 			return;
 		}
-
-		if (bundle == null) {
-			Log.d(TAG, "No bundle");
-		}
-
-		boolean intervalWifi = bundle == null
-				|| bundle.getBoolean(INTERVAL_WIFI);
-		boolean intervalMobData = bundle == null
-				|| bundle.getBoolean(INTERVAL_MOBILEDATA);
 
 		ArrayList<ScheduledPeriod> allPeriods = PersistenceUtils
 				.readFromPreferences(PersistenceUtils
@@ -750,6 +772,27 @@ public class NetworkScheduler {
 				}
 				else {
 					ConnectionUtils.toggleWifi(context, false);
+				}
+			}
+		}
+		
+		if (intervalBt){
+			
+			boolean isBtIntervalActive = isBtIntervalConnectActive(allPeriods);
+			
+			if (isBtIntervalActive) {
+
+				if (suspendIntervalConnect) {
+					UserLog.log(TAG, context,
+							"Interval switch-off skipped for Bluetooth due to option suspend interval connection while charging");
+				}
+				else if (settings.is_bluetoothInUse()) {
+					// always keep connected if paired
+					UserLog.log(TAG, context,
+							"Interval switch-off skipped for Bluetooth (because currently paired with another device)");
+				}
+				else {
+					ConnectionUtils.toggleBluetooth(context, false);
 				}
 			}
 		}
@@ -839,10 +882,7 @@ public class NetworkScheduler {
 	}
 
 	private void endToggleSensors(Context context, ScheduledPeriod period,
-			SchedulerSettings settings, boolean enable)
-			throws ClassNotFoundException, NoSuchFieldException,
-			IllegalAccessException, NoSuchMethodException,
-			InvocationTargetException {
+			SchedulerSettings settings, boolean enable) {
 
 		// NOTE: interval connect should be handled by caller now.
 		// If previously started, still active period has interval connect
@@ -1382,10 +1422,11 @@ public class NetworkScheduler {
 	}
 
 	private Bundle createIntervalSwitchOffExtras(Context context, boolean wifi,
-			boolean mobData) {
+			boolean mobData, boolean bluetooth) {
 		Bundle bundle = new Bundle();
 		bundle.putBoolean(INTERVAL_WIFI, wifi);
 		bundle.putBoolean(INTERVAL_MOBILEDATA, mobData);
+		bundle.putBoolean(INTERVAL_BT, bluetooth);
 
 		if (wifi) {
 			bundle.putBoolean(WIFI_ORIGINALLY_ON,

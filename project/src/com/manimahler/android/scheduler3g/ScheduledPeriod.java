@@ -29,6 +29,7 @@ public class ScheduledPeriod {
 
 	private static final String INTERVAL_CONNECT_WIFI = "IntervalConnectWifi";
 	private static final String INTERVAL_CONNECT_MOB = "IntervalConnectMob";
+	private static final String INTERVAL_CONNECT_BT = "IntervalConnectBt";
 	private static final String VIBRATE_WHEN_SILENT = "VibrateWhenSilent";
 
 	private static final String ACTIVE = "Active";
@@ -53,6 +54,7 @@ public class ScheduledPeriod {
 
 	private boolean _intervalConnectWifi;
 	private boolean _intervalConnectMobData;
+	private boolean _intervalConnectBluetooth;
 	private boolean _vibrateWhenSilent;
 
 	private boolean[] _weekDays;
@@ -75,7 +77,7 @@ public class ScheduledPeriod {
 		_scheduleStop = bundle.getBoolean(SCHEDULE_STOP, true);
 		_startTimeMillis = bundle.getLong(START_TIME, 0);
 		_endTimeMillis = bundle.getLong(END_TIME, 0);
-		
+
 		_enableRadios = bundle.getBoolean(ENABLE_RADIOS, true);
 
 		_mobileData = bundle.getBoolean(MOBILE_DATA, true);
@@ -92,6 +94,8 @@ public class ScheduledPeriod {
 		_intervalConnectWifi = bundle.getBoolean(INTERVAL_CONNECT_WIFI, false);
 		_intervalConnectMobData = bundle
 				.getBoolean(INTERVAL_CONNECT_MOB, false);
+		_intervalConnectBluetooth = bundle.getBoolean(INTERVAL_CONNECT_BT,
+				false);
 		_vibrateWhenSilent = bundle.getBoolean(VIBRATE_WHEN_SILENT, false);
 
 		_active = bundle.getBoolean(ACTIVE, false);
@@ -114,7 +118,7 @@ public class ScheduledPeriod {
 
 		_startTimeMillis = preferences.getLong(START_TIME + qualifier, 0);
 		_endTimeMillis = preferences.getLong(END_TIME + qualifier, 0);
-		
+
 		_enableRadios = preferences.getBoolean(ENABLE_RADIOS + qualifier, true);
 
 		_mobileData = preferences.getBoolean(MOBILE_DATA + qualifier, true);
@@ -133,7 +137,10 @@ public class ScheduledPeriod {
 				+ qualifier, false);
 		_intervalConnectMobData = preferences.getBoolean(INTERVAL_CONNECT_MOB
 				+ qualifier, false);
-		_vibrateWhenSilent = preferences.getBoolean(VIBRATE_WHEN_SILENT + qualifier, false);
+		_intervalConnectBluetooth = preferences.getBoolean(INTERVAL_CONNECT_BT
+				+ qualifier, false);
+		_vibrateWhenSilent = preferences.getBoolean(VIBRATE_WHEN_SILENT
+				+ qualifier, false);
 
 		_active = preferences.getBoolean(ACTIVE + qualifier, false);
 
@@ -156,7 +163,7 @@ public class ScheduledPeriod {
 		_schedulingEnabled = schedulingEnabled;
 		_startTimeMillis = startTimeMillis;
 		_endTimeMillis = endTimeMillis;
-		
+
 		_enableRadios = true;
 
 		_weekDays = weekDays;
@@ -168,6 +175,7 @@ public class ScheduledPeriod {
 
 		_intervalConnectWifi = false;
 		_intervalConnectMobData = false;
+		_intervalConnectBluetooth = false;
 
 		// or calculate right here if within period?
 		try {
@@ -234,7 +242,6 @@ public class ScheduledPeriod {
 		this._endTimeMillis = endTimeMillis;
 	}
 
-	
 	public boolean is_enableRadios() {
 		return _enableRadios;
 	}
@@ -295,8 +302,16 @@ public class ScheduledPeriod {
 		return _intervalConnectMobData && is_enableRadios();
 	}
 
-	public void set_intervalConnectMobData(boolean _intervalConnectMobData) {
-		this._intervalConnectMobData = _intervalConnectMobData;
+	public void set_intervalConnectMobData(boolean intervalConnectMobData) {
+		this._intervalConnectMobData = intervalConnectMobData;
+	}
+
+	public boolean is_intervalConnectBluetooth() {
+		return _intervalConnectBluetooth && is_enableRadios();
+	}
+
+	public void set_intervalConnectBluetooth(boolean intervalConnect) {
+		this._intervalConnectBluetooth = intervalConnect;
 	}
 
 	public boolean is_vibrateWhenSilent() {
@@ -349,7 +364,8 @@ public class ScheduledPeriod {
 	}
 
 	public boolean useIntervalConnect() {
-		return isIntervalConnectingWifi() || isIntervalConnectingMobileData();
+		return isIntervalConnectingWifi() || isIntervalConnectingMobileData() ||
+				isIntervalConnectingBluetooth();
 	}
 
 	public boolean isIntervalConnectingWifi() {
@@ -358,6 +374,10 @@ public class ScheduledPeriod {
 
 	public boolean isIntervalConnectingMobileData() {
 		return (is_mobileData() && is_intervalConnectMobData() && is_active() && is_schedulingEnabled());
+	}
+	
+	public boolean isIntervalConnectingBluetooth() {
+		return (is_bluetooth() && is_intervalConnectBluetooth() && is_active() && is_schedulingEnabled());
 	}
 
 	public void saveToPreferences(SharedPreferences.Editor editor,
@@ -371,7 +391,7 @@ public class ScheduledPeriod {
 		editor.putBoolean(SCHEDULING_ENABLED + qualifier, _schedulingEnabled);
 		editor.putLong(START_TIME + qualifier, _startTimeMillis);
 		editor.putLong(END_TIME + qualifier, _endTimeMillis);
-		
+
 		editor.putBoolean(ENABLE_RADIOS + qualifier, _enableRadios);
 
 		Log.d(TAG, "EnabledPeriod: Saving network settings...");
@@ -390,8 +410,9 @@ public class ScheduledPeriod {
 				_intervalConnectWifi);
 		editor.putBoolean(INTERVAL_CONNECT_MOB + qualifier,
 				_intervalConnectMobData);
+		editor.putBoolean(INTERVAL_CONNECT_BT + qualifier,
+				_intervalConnectBluetooth);
 		editor.putBoolean(VIBRATE_WHEN_SILENT + qualifier, _vibrateWhenSilent);
-
 
 		editor.putBoolean(ACTIVE + qualifier, _active);
 
@@ -403,31 +424,32 @@ public class ScheduledPeriod {
 	public void saveToBundle(Bundle bundle) {
 		bundle.putInt(PERIOD_ID, _id);
 		bundle.putString(NAME, _name);
-		
+
 		bundle.putBoolean(SCHEDULE_START, _scheduleStart);
 		bundle.putBoolean(SCHEDULE_STOP, _scheduleStop);
-		
+
 		bundle.putLong(START_TIME, _startTimeMillis);
 		bundle.putLong(END_TIME, _endTimeMillis);
 		bundle.putBoolean(SCHEDULING_ENABLED, _schedulingEnabled);
 		bundle.putLong(START_TIME, _startTimeMillis);
 		bundle.putLong(END_TIME, _endTimeMillis);
-		
+
 		bundle.putBoolean(ENABLE_RADIOS, _enableRadios);
-		
+
 		bundle.putBoolean(MOBILE_DATA, _mobileData);
 		bundle.putBoolean(WIFI, _wifi);
 		bundle.putBoolean(BLUETOOTH, _bluetooth);
 		bundle.putBoolean(VOLUME, _volume);
-		
+
 		bundle.putBooleanArray(WEEK_DAYS, _weekDays);
-		
+
 		bundle.putBoolean(INTERVAL_CONNECT_WIFI, _intervalConnectWifi);
 		bundle.putBoolean(INTERVAL_CONNECT_MOB, _intervalConnectMobData);
+		bundle.putBoolean(INTERVAL_CONNECT_BT, _intervalConnectBluetooth);
 		bundle.putBoolean(VIBRATE_WHEN_SILENT, _vibrateWhenSilent);
-		
+
 		bundle.putBoolean(ACTIVE, _active);
-		
+
 		bundle.putBoolean(SKIPPED, _skipped);
 		bundle.putBoolean(OVERRIDE_WIFI, _overrideIntervalWifi);
 		bundle.putBoolean(OVERRIDE_MOB, _overrideIntervalMob);
@@ -470,15 +492,14 @@ public class ScheduledPeriod {
 		// case 1: last stop is after last start (but of course before the check
 		// time)
 		if (lastDeactivation.after(lastActivation)) {
-			// it has already stopped: false (if applicable)			
-			if (deactivationOnNextDay())
-			{
+			// it has already stopped: false (if applicable)
+			if (deactivationOnNextDay()) {
 				// the relevant active week day is the day before
 				DateTimeUtils.addDays(lastDeactivation, -1);
 			}
-			
+
 			long relevantMillis = lastDeactivation.getTimeInMillis();
-			
+
 			return !isOnActiveWeekday(relevantMillis);
 		}
 
@@ -487,11 +508,10 @@ public class ScheduledPeriod {
 		// -> still running
 		return true;
 	}
-	
-	public boolean deactivationOnNextDay()
-	{
+
+	public boolean deactivationOnNextDay() {
 		if (is_enableRadios()) {
-			return ! startIsBeforeStop();
+			return !startIsBeforeStop();
 		} else {
 			return startIsBeforeStop();
 		}
@@ -522,7 +542,8 @@ public class ScheduledPeriod {
 		return result;
 	}
 
-	public boolean appliesToday(boolean enable, long considerNowWithinMillis) throws Exception {
+	public boolean appliesToday(boolean enable, long considerNowWithinMillis)
+			throws Exception {
 
 		// do not use todays time but the official end time because the
 		// broadcast might arrive late (esp. with inexact repeating on kitkat)
@@ -537,23 +558,24 @@ public class ScheduledPeriod {
 		} else {
 			isPeriodActivation = !enable;
 		}
-		
+
 		if (enable) {
 			alarmTime = get_startTimeMillis();
 		} else {
 			alarmTime = get_endTimeMillis();
 		}
-		
+
 		// TODO: contains fuzziness regarding midnight - remove duplication with
 		// isOnActiveWeekday
 		long actualAlarmTime = DateTimeUtils
-				.getCurrentOrPreviousTimeIn24hInMillis(alarmTime, considerNowWithinMillis);
-		
+				.getCurrentOrPreviousTimeIn24hInMillis(alarmTime,
+						considerNowWithinMillis);
+
 		Log.d(TAG, "actualAlarmTime: " + actualAlarmTime);
-		
+
 		if (!isPeriodActivation && deactivationOnNextDay()) {
 			// subtract a day, as the relevant day was yesterday
-			
+
 			actualAlarmTime = DateTimeUtils.addDays(actualAlarmTime, -1);
 			Log.d(TAG, "subtracted 1 day: " + actualAlarmTime);
 		}
@@ -593,7 +615,8 @@ public class ScheduledPeriod {
 		}
 
 		if (is_enableRadios()) {
-			return String.format("%s enabled between %s and %s", name, start, end);
+			return String.format("%s enabled between %s and %s", name, start,
+					end);
 		} else {
 			return String.format(
 					"%s between %s (stopping) and %s (re-starting)", name, end,
@@ -601,7 +624,7 @@ public class ScheduledPeriod {
 		}
 
 	}
-	
+
 	public String toString() {
 		String name;
 		if (_name == null) {
@@ -609,14 +632,14 @@ public class ScheduledPeriod {
 		} else {
 			name = _name;
 		}
-		
+
 		return name + " - ID: " + _id;
 	}
 
 	private Calendar getPreviousActivation(long beforeTimeMillis) {
 		Calendar lastActivation;
 		if (is_enableRadios()) {
-	
+
 			if (!is_scheduleStart()) {
 				lastActivation = null;
 			} else {
@@ -624,7 +647,7 @@ public class ScheduledPeriod {
 						beforeTimeMillis, get_startTimeMillis());
 			}
 		} else {
-	
+
 			if (!is_scheduleStop()) {
 				lastActivation = null;
 			} else {
@@ -632,7 +655,7 @@ public class ScheduledPeriod {
 						beforeTimeMillis, get_endTimeMillis());
 			}
 		}
-	
+
 		return lastActivation;
 	}
 
@@ -640,29 +663,29 @@ public class ScheduledPeriod {
 			long hourMinuteMillis) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(hourMinuteMillis);
-	
+
 		int startHour = calendar.get(Calendar.HOUR_OF_DAY);
 		int startMinute = calendar.get(Calendar.MINUTE);
-	
+
 		Calendar calendarAt = Calendar.getInstance();
 		calendarAt.setTimeInMillis(timeMillis);
-	
+
 		calendarAt.set(Calendar.HOUR_OF_DAY, startHour);
 		calendarAt.set(Calendar.MINUTE, startMinute);
 		calendarAt.set(Calendar.SECOND, 0);
-	
+
 		if (calendarAt.getTimeInMillis() > timeMillis) {
 			// the previous occurrence is the day before
 			DateTimeUtils.addDays(calendarAt, -1);
 		}
-	
+
 		return calendarAt;
 	}
 
 	private boolean isOnActiveWeekday(long timeInMillis) throws Exception {
-	
+
 		int weekdayIndex = DateTimeUtils.getWeekdayIndex(timeInMillis);
-	
+
 		return (get_weekDays()[weekdayIndex]);
 	}
 

@@ -19,14 +19,11 @@ import android.util.Log;
 public class ConnectionUtils {
 
 	private static final String TAG = ConnectionUtils.class.getSimpleName();
-	
+
 	private static Boolean _canToggleMobileData = null;
 
 	public static void toggleNetworkState(Context context,
-			ScheduledPeriod enabledPeriod, boolean enable)
-			throws ClassNotFoundException, NoSuchFieldException,
-			IllegalArgumentException, IllegalAccessException,
-			NoSuchMethodException, InvocationTargetException {
+			ScheduledPeriod enabledPeriod, boolean enable) {
 
 		if (enabledPeriod.is_mobileData()) {
 			toggleMobileData(context, enable);
@@ -122,7 +119,7 @@ public class ConnectionUtils {
 
 		return (mWifi.isConnected());
 	}
-	
+
 	public static boolean isTethering(Context context) {
 
 		boolean isWifiAPenabled = false;
@@ -201,12 +198,11 @@ public class ConnectionUtils {
 			UserLog.log(context, "Enabling Wi-Fi");
 			wifiManager.setWifiEnabled(enable);
 		}
-		
+
 		if (!enable && wifiManager.isWifiEnabled()) {
 			UserLog.log(context, "Disabling Wi-Fi");
 			wifiManager.setWifiEnabled(enable);
 		}
-		
 
 		// This entire carefulness did not really resolve the KITKAT bug and
 		// produced
@@ -295,110 +291,114 @@ public class ConnectionUtils {
 			}
 		}
 	}
-	
+
 	public static boolean canToggleMobileData(Context context) {
-		
+
 		if (_canToggleMobileData != null) {
 			return _canToggleMobileData;
 		}
-		
+
 		// Determine if mobile data is available
 		boolean hasMobileDataSensor = hasMobileDataSensor(context);
-		
+
 		boolean result;
-		
+
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
 			result = hasMobileDataSensor;
 		} else {
-			result = hasMobileDataSensor && RootCommandExecuter.canRunRootCommands();
+			result = hasMobileDataSensor
+					&& RootCommandExecuter.canRunRootCommands();
 		}
-		
+
 		_canToggleMobileData = result;
-		
+
 		return result;
 	}
-	
+
 	public static boolean hasMobileDataSensor(Context context) {
-		
-		if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_TELEPHONY)) {
-		    return true;
+
+		if (context.getPackageManager().hasSystemFeature(
+				PackageManager.FEATURE_TELEPHONY)) {
+			return true;
 		}
-		
-		ConnectivityManager cm = (ConnectivityManager) 
-				context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		
-		NetworkInfo networkInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+		ConnectivityManager cm = (ConnectivityManager) context
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+		NetworkInfo networkInfo = cm
+				.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
 		if (networkInfo == null) {
-		    UserLog.log(context, "No mobile data sensor available"); 
-		    return false;
+			UserLog.log(context, "No mobile data sensor available");
+			return false;
 		}
-		
+
 		return true;
 	}
-	
-	public static void toggleMobileData(Context context, boolean enable) 
-			throws ClassNotFoundException, NoSuchFieldException,
-			IllegalArgumentException, IllegalAccessException,
-			NoSuchMethodException, InvocationTargetException {
-		
-		if (! canToggleMobileData(context)) {
-			UserLog.log(context, "Cannot enable/disable mobile data due to lacking privileges (or no 3G sensor)");
+
+	public static void toggleMobileData(Context context, boolean enable) {
+
+		if (!canToggleMobileData(context)) {
+			UserLog.log(context,
+					"Cannot enable/disable mobile data due to lacking privileges (or no 3G sensor)");
 			return;
 		}
-		
+
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
 			toggleMobileDataPreLollipop(context, enable);
-		}
-		else {
+		} else {
 			try {
 				setMobileDataStateLollipop(context, enable);
-			}
-			catch (Exception ex) {
-				Log.e(TAG, "Failed to toggle mobile data state as system app", ex);
-				UserLog.log(context, "Failed to toggle mobile data state as system app: " + ex.toString());
+			} catch (Exception ex) {
+				Log.e(TAG, "Failed to toggle mobile data state as system app",
+						ex);
+				UserLog.log(context,
+						"Failed to toggle mobile data state as system app: "
+								+ ex.toString());
 			}
 		}
-			
+
 	}
 
-	// found on the Internet and adapted slightly
-	public static void toggleMobileDataPreLollipop(Context context, boolean enable)
-			throws ClassNotFoundException, NoSuchFieldException,
-			IllegalArgumentException, IllegalAccessException,
-			NoSuchMethodException, InvocationTargetException {
-
-		final ConnectivityManager conman = (ConnectivityManager) context
-				.getSystemService(Context.CONNECTIVITY_SERVICE);
-		final Class<?> conmanClass = Class.forName(conman.getClass().getName());
-		final Field iConnectivityManagerField = conmanClass
-				.getDeclaredField("mService");
-		iConnectivityManagerField.setAccessible(true);
-		final Object iConnectivityManager = iConnectivityManagerField
-				.get(conman);
-		final Class<?> iConnectivityManagerClass = Class
-				.forName(iConnectivityManager.getClass().getName());
-		final Method setMobileDataEnabledMethod = iConnectivityManagerClass
-				.getDeclaredMethod("setMobileDataEnabled", Boolean.TYPE);
+	public static void toggleMobileDataPreLollipop(Context context,
+			boolean enable) {
 
 		Log.d(TAG, "Switching mobile data ON status to " + enable);
 
-		setMobileDataEnabledMethod.setAccessible(true);
-		
-		if (enable) {
-			UserLog.log(context, "Enabling Mobile Data");
+		try {
+			final ConnectivityManager conman = (ConnectivityManager) context
+					.getSystemService(Context.CONNECTIVITY_SERVICE);
+			final Class<?> conmanClass = Class.forName(conman.getClass()
+					.getName());
+			final Field iConnectivityManagerField = conmanClass
+					.getDeclaredField("mService");
+			iConnectivityManagerField.setAccessible(true);
+			final Object iConnectivityManager = iConnectivityManagerField
+					.get(conman);
+			final Class<?> iConnectivityManagerClass = Class
+					.forName(iConnectivityManager.getClass().getName());
+			final Method setMobileDataEnabledMethod = iConnectivityManagerClass
+					.getDeclaredMethod("setMobileDataEnabled", Boolean.TYPE);
+
+			setMobileDataEnabledMethod.setAccessible(true);
+
+			if (enable) {
+				UserLog.log(context, "Enabling Mobile Data");
+			} else {
+				UserLog.log(context, "Disabling Mobile Data");
+			}
+
+			setMobileDataEnabledMethod.invoke(iConnectivityManager, enable);
+
+		} catch (Exception e) {
+			Log.e(TAG, "Error switching mobile data ", e);
+			UserLog.log(context, "Error changing mobile data state.");
 		}
-		else {
-			UserLog.log(context, "Disabling Mobile Data");
-		}
-		
-		setMobileDataEnabledMethod.invoke(iConnectivityManager, enable);
 	}
-	
-	private static void setMobileDataStateLollipop(Context context, boolean mobileDataEnabled)
-	{
-	    try
-	    {
+
+	private static void setMobileDataStateLollipop(Context context,
+			boolean mobileDataEnabled) {
+		try {
 			TelephonyManager telephonyService = (TelephonyManager) context
 					.getSystemService(Context.TELEPHONY_SERVICE);
 
@@ -416,125 +416,145 @@ public class ConnectionUtils {
 			} else {
 				UserLog.log(context, "Disabled Mobile Data as system app");
 			}
-	    }
-	    catch (Exception ex)
-	    {
-	        Log.e(TAG, "Error setting mobile data state. Trying root command line...", ex);
-	        setMobileDataStateLollipopCommandlineAsRoot(context, mobileDataEnabled);
-	    }
+		} catch (Exception ex) {
+			Log.e(TAG,
+					"Error setting mobile data state. Trying root command line...",
+					ex);
+			setMobileDataStateLollipopCommandlineAsRoot(context,
+					mobileDataEnabled);
+		}
 	}
 
-	    private static void setMobileDataStateLollipopCommandlineAsRoot(Context context, boolean enable) {
-	        try{
-	            StringBuilder command = new StringBuilder();
-	            command.append("su -c ");
-	            command.append("svc data ");
-	            
-	            command.append(enable?"enable":"disable");
-	            command.append("\n");
-	            
-	            Log.i(TAG, "Executing on the command line: " + command.toString());
-	            
-	            int returnValue = RootCommandExecuter.execute(command.toString());
-	            
-	            if (returnValue != 0) {
-	            	UserLog.log(context, "Error setting mobile data state using root command line. Make sure root privilege is granted. Return value: " + returnValue);
-	            }
-	            else {
-	            	UserLog.log(context, "Toggled mobile data using root command line.");
-	            }
-	        }catch(Exception e){
-	        	Log.e(TAG, "Error changing mobile data on command line", e);
-	        	UserLog.log(context, "Error changing mobile data on root command line. Make sure root privilege is granted.");
-	        }
-	    }
-	    
-//
-//	public boolean getMobileDataState(Context context)
-//	{
-//	    try
-//	    {
-//	        TelephonyManager telephonyService = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-//
-//	        Method getMobileDataEnabledMethod = telephonyService.getClass().getDeclaredMethod("getDataEnabled");
-//
-//	        if (null != getMobileDataEnabledMethod)
-//	        {
-//	            boolean mobileDataEnabled = (Boolean) getMobileDataEnabledMethod.invoke(telephonyService);
-//
-//	            return mobileDataEnabled;
-//	        }
-//	    }
-//	    catch (Exception ex)
-//	    {
-//	        Log.e(TAG, "Error getting mobile data state", ex);
-//	    }
-//
-//	    return false;
-//	}
-//	
+	private static void setMobileDataStateLollipopCommandlineAsRoot(
+			Context context, boolean enable) {
+		try {
+			StringBuilder command = new StringBuilder();
+			command.append("su -c ");
+			command.append("svc data ");
 
-	//	
-	//    private static void setMobileDataStateLollipopCommandlineAsRootUsingServiceCallPhone(Context context, boolean enable) {
-	//        try{
-	//        	
-	//        	//TEST
-	//        	
-	//            StringBuilder command = new StringBuilder();
-	//            command.append("su -c ");
-	//            command.append("\"service call phone ");
-	//            command.append(getTransactionCode(context) + " ");
-	//            command.append("i32 ");
-	//            command.append(enable?"1":"0");
-	//            command.append("\"\n");
-	//            
-	//            Log.i(TAG, "Executing on the command line: " + command.toString());
-	//            
-	//            Process process = Runtime.getRuntime().exec(command.toString());
-	//            
-	//            int returnValue = process.waitFor();
-	//            
-	//            Log.i(TAG, "Command returned with: " + returnValue);
-	//            
-	//            if (returnValue != 0) {
-	//            	UserLog.log(context, "Error setting mobile data state using service call phone. Return value: " + returnValue);
-	//            	setMobileDataStateLollipopCommandlineAsRoot2(context, enable);
-	//            }
-	//        }catch(Exception e){
-	//        	UserLog.log(context, "Error setting mobile data state using service call phone.");
-	//        	Log.e(TAG, "Error changing mobile data on command line", e);
-	//        }
-	//    }
-	    
-//	
-//    private static void setMobileDataStateLollipopCommandlineAsRootUsingServiceCallPhone(Context context, boolean enable) {
-//        try{
-//        	
-//        	//TEST
-//        	
-//            StringBuilder command = new StringBuilder();
-//            command.append("su -c ");
-//            command.append("\"service call phone ");
-//            command.append(getTransactionCode(context) + " ");
-//            command.append("i32 ");
-//            command.append(enable?"1":"0");
-//            command.append("\"\n");
-//            
-//            Log.i(TAG, "Executing on the command line: " + command.toString());
-//            
-//            Process process = Runtime.getRuntime().exec(command.toString());
-//            
-//            int returnValue = process.waitFor();
-//            
-//            Log.i(TAG, "Command returned with: " + returnValue);
-//            
-//            if (returnValue != 0) {
-//            	UserLog.log(context, "Error setting mobile data state using service call phone. Return value: " + returnValue);
-//            	setMobileDataStateLollipopCommandlineAsRoot2(context, enable);
-//            }
-//        }catch(Exception e){
-//        	UserLog.log(context, "Error setting mobile data state using service call phone.");
-//        	Log.e(TAG, "Error changing mobile data on command line", e);
-//        }
-//    }
+			command.append(enable ? "enable" : "disable");
+			command.append("\n");
+
+			Log.i(TAG, "Executing on the command line: " + command.toString());
+
+			int returnValue = RootCommandExecuter.execute(command.toString());
+
+			if (returnValue != 0) {
+				UserLog.log(
+						context,
+						"Error setting mobile data state using root command line. Make sure root privilege is granted. Return value: "
+								+ returnValue);
+			} else {
+				UserLog.log(context,
+						"Toggled mobile data using root command line.");
+			}
+		} catch (Exception e) {
+			Log.e(TAG, "Error changing mobile data on command line", e);
+			UserLog.log(
+					context,
+					"Error changing mobile data on root command line. Make sure root privilege is granted.");
+		}
+	}
+
+	//
+	// public boolean getMobileDataState(Context context)
+	// {
+	// try
+	// {
+	// TelephonyManager telephonyService = (TelephonyManager)
+	// context.getSystemService(Context.TELEPHONY_SERVICE);
+	//
+	// Method getMobileDataEnabledMethod =
+	// telephonyService.getClass().getDeclaredMethod("getDataEnabled");
+	//
+	// if (null != getMobileDataEnabledMethod)
+	// {
+	// boolean mobileDataEnabled = (Boolean)
+	// getMobileDataEnabledMethod.invoke(telephonyService);
+	//
+	// return mobileDataEnabled;
+	// }
+	// }
+	// catch (Exception ex)
+	// {
+	// Log.e(TAG, "Error getting mobile data state", ex);
+	// }
+	//
+	// return false;
+	// }
+	//
+
+	//
+	// private static void
+	// setMobileDataStateLollipopCommandlineAsRootUsingServiceCallPhone(Context
+	// context, boolean enable) {
+	// try{
+	//
+	// //TEST
+	//
+	// StringBuilder command = new StringBuilder();
+	// command.append("su -c ");
+	// command.append("\"service call phone ");
+	// command.append(getTransactionCode(context) + " ");
+	// command.append("i32 ");
+	// command.append(enable?"1":"0");
+	// command.append("\"\n");
+	//
+	// Log.i(TAG, "Executing on the command line: " + command.toString());
+	//
+	// Process process = Runtime.getRuntime().exec(command.toString());
+	//
+	// int returnValue = process.waitFor();
+	//
+	// Log.i(TAG, "Command returned with: " + returnValue);
+	//
+	// if (returnValue != 0) {
+	// UserLog.log(context,
+	// "Error setting mobile data state using service call phone. Return value: "
+	// + returnValue);
+	// setMobileDataStateLollipopCommandlineAsRoot2(context, enable);
+	// }
+	// }catch(Exception e){
+	// UserLog.log(context,
+	// "Error setting mobile data state using service call phone.");
+	// Log.e(TAG, "Error changing mobile data on command line", e);
+	// }
+	// }
+
+	//
+	// private static void
+	// setMobileDataStateLollipopCommandlineAsRootUsingServiceCallPhone(Context
+	// context, boolean enable) {
+	// try{
+	//
+	// //TEST
+	//
+	// StringBuilder command = new StringBuilder();
+	// command.append("su -c ");
+	// command.append("\"service call phone ");
+	// command.append(getTransactionCode(context) + " ");
+	// command.append("i32 ");
+	// command.append(enable?"1":"0");
+	// command.append("\"\n");
+	//
+	// Log.i(TAG, "Executing on the command line: " + command.toString());
+	//
+	// Process process = Runtime.getRuntime().exec(command.toString());
+	//
+	// int returnValue = process.waitFor();
+	//
+	// Log.i(TAG, "Command returned with: " + returnValue);
+	//
+	// if (returnValue != 0) {
+	// UserLog.log(context,
+	// "Error setting mobile data state using service call phone. Return value: "
+	// + returnValue);
+	// setMobileDataStateLollipopCommandlineAsRoot2(context, enable);
+	// }
+	// }catch(Exception e){
+	// UserLog.log(context,
+	// "Error setting mobile data state using service call phone.");
+	// Log.e(TAG, "Error changing mobile data on command line", e);
+	// }
+	// }
 }

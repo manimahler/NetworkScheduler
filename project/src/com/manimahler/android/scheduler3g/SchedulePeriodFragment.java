@@ -376,6 +376,23 @@ public class SchedulePeriodFragment extends DialogFragment {
 			updateCheckBoxIntervalConnectMobData(checkBoxIntervalConnectMobData);
 		}
 		
+		// check box interval connect BT
+		CheckBox checkBoxIntervalConnectBt = (CheckBox) _view
+				.findViewById(R.id.checkBoxScheduleIntervalBt);
+		checkBoxIntervalConnectBt.setChecked(_enabledPeriod
+				.is_intervalConnectBluetooth());
+		checkBoxIntervalConnectBt
+				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+					@Override
+					public void onCheckedChanged(CompoundButton buttonView,
+							boolean isChecked) {
+
+						onToggleBtInterval((CheckBox) buttonView, isChecked);
+					}
+				});
+
+		updateCheckBoxIntervalConnectBt(checkBoxIntervalConnectBt);
+		
 		// check box vibrate when silent
 		CheckBox checkBoxVibrate = (CheckBox) _view
 				.findViewById(R.id.checkBoxVolumeVibrate);
@@ -595,6 +612,27 @@ public class SchedulePeriodFragment extends DialogFragment {
 
 		updateCheckBoxIntervalConnectWifi(checkBox);
 	}
+	
+	private void onToggleBtInterval(CheckBox checkBox, boolean isChecked) {
+
+		// to avoid the scroll view from jumping back up
+		checkBox.requestFocusFromTouch();
+
+		if (!_enabledPeriod.is_bluetooth() || !_enabledPeriod.is_enableRadios()) {
+			// disabled, ignore
+
+			checkBox.setChecked(false);
+
+			if (!_enabledPeriod.is_enableRadios()) {
+				makeIntervalConnectNotSupportedToast();
+			}
+			return;
+		} else {
+			_enabledPeriod.set_intervalConnectBluetooth(isChecked);
+		}
+
+		updateCheckBoxIntervalConnectBt(checkBox);
+	}
 
 	private void onToggleBluetooth(CompoundButton checkBox, boolean isChecked) {
 
@@ -702,6 +740,11 @@ public class SchedulePeriodFragment extends DialogFragment {
 	private void updateCheckBoxIntervalConnectWifi(CheckBox checkBox) {
 
 		updateCheckBoxIntervalConnect(checkBox, _enabledPeriod.is_wifi());
+	}
+	
+	private void updateCheckBoxIntervalConnectBt(CheckBox checkBox) {
+
+		updateCheckBoxIntervalConnect(checkBox, _enabledPeriod.is_bluetooth());
 	}
 
 	private void updateCheckBoxIntervalConnect(CheckBox checkBox,
@@ -820,6 +863,11 @@ public class SchedulePeriodFragment extends DialogFragment {
 				.findViewById(R.id.checkBoxScheduleIntervalMob);
 		updateCheckboxAppearance(intervalConnectMob,
 				R.drawable.ic_action_interval, activeIsEnabled, false);
+		
+		CheckBox intervalConnectBt = (CheckBox)_view.findViewById(R.id.checkBoxScheduleIntervalBt);
+		updateCheckboxAppearance(intervalConnectBt,
+				R.drawable.ic_action_interval, activeIsEnabled, false);
+
 	}
 
 	public void buttonStopClicked(View v) {
