@@ -150,5 +150,18 @@ public class PersistenceUtils {
 
 		editor.commit();
 	}
+	
+	public static void saveBluetoothState(Context context, boolean isInUse) {
+		SharedPreferences sharedPrefs = PreferenceManager
+				.getDefaultSharedPreferences(context);
+		
+		UserLog.log(context, "Detected bluetooth usage change. Is in use: " + isInUse);
+		
+		SharedPreferences.Editor editor = sharedPrefs.edit();
+		
+		editor.putBoolean(SchedulerSettings.BLUETOOTH_IN_USE, isInUse);
+		
+		editor.commit();
+	}
 
 }

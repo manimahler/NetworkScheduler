@@ -25,6 +25,8 @@ public class SchedulerSettings {
 	
 	private static final String GLOBAL_ON = "pref_key_global_on";
 	
+	public static final String BLUETOOTH_IN_USE = "pref_key_bluetooth_in_use";
+	
 	private boolean _globalOn;
 	
 	private boolean _vibrate;
@@ -51,6 +53,8 @@ public class SchedulerSettings {
 	private int _unlockPolicyWifi;
 	private int _unlockPolicyMobi;
 	
+	private boolean _bluetoothInUse;
+	
 	public SchedulerSettings(SharedPreferences preferences, Context context)
 	{
 		_globalOn = preferences.getBoolean(GLOBAL_ON, true);
@@ -68,6 +72,7 @@ public class SchedulerSettings {
 		
 		_intervalConnectWifi = preferences.getBoolean(INTERVAL_CONNECT_WIFI, false);
 		_intervalConnectMobileData = preferences.getBoolean(INTERVAL_CONNECT_MOBILEDATA, false);
+				
 		_connectInterval = tryReadIntLarger0(preferences, CONNECT_INTERVAL, 15);
 		_connectDuration = tryReadDoubleLarger0(preferences, CONNECT_DURATION, 1);
 		
@@ -78,6 +83,8 @@ public class SchedulerSettings {
 		
 		_unlockPolicyWifi = tryReadIntLarger0(preferences, context.getString(R.string.pref_key_unlock_policy_wifi), 2);
 		_unlockPolicyMobi = tryReadIntLarger0(preferences, context.getString(R.string.pref_key_unlock_policy_mob), 2);
+		
+		_bluetoothInUse = preferences.getBoolean(BLUETOOTH_IN_USE, false);
 	}
 	
 	private int tryReadIntLarger0(SharedPreferences preferences, String name, int defValue) {
@@ -137,7 +144,7 @@ public class SchedulerSettings {
 		this._globalOn = _globalOn;
 	}
 	
-	public boolean is_warnOnlyWhenScreenOn() {
+	public boolean is_warnOnlyWhenInUse() {
 		return _warnOnlyWhenScreenOn;
 	}
 	
@@ -264,6 +271,14 @@ public class SchedulerSettings {
 
 	public void set_unlockPolicyMobi(int _unlockPolicyMobi) {
 		this._unlockPolicyMobi = _unlockPolicyMobi;
+	}
+
+	public boolean is_bluetoothInUse() {
+		return _bluetoothInUse;
+	}
+
+	public void set_bluetoothInUse(boolean _bluetoothInUse) {
+		this._bluetoothInUse = _bluetoothInUse;
 	}
 	
 	

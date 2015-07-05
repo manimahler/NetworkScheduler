@@ -23,6 +23,9 @@ public class AutostartNotifyReceiver extends BroadcastReceiver {
 				
 				SchedulerSettings settings = PersistenceUtils.readSettings(context);
 				
+				// just to be sure to be persistent - who knows if we got the disconnection on shutdown
+				PersistenceUtils.saveBluetoothState(context, false);
+				
 				if (! settings.is_globalOn()) {
 					// do nothing
 					

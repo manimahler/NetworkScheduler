@@ -61,6 +61,14 @@
                 <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
         </receiver>
+        <receiver android:name=".BluetoothActionBroadCastReceiver" >
+            <intent-filter>
+                <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
+                <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
+            </intent-filter>
+        </receiver>
+        
+        
         <!-- Broadcast receiver -->
         <receiver android:name=".StartStopBroadcastReceiver" >
         </receiver>

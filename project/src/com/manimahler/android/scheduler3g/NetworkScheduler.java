@@ -257,11 +257,10 @@ public class NetworkScheduler {
 			// no need for warning, stop will honour / reset skip flag
 			stop(period, context);
 		} else {
-			PowerManager powerManager = (PowerManager) context
-					.getSystemService(Context.POWER_SERVICE);
-			boolean isScreenOn = powerManager.isScreenOn();
-
-			if (!isScreenOn && settings.is_warnOnlyWhenScreenOn()) {
+			
+			String deviceUseage = deviceInUse(context, period, settings);
+			
+			if (deviceUseage == null && settings.is_warnOnlyWhenInUse()) {
 				// cancel interval connect
 				stop(period, context);
 			} else {
@@ -269,7 +268,7 @@ public class NetworkScheduler {
 					Log.i(TAG,
 							"Auto-delaying scheduled period "
 									+ period.toString()
-									+ "  because screen is on");
+									+ "  because " + deviceUseage);
 
 					int delayInSec = settings.get_delay() * 60;
 
@@ -278,7 +277,7 @@ public class NetworkScheduler {
 							period);
 
 					UserLog.log(context, "Switch-off automatically delayed by "
-							+ settings.get_delay() + "min");
+							+ settings.get_delay() + "min because " + deviceUseage);
 				} else {
 					Log.d(TAG, "Screen is on: notification.");
 					makeDisableNotification(context, period, settings);
@@ -289,6 +288,24 @@ public class NetworkScheduler {
 				}
 			}
 		}
+	}
+
+	private String deviceInUse(Context context, ScheduledPeriod period,
+			SchedulerSettings settings) 
+	{
+		PowerManager powerManager = (PowerManager) context
+				.getSystemService(Context.POWER_SERVICE);
+		
+		String result = null;
+		
+		if (powerManager.isScreenOn()) {
+			result = "screen is on";
+		}
+		else if (settings.is_bluetoothInUse() && period.is_bluetooth()) {
+			result = "bluetooth is still connected";
+		}
+		
+		return result;
 	}
 
 	public void stop(int periodId, Context context) throws Exception {
@@ -515,7 +532,7 @@ public class NetworkScheduler {
 			switchOnMobi = true;
 			break;
 		}
-
+		
 		boolean changeRequired = (switchOnWifi && !ConnectionUtils
 				.isWifiOn(context))
 				|| (switchOnMobi && !ConnectionUtils.isMobileDataOn(context));
@@ -625,7 +642,7 @@ public class NetworkScheduler {
 			if (intervalMobData) {
 				ConnectionUtils.toggleMobileData(context, true);
 			}
-
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -656,16 +673,16 @@ public class NetworkScheduler {
 					"Device is tethering, no Wi-Fi / mobile data switch-off performed to avoid cutting off tethering!");
 			return;
 		}
-
+		
 		ScreenLockDetector screenLockDetector = new ScreenLockDetector();
-
+		
 		if (!screenLockDetector.isUserAbsent(context)) {
 			// NOTE: if keyguard is not locked and the user switches the screen
 			// back on NO user_present broadcast is received! Therefore only
 			// switch off if locked.
 			UserLog.log(TAG, context,
 					"Interval switch-off skipped (keyguard is not yet locked)");
-
+			
 			scheduleIntervalSwitchOff(context, reTestIntervalSec, bundle);
 			return;
 		}
@@ -772,6 +789,23 @@ public class NetworkScheduler {
 				&& !period.is_overrideIntervalMob();
 
 		return intervalMobData;
+	}
+	
+	private boolean isBtIntervalConnectActive(
+			ArrayList<ScheduledPeriod> allPeriods) {
+
+		ScheduledPeriod lastActivatedMobDataPeriod = getLastActivatedActivePeriod(
+				allPeriods, NetworkType.Bluetooth);
+
+		return isBtIntervalConnectActive(lastActivatedMobDataPeriod);
+	}
+
+	private boolean isBtIntervalConnectActive(ScheduledPeriod period) {
+
+		boolean intervalBt = period != null && period.is_enableRadios()
+				&& period.is_bluetooth() && period.is_intervalConnectBluetooth();
+		
+		return intervalBt;
 	}
 
 	private void scheduleSwitchOff(Context context, int seconds,
