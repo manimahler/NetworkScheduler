@@ -99,7 +99,7 @@
     <!-- Switch-off Notification -->
     <string name="settings_title_notifications">Kikapcsolás figyelmeztetés ha képernyő aktív</string>
     <!--
-    TOOD: Move switch-off notifications to separate dialog, and add the long description at the top:
+    TODO: Move switch-off notifications to separate dialog, and add the long description at the top:
     Figyelmeztetés a kapcsolat bontása előtt. (Hasznos lehet például video nézés esetén.)
     -->
     <string name="pref_title_warn_vibrate">Rezgés</string>
