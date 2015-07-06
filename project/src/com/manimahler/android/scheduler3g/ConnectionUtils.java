@@ -399,29 +399,54 @@ public class ConnectionUtils {
 	private static void setMobileDataStateLollipop(Context context,
 			boolean mobileDataEnabled) {
 		try {
-			TelephonyManager telephonyService = (TelephonyManager) context
-					.getSystemService(Context.TELEPHONY_SERVICE);
-
-			Method setMobileDataEnabledMethod = telephonyService.getClass()
-					.getDeclaredMethod("setDataEnabled", boolean.class);
-
-			Assert.assertNotNull("setMobileDataEnabledMethod not found",
-					setMobileDataEnabledMethod);
-
-			setMobileDataEnabledMethod.invoke(telephonyService,
-					mobileDataEnabled);
-
-			if (mobileDataEnabled) {
-				UserLog.log(context, "Enabled Mobile Data as system app");
-			} else {
-				UserLog.log(context, "Disabled Mobile Data as system app");
+			
+			// Fix crash reported in developer console (Android 5.0) security exception, somehow not caught by the exception below
+			if (RootCommandExecuter.canRunRootCommands())
+			{
+				setMobileDataStateLollipopCommandlineAsRoot(context, mobileDataEnabled);
+			}
+			else if (checkCanToggleMobileDataAsSystemAppPermission(context))
+			{
+				// it could have been made a system app...
+				setMobileDataStateLollipopAsSystemApp(context, mobileDataEnabled);
+			}
+			else {
+				UserLog.log(context, "Unable to toggle mobile data. Network Scheduler is not allowed to issue root commands and is no system app");
 			}
 		} catch (Exception ex) {
-			Log.e(TAG,
-					"Error setting mobile data state. Trying root command line...",
-					ex);
-			setMobileDataStateLollipopCommandlineAsRoot(context,
-					mobileDataEnabled);
+			Log.e(TAG, "Error setting mobile data state.", ex);
+			UserLog.log(context, "Error toggling mobile data", ex);
+		}
+	}
+	
+	private static boolean checkCanToggleMobileDataAsSystemAppPermission(Context context)
+	{
+	    String permission = "android.permission.MODIFY_PHONE_STATE";
+	    
+	    int result = context.checkCallingOrSelfPermission(permission);
+	    
+	    return (result == PackageManager.PERMISSION_GRANTED);         
+	}
+
+	private static void setMobileDataStateLollipopAsSystemApp(Context context,
+			boolean mobileDataEnabled) throws NoSuchMethodException,
+			IllegalAccessException, InvocationTargetException {
+		TelephonyManager telephonyService = (TelephonyManager) context
+				.getSystemService(Context.TELEPHONY_SERVICE);
+
+		Method setMobileDataEnabledMethod = telephonyService.getClass()
+				.getDeclaredMethod("setDataEnabled", boolean.class);
+
+		Assert.assertNotNull("setMobileDataEnabledMethod not found",
+				setMobileDataEnabledMethod);
+
+		setMobileDataEnabledMethod.invoke(telephonyService,
+				mobileDataEnabled);
+
+		if (mobileDataEnabled) {
+			UserLog.log(context, "Enabled Mobile Data as system app");
+		} else {
+			UserLog.log(context, "Disabled Mobile Data as system app");
 		}
 	}
 
