@@ -51,8 +51,8 @@ public class NetworkScheduler {
 	private static final int UNLOCK_POLICY_SWITCH_ON_NEVER = 1;
 	private static final int UNLOCK_POLICY_SWITCH_ON_WHEN_ACTIVE = 2;
 	private static final int UNLOCK_POLICY_SWITCH_ON_ALWAYS = 3;
-
-	private enum NetworkType {
+	
+	public enum NetworkType {
 		WiFi, MobileData, Bluetooth, Volume
 	}
 

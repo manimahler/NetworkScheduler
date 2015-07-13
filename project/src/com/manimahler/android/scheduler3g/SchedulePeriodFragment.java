@@ -36,6 +36,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import com.manimahler.android.scheduler3g.FlowLayout.LayoutParams;
+import com.manimahler.android.scheduler3g.NetworkScheduler.NetworkType;
 
 public class SchedulePeriodFragment extends DialogFragment {
 
@@ -420,7 +421,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 				@Override
 				public void onClick(View v) {
 					((MainActivity) getActivity())
-							.showIntervalConnectExplanation(v);
+							.showIntervalConnectExplanation(NetworkType.MobileData);
 				}
 			});
 		}
@@ -432,7 +433,18 @@ public class SchedulePeriodFragment extends DialogFragment {
 			@Override
 			public void onClick(View v) {
 				((MainActivity) getActivity())
-						.showIntervalConnectExplanation(v);
+						.showIntervalConnectExplanation(NetworkType.WiFi);
+			}
+		});
+		
+		ImageButton explainBtBtn = (ImageButton) _view
+				.findViewById(R.id.buttonIntervalBtHelp);
+		explainBtBtn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				((MainActivity) getActivity())
+						.showIntervalConnectExplanation(NetworkType.Bluetooth);
 			}
 		});
 

@@ -1,8 +1,11 @@
 package com.manimahler.android.scheduler3g;
 
+import com.manimahler.android.scheduler3g.NetworkScheduler.NetworkType;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -16,12 +19,12 @@ public class ExplainIntervalConnectDialog extends DialogFragment {
 	private static final String INTERVAL = "CONNECT_INTERVAL";
 	private static final String DURATION = "CONNECT_DURATION";
 
-	private String _radio;
+	private NetworkType _radio;
 	private int _connectInterval;
 	private double _connectDuration;
 
 	// Factory method
-	public static ExplainIntervalConnectDialog newInstance(String radio,
+	public static ExplainIntervalConnectDialog newInstance(NetworkType radio,
 			int connectInterval, double connectDuration) {
 
 		ExplainIntervalConnectDialog f = new ExplainIntervalConnectDialog();
@@ -51,7 +54,7 @@ public class ExplainIntervalConnectDialog extends DialogFragment {
 		}
 
 		// read from bundle
-		_radio = savedData.getString(RADIO);
+		_radio = (NetworkType) savedData.getSerializable(RADIO);
 		_connectInterval = savedData.getInt(INTERVAL);
 		_connectDuration = savedData.getDouble(DURATION);
 
@@ -59,17 +62,37 @@ public class ExplainIntervalConnectDialog extends DialogFragment {
 
 		LayoutInflater inflator = getActivity().getLayoutInflater();
 		View view = inflator.inflate(R.layout.alert_dialog, null);
-		
+
 		TextView introView = (TextView) view.findViewById(R.id.intro);
 		TextView messageView = (TextView) view.findViewById(R.id.message);
-		
-		String explainIntroFormat = getActivity().getResources().getString(
-				R.string.explain_interval_connection_intro);
-		introView.setText(String.format(explainIntroFormat, _radio));
-		
-		String explainTextFormat = getActivity().getResources().getString(
-				R.string.explain_interval_connection_text);
-		messageView.setText(String.format(explainTextFormat, _radio,
+
+		Resources resources = getActivity().getResources();
+
+		String radioText;
+
+		if (_radio == NetworkType.WiFi) {
+			radioText = resources.getString(R.string.wifi);
+		} else if (_radio == NetworkType.MobileData) {
+			radioText = resources.getString(R.string.mobile_data);
+		} else {
+			radioText = resources.getString(R.string.bluetooth);
+		}
+
+		String explainIntroFormat = resources
+				.getString(R.string.explain_interval_connection_intro);
+		introView.setText(String.format(explainIntroFormat, radioText));
+
+		String explainTextFormat;
+
+		if (_radio == NetworkType.Bluetooth) {
+			explainTextFormat = resources
+					.getString(R.string.explain_interval_connection_bt_text);
+		} else {
+			explainTextFormat = resources
+					.getString(R.string.explain_interval_connection_text);
+		}
+
+		messageView.setText(String.format(explainTextFormat, radioText,
 				_connectInterval, _connectDuration));
 
 		builder.setView(view);
@@ -113,9 +136,9 @@ public class ExplainIntervalConnectDialog extends DialogFragment {
 				_connectDuration);
 	}
 
-	private static void saveToBundle(Bundle args, String radio,
+	private static void saveToBundle(Bundle args, NetworkType radio,
 			int connectInterval, double connectDuration) {
-		args.putString(RADIO, radio);
+		args.putSerializable(RADIO, radio);
 		args.putInt(INTERVAL, connectInterval);
 		args.putDouble(DURATION, connectDuration);
 	}

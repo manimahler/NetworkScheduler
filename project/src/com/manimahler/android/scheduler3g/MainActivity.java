@@ -3,6 +3,7 @@ package com.manimahler.android.scheduler3g;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.manimahler.android.scheduler3g.NetworkScheduler.NetworkType;
 import com.manimahler.android.scheduler3g.SchedulePeriodFragment.OnPeriodUpdatedListener;
 import com.manimahler.android.scheduler3g.R;
 
@@ -699,15 +700,8 @@ public class MainActivity extends FragmentActivity implements
 		schedulePeriodFragment.show(fm, "fragment_schedule_period");
 	}
 
-	public void showIntervalConnectExplanation(View view) {
+	public void showIntervalConnectExplanation(NetworkType radio) {
 		FragmentManager fm = getSupportFragmentManager();
-
-		String radio;
-		if (view.getId() == R.id.buttonIntervalWifiHelp) {
-			radio = this.getResources().getString(R.string.wifi);
-		} else {
-			radio = this.getResources().getString(R.string.mobile_data);
-		}
 
 		ExplainIntervalConnectDialog explainDlg = ExplainIntervalConnectDialog
 				.newInstance(radio, _settings.get_connectInterval(),
