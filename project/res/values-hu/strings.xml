@@ -74,7 +74,7 @@
 
     <!-- Unlock policy -->
     <string name="pref_title_unlock_policy">Bekapcsolás feloldásra</string>
-    <string name="explain_unlock_policy_prefs">A Wi-Fi / Mobil adatkapcsolat automatikus bekapcsolása, amikor a képernyő be van kapcsolva és a képernyőzár fel van oldva</string>
+    <string name="explain_unlock_policy_prefs">A Wi-Fi / Mobil adatkapcsolat automatikus bekapcsolása, amikor a képernyő be van kapcsolva és a képernyőzár fel van oldva.</string>
     <string name="pref_dialog_title_unlock_policy_wifi">Wi-Fi bekapcsolása</string>
     <string name="pref_dialog_title_unlock_policy_mob">Mobil adatkapcsolat bekapcsolása</string>
     <string name="unlock_policy_never">Soha</string>
@@ -84,10 +84,10 @@
     <!-- Interval Connection -->
     <string name="settings_title_interval_connect">Szakaszos kapcsolat</string>
     <string name="explain_interval_connection_prefs">A szakaszos kapcsolódás növeli az üzemidőt. Lekapcsolja a Wi-Fi / Mobil adatkapcsolatot amikor az eszköz készenlétben van és csak a meghatározott időszakokban kapcsolódik újra.</string>
-    <string name="pref_summary_intervalconnect_group">Kapcsolódás minden %1$s percben %2$s percre (az aktív időszakokban)</string>
-    <string name="pref_summary_intervalconnect_group_singular">Kapcsolódás minden %1$s percben %2$s perc (az aktív időszakokban)</string>
+    <string name="pref_summary_intervalconnect_group">Kapcsolódás minden %1$s. percben %2$s percre (az aktív időszakokban)</string>
+    <string name="pref_summary_intervalconnect_group_singular">Kapcsolódás minden %1$s. percben %2$s perc (az aktív időszakokban)</string>
     <string name="pref_title_connect_interval">Csatlakozási gyakoriság: %s perc</string>
-    <string name="pref_summary_connect_interval">Csak minden %s percben csatlakozzon az alábbi időtartamban</string>
+    <string name="pref_summary_connect_interval">Csak minden %s. percben csatlakozzon az alábbi időtartamban</string>
     <string name="pref_dialog_title_connect_interval">Gyakoriság (perc)</string>
     <string name="pref_title_connect_duration">Csatlakozási időtartam: %s perc</string>
     <string name="pref_summary_connect_duration">Csatlakozás %s perc időtartamban.</string>
@@ -112,7 +112,7 @@
     <string name="pref_summary_delay_min">A kikapcsolás késleltetésre kerül %s perccel a kikapcsolás figyelmeztetéstől számolva.</string>
     <string name="pref_dialog_title_delay_min">Kikapcsolás késleltetés (perc)</string>
     <string name="pref_title_no_switchoff_unlocked">Bekapcsolva tartás aktív képernyőnél</string>
-    <string name="pref_summary_no_switchoff_unlocked">Kerüljön késleltetésre az automatikus kikapcsolás, ha a képernyő aktív</string>
+    <string name="pref_summary_no_switchoff_unlocked">Kerüljön késleltetésre az automatikus kikapcsolás, ha a képernyő aktív.</string>
     <!-- Logging -->
     <string name="settings_title_logging">Naplózás</string>
     <string name="pref_title_logging_enable">Naplózás engedélyezése</string>
