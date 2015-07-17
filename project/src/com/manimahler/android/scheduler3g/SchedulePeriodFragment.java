@@ -581,6 +581,26 @@ public class SchedulePeriodFragment extends DialogFragment {
 			updateCheckBoxIntervalConnectWifi(checkBoxIntervalConnectWifi);
 		}
 	}
+	
+	private void onToggleBluetooth(CompoundButton checkBox, boolean isChecked) {
+
+		// to avoid the scroll view from jumping back up
+		checkBox.requestFocusFromTouch();
+
+		_enabledPeriod.set_bluetooth(isChecked);
+
+		updateCheckboxAppearance((CheckBox) checkBox,
+				R.drawable.ic_action_bluetooth1);
+		
+		Dialog dialog = getDialog();
+
+		if (dialog != null) {
+			CheckBox checkBoxIntervalConnectBt = (CheckBox) dialog
+					.findViewById(R.id.checkBoxScheduleIntervalBt);
+
+			updateCheckBoxIntervalConnectBt(checkBoxIntervalConnectBt);
+		}
+	}
 
 	private void onToggleMobileDataInterval(CheckBox checkBox, boolean isChecked) {
 
@@ -644,17 +664,6 @@ public class SchedulePeriodFragment extends DialogFragment {
 		}
 
 		updateCheckBoxIntervalConnectBt(checkBox);
-	}
-
-	private void onToggleBluetooth(CompoundButton checkBox, boolean isChecked) {
-
-		// to avoid the scroll view from jumping back up
-		checkBox.requestFocusFromTouch();
-
-		_enabledPeriod.set_bluetooth(isChecked);
-
-		updateCheckboxAppearance((CheckBox) checkBox,
-				R.drawable.ic_action_bluetooth1);
 	}
 
 	private void onToggleVolume(CompoundButton checkBox, boolean isChecked) {
