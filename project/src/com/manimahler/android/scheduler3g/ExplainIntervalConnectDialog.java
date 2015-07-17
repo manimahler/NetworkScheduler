@@ -87,9 +87,12 @@ public class ExplainIntervalConnectDialog extends DialogFragment {
 		if (_radio == NetworkType.Bluetooth) {
 			explainTextFormat = resources
 					.getString(R.string.explain_interval_connection_bt_text);
+		} else if (_radio == NetworkType.WiFi) {
+			explainTextFormat = resources
+					.getString(R.string.explain_interval_connection_wifi_text);
 		} else {
 			explainTextFormat = resources
-					.getString(R.string.explain_interval_connection_text);
+					.getString(R.string.explain_interval_connection_mob_text);
 		}
 
 		messageView.setText(String.format(explainTextFormat, radioText,
