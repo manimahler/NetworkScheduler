@@ -173,9 +173,11 @@ public class MainActivity extends FragmentActivity implements
 
 				boolean switchOn = period.is_enableRadios();
 
-				// NOTE: switching off is a bit risky, the user might want this to be an exception
-				//		 plus it does not work properly! It is not active despite it should and it 
-				//		 starts all the sensors it should stop.
+				// NOTE: switching off is a bit risky, the user might want this
+				// to be an exception
+				// plus it does not work properly! It is not active despite it
+				// should and it
+				// starts all the sensors it should stop.
 				if (switchOn) {
 
 					makeActivePeriodCheckingSensorsToast(period);
@@ -613,18 +615,20 @@ public class MainActivity extends FragmentActivity implements
 		if (sensorListMsg == null) {
 			return;
 		}
-		
+
 		String formatString;
 		if (selectedPeriod.is_enableRadios()) {
-			formatString = getResources().getString(R.string.enabled_period_checking);
+			formatString = getResources().getString(
+					R.string.enabled_period_checking);
 		} else {
-			formatString = getResources().getString(R.string.disabled_period_checking);
+			formatString = getResources().getString(
+					R.string.disabled_period_checking);
 		}
-		
+
 		String msg = String.format(formatString, sensorListMsg);
-		
+
 		UserLog.log(this, msg);
-		
+
 		Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 	}
 

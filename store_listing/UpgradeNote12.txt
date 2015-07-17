@@ -1,0 +1,10 @@
+Add support for android 5.0 and 5.1 (lollipop):
+* Rooted devices with android lollipop can continue scheduling mobile data. No changes either for Gingerbread, Jellybean and Kitkat.
+* Non-rooted lollipop devices: Removed mobile data functionality which is not supported any more due to changes in android 5 (lollipop). Wi-Fi, Bluetooth, Ringer sound are still supported an all devices.
+
+New privilege (Phone) is only required on rooted android 5 devices to toggle mobile data.
+
+
+Unterstützung für android 5.0 und 5.1:
+- Geräte mit Root-Zugriff sowie alle Versionen tiefer als 5.0 können weiterhin Mobile Daten ein- und ausschalten
+- Für alle anderen Geräte mit Android 5 (lollipop): Die Mobile Daten Verbindung kann nicht mehr ein-/ausgeschaltet werden. Dies ist nicht mehr möglich wegen gänderter Berechtigungen in Android 5 (lollipop). WLAN, Bluetooth und Ton sind nach wie vor auf allen Geräten unterstützt.
