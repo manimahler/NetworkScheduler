@@ -28,7 +28,9 @@
     <string name="interval_connection_help_content_desc">A szakaszos kapcsolat súgója</string>
     <string name="explain_interval_connection_title">Szakaszos kapcsolat</string>
     <string name="explain_interval_connection_intro">Ez az opció energiát és adathasználatot takarít meg amíg a %1$s engedélyezve van.</string>
-    <string name="explain_interval_connection_text">A szakaszos kapcsolat mód lakapcsolja a %1$s amikor az eszköz készenlétben van és minden %2$s . percben %3$s perc időtartamban kapcsolódik újból (gyakoriság és időtartam beállítható) az üzenetek fogadásához.</string>
+    <string name="explain_interval_connection_mob_text">A szakaszos kapcsolat mód lekapcsolja a Mobil adatkapcsolatot amikor az eszköz készenlétben van és minden %2$s. percben %3$s perc időtartamban kapcsolódik újból (gyakoriság és időtartam beállítható) az üzenetek fogadásához.</string>
+    <string name="explain_interval_connection_wifi_text">A szakaszos kapcsolat mód lekapcsolja a Wi-Fi-t amikor az eszköz készenlétben van és minden %2$s. percben %3$s perc időtartamban kapcsolódik újból (gyakoriság és időtartam beállítható) az üzenetek fogadásához.</string>
+    <string name="explain_interval_connection_bt_text">A szakaszos kapcsolat mód %3$s percre engedélyezi a Bluetooth kapcsolatot párosítás céljából. Ha a párosítás sikertelen %3$s perc után a Bluettooth kikapcsol %2$s percre (gyakoriság és időtartam beállítható). Az eszköz aktív időszakban történő feloldása alatt a Bluetooth szintén bekapcsol.</string>
     <string name="close_dialog">Bezár</string>
 
     <!-- Context menu actions -->

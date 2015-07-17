@@ -27,7 +27,9 @@
     <string name="interval_connection_help_content_desc">Show help on interval connection</string>
     <string name="explain_interval_connection_title">Interval Connection</string>
     <string name="explain_interval_connection_intro">This option saves battery and reduces data usage while %1$s is enabled</string>
-    <string name="explain_interval_connection_text">Interval connection turns off %1$s when the device sleeps and only re-connects every %2$s min for %3$s min (interval and duration can be changed in settings) to fetch new messages. Depending on the \'Switch-on when unlocking\' setting it is also turned on when the device is unlocked.</string>
+    <string name="explain_interval_connection_mob_text">Interval connection turns off %1$s when the device sleeps and only re-connects every %2$s min for %3$s min (interval and duration can be changed in settings) to fetch new messages. Depending on the \'Switch-on when unlocking\' setting it is also turned on when the device is unlocked.</string>
+    <string name="explain_interval_connection_wifi_text">Interval connection turns off %1$s when the device sleeps and only re-connects every %2$s min for %3$s min (interval and duration can be changed in settings) to fetch new messages. Depending on the \'Switch-on when unlocking\' setting it is also turned on when the device is unlocked.</string>
+    <string name="explain_interval_connection_bt_text">Interval connection enables bluetooth only for %3$s min to allow pairing. If the device is not paired with another bluetooth device after %3$s min the bluetooth radio is disabled for %2$s min to save battery (interval and duration can be changed in settings). Bluetooth is also turned on when the device is unlocked during the active period.</string>
     <string name="close_dialog">Close</string>
 
     <!-- Context menu actions (long press) -->
