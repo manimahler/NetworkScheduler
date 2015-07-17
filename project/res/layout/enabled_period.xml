@@ -110,7 +110,7 @@
         android:layout_below="@+id/TextViewStopTime"
         android:gravity="center_vertical"
         android:textColor="@android:color/white"
-        android:textSize="24sp"
+        android:textSize="20sp"
         android:typeface="sans" />
 
     <TextView
