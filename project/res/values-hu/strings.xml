@@ -65,8 +65,8 @@
     <string name="switch_off_now">Kapcsolat bontása</string>
     <string name="connections_switched_off">Hálózati kapcsolatok engedélyezve.</string>
     <string name="switch_off_auto_delayed">A kapcsolat bontása késleltetésre került.</string>
-    <string name="switch_off_delayed_until">A kapcsolat bontása késleltetve %s -ig.</string>
-    <string name="switch_off_auto_delayed_until">A kapcsolat bontása késleltetve %s -ig, mert az eszköz használatban van.</string>
+    <string name="switch_off_delayed_until">A kapcsolat bontása késleltetve %s-ig.</string>
+    <string name="switch_off_auto_delayed_until">A kapcsolat bontása késleltetve %s-ig, mert az eszköz használatban van.</string>
 
     <!-- Settings -->
     <string name="settings">Beállítások</string>
@@ -116,9 +116,9 @@
     <!-- Logging -->
     <string name="settings_title_logging">Naplózás</string>
     <string name="pref_title_logging_enable">Naplózás engedélyezése</string>
-    <string name="pref_summary_logging_enable">Az összes tevékenység log fájlba mentése</string>
+    <string name="pref_summary_logging_enable">Az összes tevékenység log fájlba mentése.</string>
     <string name="pref_title_logging_show">Napló megtekintése</string>
-    <string name="pref_summary_logging_show">A naplófájl megnyitása a választott szövegszerkesztővel</string>
+    <string name="pref_summary_logging_show">A naplófájl megnyitása a választott szövegszerkesztővel.</string>
     <string name="pref_title_logging_delete">Napló törlése</string>
     <string name="pref_summary_logging_delete">Naplófájl törlése (%sKB)</string>
     <string name="log_file_deleted">Log file deleted</string>
