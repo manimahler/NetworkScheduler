@@ -455,10 +455,10 @@ public class ConnectionUtils {
 		try {
 			StringBuilder command = new StringBuilder();
 			command.append("su -c ");
-			command.append("svc data ");
+			command.append("\"svc data ");
 
 			command.append(enable ? "enable" : "disable");
-			command.append("\n");
+			command.append("\"\n");
 
 			Log.i(TAG, "Executing on the command line: " + command.toString());
 
