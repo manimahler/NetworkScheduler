@@ -154,7 +154,7 @@ public class NetworkScheduler {
 				startIntervalConnect(context, settings);
 			} catch (Exception e) {
 				UserLog.log(context,
-						"Error setting up interval connect: " + e.getMessage());
+						"Error setting up interval connect: " + e);
 				e.printStackTrace();
 			}
 		}
@@ -526,7 +526,7 @@ public class NetworkScheduler {
 								.getSchedulesPreferences(context));
 			}
 
-			// TODO: not only when interval-connect is active but genarally the
+			// TODO: not only when interval-connect is active but generally the
 			// period is active? (could have been switched off!)
 			switchOnMobi = isMobiIntervalConnectActive(allPeriods);
 			break;
@@ -562,6 +562,13 @@ public class NetworkScheduler {
 						+ translateUnlockPolicy(unlockPolicyMobi) + 
 						") and for bluetooth (when period active) " + changeText);
 
+		if (switchOnMobi && ConnectionUtils.isWifiConnected(context))
+		{
+			switchOnMobi = false;
+			UserLog.log(context,
+					"Unlock policy for mobile data is not applied, because Wi-Fi is already connected.");
+		}
+		
 		// This protects us from saving the incorrect 'original' state in the
 		// bundle
 		// in case the previous unlock has switched on a sensor and stored the
@@ -618,16 +625,28 @@ public class NetworkScheduler {
 			cancelIntervalConnect(context);
 			return;
 		}
-		
-		if ((intervalWifi || intervalMobData) && ConnectionUtils.isTethering(context)) {
-			UserLog.log(context,
+
+		if ((intervalWifi || intervalMobData)
+				&& ConnectionUtils.isTethering(context)) {
+			UserLog.log(
+					context,
 					"Device is tethering, interval connection is suspended to avoid interrupting tethering!");
 
 			intervalWifi = false;
 			intervalMobData = false;
 		}
 
-		intervalSwitchOn(context, settings, intervalWifi, intervalMobData, intervalBt);
+		// Do the same for wifi? No because this would avoid picking up a Wi-Fi that has
+		// become visible in the mean while.
+		if (intervalMobData && ConnectionUtils.isWifiConnected(context)) {
+			UserLog.log(
+					context,
+					"Interval connection for mobile data is skipped because Wi-Fi is already connected");
+			intervalMobData = false;
+		}
+
+		intervalSwitchOn(context, settings, intervalWifi, intervalMobData,
+				intervalBt);
 	}
 
 	private void intervalSwitchOn(Context context, SchedulerSettings settings,
@@ -673,18 +692,7 @@ public class NetworkScheduler {
 	public void intervalSwitchOff(Context context, SchedulerSettings settings,
 			Bundle bundle) {
 
-		// TODO: also here, loop through all active periods!
-		// schedule another 2-minute period if screen is on or keyguard not
-		// locked:
 		int reTestIntervalSec = 120;
-		
-		if (isScreenOn(context)) {
-			UserLog.log(TAG, context,
-					"Interval switch-off skipped (screen is ON)");
-
-			scheduleIntervalSwitchOff(context, reTestIntervalSec, bundle);
-			return;
-		}
 		
 		if (bundle == null) {
 			Log.d(TAG, "No bundle");
@@ -706,14 +714,41 @@ public class NetworkScheduler {
 		}
 		
 		ScreenLockDetector screenLockDetector = new ScreenLockDetector();
-		
-		if (!screenLockDetector.isUserAbsent(context)) {
-			// NOTE: if keyguard is not locked and the user switches the screen
-			// back on NO user_present broadcast is received! Therefore only
-			// switch off if locked.
-			UserLog.log(TAG, context,
-					"Interval switch-off skipped (keyguard is not yet locked)");
-			
+
+		boolean screenIsOn = isScreenOn(context);
+		boolean isUserAbsent = screenLockDetector.isUserAbsent(context);
+
+		// NOTE: if key guard is not locked and the user switches the screen
+		// back on NO user_present broadcast is received! Therefore only
+		// switch off if locked.
+		if (!isUserAbsent || screenIsOn) {
+			String deviceActiveMsg = "";
+
+			if (screenIsOn) {
+				deviceActiveMsg = "Interval switch-off skipped (screen is ON)";
+			} else if (!isUserAbsent) {
+				deviceActiveMsg = "Interval switch-off skipped (keyguard is not yet locked)";
+			}
+
+			// Special rules if both intervalWifi and intervalMobData: keep only
+			// one sensor active
+			if (intervalMobData && ConnectionUtils.isWifiConnected(context)) {
+				ConnectionUtils.toggleMobileData(context, false);
+				UserLog.log(
+						TAG,
+						context,
+						"Interval/Unlock policy switch-off: Switched off mobile data because Wi-Fi is already connected");
+			} else if (intervalWifi
+					&& ConnectionUtils.isMobileDataConnected(context)) {
+				ConnectionUtils.toggleWifi(context, false);
+				UserLog.log(
+						TAG,
+						context,
+						"Interval/Unlock policy switch-off: Switched off Wi-Fi because mobile data is already connected");
+			} else {
+				UserLog.log(TAG, context, deviceActiveMsg);
+			}
+
 			scheduleIntervalSwitchOff(context, reTestIntervalSec, bundle);
 			return;
 		}
