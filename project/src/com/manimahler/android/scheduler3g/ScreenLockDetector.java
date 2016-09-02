@@ -54,42 +54,76 @@ public class ScreenLockDetector {
 
 	/**
 	 * Returns whether the user is absent in a way that the next time the screen
-	 * is turned on (if no screen lock is set up) or unlocked a
+	 * is turned on (if no screen lock is set up) or the device is unlocked (including swipe) a
 	 * USER_PRESENT_ACTION is broadcast.
 	 */
 	public boolean isUserAbsent(Context context) {
-
+		
 		boolean isDeviceLocked = isLocked(context);
 
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-			// there was no 'None' option for screen lock
+			// there was no 'None' option for screen lock in the olden days
 			return isDeviceLocked;
 		}
-		
+				
 		if (isLockScreenDisabled(context)) {
+			
+			// Lock Type 'None' (USER_PRESENT is broadcast when screen comes on)
+			
 			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
 				// android 3.0 - 4.1: we have a problem with 'None' because
 				// user_present is never broadcast!
 				UserLog.log(TAG, context,
 						"No screen lock on android 3.0 - 4.1: User-presence will not be detected! Please switch to 'Swipe'");
 			}
+			
 			return !isScreenOn(context);
 		} else {
+			// Lock Type 'Swipe' or proper lock  (USER_PRESENT is broadcast when device is unlocked)
 			return isDeviceLocked;
 		}
 	}
 	
 	private boolean isScreenOn(Context context) {
+		
 		PowerManager powerManager = (PowerManager) context
 				.getSystemService(Context.POWER_SERVICE);
-		return powerManager.isScreenOn();
+		
+		boolean result;
+		
+		if (Build.VERSION.SDK_INT >= 20) {
+			result = powerManager.isInteractive();
+		}
+		else{
+			result = powerManager.isScreenOn();
+		}
+		
+		Log.d(TAG, "isScreenOn: " + result);
+		
+		return result;
 	}
 	
 	private boolean isLockScreenDisabled(Context context)
 	{
+		// Starting with android 6.0 calling isLockScreenDisabled fails altogether because the
+		// signature has changed. There is a new method isDeviceSecure which, however, does
+		// not allow the differentiation between lock screen 'None' and 'Swipe.
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+			
+			KeyguardManager keyguardMgr = (KeyguardManager) context
+					.getSystemService(Context.KEYGUARD_SERVICE);
+			
+			Log.d(TAG, "Marshmallow is device secured: " + keyguardMgr.isDeviceSecure());
+			
+			// But luckily there is no 'Automatically lock x minutes after sleep' option when 
+			// 'Swipe' is set which means that as soon as the screen is off, switching back on 
+			// requires a swipe which results in a USER_PRESENT broadcast. 
+			return !keyguardMgr.isDeviceSecure();
+		}
+		
 	    String LOCKSCREEN_UTILS = "com.android.internal.widget.LockPatternUtils";
 
-	    try
+	    try 
 	    {
 	        Class<?> lockUtilsClass = Class.forName(LOCKSCREEN_UTILS);
 	        
