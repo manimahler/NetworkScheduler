@@ -123,22 +123,10 @@ public class MainActivity extends FragmentActivity implements
 		super.onStart();
 
 		final ListView listview = (ListView) findViewById(R.id.listview);
-
-		int width = getAvailableScreenWitdh(this);
-
-		Log.d(TAG, "width: " + width);
-
-		int maxWidth = 800;
-
 		int paddingTop = listview.getPaddingTop();
 		int paddingBottom = listview.getPaddingBottom();
-		int paddingLeftRight;
 
-		if (width > maxWidth) {
-			paddingLeftRight = (width - 100 - maxWidth) / 2;
-		} else {
-			paddingLeftRight = 0;
-		}
+		int paddingLeftRight = getListViewHorizontalPadding();
 
 		Log.d(TAG, "Setting padding: " + paddingLeftRight);
 		listview.setPadding(paddingLeftRight, paddingTop, paddingLeftRight,
@@ -648,36 +636,40 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 
-	private int getAvailableScreenWitdh(Activity activity) {
+	private int getListViewHorizontalPadding() {
 
-		WindowManager w = activity.getWindowManager();
-		Display d = w.getDefaultDisplay();
-		DisplayMetrics metrics = new DisplayMetrics();
-		d.getMetrics(metrics);
-		// since SDK_INT = 1;
-		int widthPixels = metrics.widthPixels;
-		// int heightPixels = metrics.heightPixels;
-		// includes window decorations (statusbar bar/menu bar)
-		if (Build.VERSION.SDK_INT >= 14 && Build.VERSION.SDK_INT < 17)
-			try {
-				widthPixels = (Integer) Display.class.getMethod("getRawWidth")
-						.invoke(d);
-				// heightPixels = (Integer)
-				// Display.class.getMethod("getRawHeight").invoke(d);
-			} catch (Exception ignored) {
-			}
-		// includes window decorations (statusbar bar/menu bar)
-		if (Build.VERSION.SDK_INT >= 17)
-			try {
-				Point realSize = new Point();
-				Display.class.getMethod("getRealSize", Point.class).invoke(d,
-						realSize);
-				widthPixels = realSize.x;
-				// heightPixels = realSize.y;
-			} catch (Exception ignored) {
-			}
+		int width = getScreenWidth(this);
 
-		return widthPixels;
+		Log.d(TAG, "width: " + width);
+
+		int maxWidth = 560;
+
+		int paddingLeftRight;
+
+		if (width > maxWidth) {
+			paddingLeftRight = (width - maxWidth) / 2;
+		} else {
+			paddingLeftRight = 0;
+		}
+
+		return paddingLeftRight;
+	}
+
+	private int getScreenWidth(Activity activity) {
+
+		DisplayMetrics displayMetrics = new DisplayMetrics();
+
+		WindowManager windowManager = activity.getWindowManager();
+		windowManager.getDefaultDisplay().getMetrics(displayMetrics);
+
+		Log.d(TAG, "width: " + displayMetrics.widthPixels);
+		Log.d(TAG, "density: " + displayMetrics.density);
+
+		int densityIndependentPixels = (int) ((double) displayMetrics.widthPixels / displayMetrics.density);
+
+		Log.d(TAG, "adjusted width: " + densityIndependentPixels);
+
+		return densityIndependentPixels;
 	}
 
 	private void saveSettings() throws Exception {
