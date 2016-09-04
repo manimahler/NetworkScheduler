@@ -737,14 +737,14 @@ public class NetworkScheduler {
 				UserLog.log(
 						TAG,
 						context,
-						"Interval/Unlock policy switch-off: Switched off mobile data because Wi-Fi is already connected");
+						"Interval/Unlock policy switch-off: Ensured mobile data is off because Wi-Fi is already connected");
 			} else if (intervalWifi
 					&& ConnectionUtils.isMobileDataConnected(context)) {
 				ConnectionUtils.toggleWifi(context, false);
 				UserLog.log(
 						TAG,
 						context,
-						"Interval/Unlock policy switch-off: Switched off Wi-Fi because mobile data is already connected");
+						"Interval/Unlock policy switch-off: Ensured Wi-Fi is off because mobile data is already connected");
 			} else {
 				UserLog.log(TAG, context, deviceActiveMsg);
 			}

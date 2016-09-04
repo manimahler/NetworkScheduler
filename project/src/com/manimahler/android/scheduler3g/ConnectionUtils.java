@@ -106,18 +106,51 @@ public class ConnectionUtils {
 
 		WifiManager wifiManager = (WifiManager) context
 				.getSystemService(Context.WIFI_SERVICE);
-		boolean wifiEnabled = wifiManager.isWifiEnabled();
+		
+		int currentState = wifiManager.getWifiState();
+		
+		if (currentState == WifiManager.WIFI_STATE_ENABLED ||
+				currentState == WifiManager.WIFI_STATE_ENABLING)
+		{
+			return true;
+		}
+		
+		if (currentState == WifiManager.WIFI_STATE_UNKNOWN){
+			UserLog.log(context, "Current WIFI state is UNKNOWN!");
+		}
+		
+		return false;
+		
+		// This is apparently not reliable:
+		//boolean wifiEnabled = wifiManager.isWifiEnabled();
 
-		return wifiEnabled;
+		//return wifiEnabled;
 	}
 
 	public static boolean isWifiConnected(Context context) {
+		
+		return isConnected(context, ConnectivityManager.TYPE_WIFI);
+	}
+	
+	public static boolean isMobileDataConnected(Context context) {
+		
+		return isConnected(context, ConnectivityManager.TYPE_MOBILE);
+	}
+	
+	private static boolean isConnected(Context context, int networkType) {
 		ConnectivityManager connManager = (ConnectivityManager) context
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo mWifi = connManager
-				.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		
+		NetworkInfo activeNetwork = connManager.getActiveNetworkInfo();
+		
+		// Nothing active:
+		if (activeNetwork == null)
+		{
+			return false;
+		}
 
-		return (mWifi.isConnected());
+		return (activeNetwork.getType() == networkType &&
+				activeNetwork.isConnected());
 	}
 
 	public static boolean isTethering(Context context) {
@@ -392,7 +425,7 @@ public class ConnectionUtils {
 
 		} catch (Exception e) {
 			Log.e(TAG, "Error switching mobile data ", e);
-			UserLog.log(context, "Error changing mobile data state.");
+			UserLog.log(context, "Error changing mobile data state: " + e.getMessage());
 		}
 	}
 
