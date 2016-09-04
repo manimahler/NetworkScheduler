@@ -11,7 +11,6 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,7 +19,6 @@ import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -91,7 +89,7 @@ public class MainActivity extends FragmentActivity implements
 						@Override
 						public void onCheckedChanged(CompoundButton buttonView,
 								boolean isChecked) {
-							onGlobalOnClicked(buttonView);
+							onGlobalOnClicked(buttonView, isChecked);
 						}
 					});
 		}
@@ -195,10 +193,10 @@ public class MainActivity extends FragmentActivity implements
 		showPeriodDetails(newPeriod);
 	}
 
-	public void onGlobalOnClicked(CompoundButton buttonView) {
+	public void onGlobalOnClicked(CompoundButton buttonView, boolean isChecked) {
 
 		try {
-			boolean isGlobalOn = buttonView.isChecked();
+			boolean isGlobalOn = isChecked;
 
 			if (!isGlobalOn) {
 				// log as long as it is still enabled:
