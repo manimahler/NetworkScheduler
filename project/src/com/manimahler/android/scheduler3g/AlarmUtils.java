@@ -5,6 +5,7 @@ import java.util.Calendar;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 
 public class AlarmUtils {
@@ -19,28 +20,59 @@ public class AlarmUtils {
 		am.cancel(pendingIntent);
 	}
 
-	public static void setAlarm(Context context, PendingIntent pendingIntent,
+	public static void setExactAlarmSeconds(Context context, PendingIntent pendingIntent,
 			int secondsFromNow) {
 
 		long wakeTime = DateTimeUtils.getTimeFromNowInMillis(secondsFromNow);
 
-		setAlarm(context, pendingIntent, wakeTime);
+		setExactAlarmMilliseconds(context, pendingIntent, wakeTime);
 	}
 
-	public static void setAlarm(Context context, PendingIntent pendingIntent,
+	public static void setExactAlarmMilliseconds(Context context, PendingIntent pendingIntent,
 			long wakeTime) {
 		AlarmManager am = (AlarmManager) context
 				.getSystemService(android.content.Context.ALARM_SERVICE);
 
+		logAlarmWakeUpTime(pendingIntent, wakeTime);
+
+		// setExact was introduced with kitkat
+		if (Build.VERSION.SDK_INT >= 19) {
+			am.setExact(AlarmManager.RTC_WAKEUP, wakeTime, pendingIntent);
+		}
+		else{
+			am.set(AlarmManager.RTC_WAKEUP, wakeTime, pendingIntent);
+		}
+			
+	}
+	
+	public static void setInexactAlarmSeconds(Context context, PendingIntent pendingIntent,
+			int secondsFromNow) {
+
+		long wakeTime = DateTimeUtils.getTimeFromNowInMillis(secondsFromNow);
+
+		setInexactAlarmMilliseconds(context, pendingIntent, wakeTime);
+	}
+	
+	public static void setInexactAlarmMilliseconds(Context context, PendingIntent pendingIntent,
+			long wakeTime) {
+		AlarmManager am = (AlarmManager) context
+				.getSystemService(android.content.Context.ALARM_SERVICE);
+
+		logAlarmWakeUpTime(pendingIntent, wakeTime);
+
+		// On newer phones this is several minutes late!
+		am.set(AlarmManager.RTC_WAKEUP, wakeTime, pendingIntent);
+	}
+
+	private static void logAlarmWakeUpTime(PendingIntent pendingIntent,
+			long wakeTime) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(wakeTime);
 
 		Log.d(TAG, "Setting alarm with intent " + pendingIntent.toString()
 				+ " to go off at " + calendar.getTime().toString());
-
-		am.set(AlarmManager.RTC_WAKEUP, wakeTime, pendingIntent);
 	}
-
+	
 	public static void setInexactRepeatingAlarm(Context context,
 			PendingIntent pendingIntent, int intervalSeconds) {
 		AlarmManager am = (AlarmManager) context

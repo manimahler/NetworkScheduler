@@ -141,7 +141,7 @@ public class NetworkScheduler {
 			long startMillis = DateTimeUtils.getNextTimeIn24hInMillis(
 					period.get_startTimeMillis(), considerNowWithinMillis);
 
-			AlarmUtils.setAlarm(context, pendingIntentOn, startMillis);
+			AlarmUtils.setExactAlarmMilliseconds(context, pendingIntentOn, startMillis);
 
 		} else {
 			Log.d(TAG, "Cancelling start alarm for period " + period.get_id());
@@ -185,7 +185,7 @@ public class NetworkScheduler {
 			long stopMillis = DateTimeUtils.getNextTimeIn24hInMillis(
 					period.get_endTimeMillis(), considerNowWithinMillis);
 
-			AlarmUtils.setAlarm(context, pendingIntentOff, stopMillis);
+			AlarmUtils.setExactAlarmMilliseconds(context, pendingIntentOff, stopMillis);
 		} else {
 			am.cancel(pendingIntentOff);
 		}
@@ -892,7 +892,7 @@ public class NetworkScheduler {
 		PendingIntent pendingIntentOff = getSwitchOffIntent(context, period,
 				actionName);
 
-		AlarmUtils.setAlarm(context, pendingIntentOff, seconds);
+		AlarmUtils.setExactAlarmSeconds(context, pendingIntentOff, seconds);
 	}
 
 	private void scheduleIntervalConnect(Context context,
@@ -913,7 +913,8 @@ public class NetworkScheduler {
 		PendingIntent intervalOffIntent = getIntervalIntent(context,
 				ACTION_INTERVAL_OFF, extras);
 
-		AlarmUtils.setAlarm(context, intervalOffIntent, connectTimeSec);
+		// Setting an exact alarm here has made the app unresponsive in android 6.0 emulator
+		AlarmUtils.setInexactAlarmSeconds(context, intervalOffIntent, connectTimeSec);
 	}
 
 	private void endToggleSensors(Context context, ScheduledPeriod period,
