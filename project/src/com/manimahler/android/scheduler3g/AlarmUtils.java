@@ -35,14 +35,19 @@ public class AlarmUtils {
 
 		logAlarmWakeUpTime(pendingIntent, wakeTime);
 
+		int alarmType = AlarmManager.RTC_WAKEUP;
+		
 		// setExact was introduced with kitkat
-		if (Build.VERSION.SDK_INT >= 19) {
-			am.setExact(AlarmManager.RTC_WAKEUP, wakeTime, pendingIntent);
+		// setExactAndAllowWhileIdle was introduced with marshmallow
+		if (Build.VERSION.SDK_INT >= 23) {
+			am.setExactAndAllowWhileIdle(alarmType, wakeTime, pendingIntent);
+		}
+		else if (Build.VERSION.SDK_INT >= 19) {
+			am.setExact(alarmType, wakeTime, pendingIntent);
 		}
 		else{
-			am.set(AlarmManager.RTC_WAKEUP, wakeTime, pendingIntent);
+			am.set(alarmType, wakeTime, pendingIntent);
 		}
-			
 	}
 	
 	public static void setInexactAlarmSeconds(Context context, PendingIntent pendingIntent,
@@ -59,9 +64,17 @@ public class AlarmUtils {
 				.getSystemService(android.content.Context.ALARM_SERVICE);
 
 		logAlarmWakeUpTime(pendingIntent, wakeTime);
+		
+		int alarmType = AlarmManager.RTC_WAKEUP;
 
-		// On newer phones this is several minutes late!
-		am.set(AlarmManager.RTC_WAKEUP, wakeTime, pendingIntent);
+		// setAndAllowWhileIdle was introduced with marshmallow
+		if (Build.VERSION.SDK_INT >= 23) {
+			am.setAndAllowWhileIdle(alarmType, wakeTime, pendingIntent);
+		}
+		else {
+			// On newer phones this is several minutes late!
+			am.set(alarmType, wakeTime, pendingIntent);
+		}
 	}
 
 	private static void logAlarmWakeUpTime(PendingIntent pendingIntent,
