@@ -20,7 +20,7 @@
     <string name="bluetooth">Bluetooth</string>
     <string name="volume_on">Csengőhang</string>
     <string name="volume_with_vibrate">Rezgés néma módban</string>
-    <string name="missing_MobData">Hiányzó Mobile adat?</string>
+    <string name="missing_MobData">Mobil adatkapcsolat nem időzíthető</string>
     <string name="interval_connect_disabling_period">Szakaszos kapcsolat nem lehetséges amennyiben a kikapcsolás ideje korábbi a bekapcsolásénál.</string>
 
     <!-- ? next to interval connection in edit period: -->

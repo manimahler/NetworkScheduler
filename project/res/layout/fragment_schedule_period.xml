@@ -265,8 +265,9 @@
 
             <Button
                 android:id="@+id/buttonMissingMobData"
-                android:layout_width="wrap_content"
+                android:layout_width = "match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="left|center_vertical"
                 android:contentDescription="@string/interval_connection_help_content_desc"
                 android:drawableLeft="@drawable/ic_action_help"
                 android:background="@android:color/transparent"
