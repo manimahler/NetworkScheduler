@@ -9,6 +9,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
@@ -248,7 +249,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 		
 		Context context = getActivity();
 		
-		View mobDataViewExplanation = _view.findViewById(R.id.buttonMissingMobData);
+		Button mobDataViewExplanation = (Button)_view.findViewById(R.id.buttonMissingMobData);
 
 		if (!ConnectionUtils.canToggleMobileData(context)) {
 			// the default is true:
@@ -271,6 +272,9 @@ public class SchedulePeriodFragment extends DialogFragment {
 								startActivity(i);
 							}
 						});
+				
+				mobDataViewExplanation.setPaintFlags(mobDataViewExplanation.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG);
+
 			} else {
 				sensorsLayout.removeView(mobDataViewExplanation);
 			}
