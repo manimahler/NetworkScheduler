@@ -1,0 +1,154 @@
+ECLIPSE ANDROID PROJECT IMPORT SUMMARY
+======================================
+
+Ignored Files:
+--------------
+The following files were *not* copied into the new Gradle project; you
+should evaluate whether these are still needed in your project and if
+so manually move them:
+
+* build.xml
+* build\
+* build\incremental\
+* build\incremental\aidl\
+* build\incremental\aidl\debug\
+* build\incremental\aidl\debug\dependency.store
+* build\incremental\aidl\debug\inputs.data
+* build\incremental\aidl\debug\outputs.data
+* build\incremental\mergeAssets\
+* build\incremental\mergeAssets\debug\
+* build\incremental\mergeAssets\debug\inputs.data
+* build\incremental\mergeAssets\debug\merger.xml
+* build\incremental\mergeAssets\debug\outputs.data
+* build\incremental\mergeResources\
+* build\incremental\mergeResources\debug\
+* build\incremental\mergeResources\debug\inputs.data
+* build\incremental\mergeResources\debug\merger.xml
+* build\incremental\mergeResources\debug\outputs.data
+* build\manifests\
+* build\manifests\debug\
+* build\manifests\debug\AndroidManifest.xml
+* build\res\
+* build\res\all\
+* build\res\all\debug\
+* build\res\all\debug\anim\
+* build\res\all\debug\anim\fadein.xml
+* build\res\all\debug\drawable-hdpi\
+* build\res\all\debug\drawable-hdpi\clock_notification.png
+* build\res\all\debug\drawable-hdpi\ic_action_bluetooth.png
+* build\res\all\debug\drawable-hdpi\ic_action_bluetooth1.png
+* build\res\all\debug\drawable-hdpi\ic_action_mobile_data.png
+* build\res\all\debug\drawable-hdpi\ic_action_new.png
+* build\res\all\debug\drawable-hdpi\ic_action_wifi.png
+* build\res\all\debug\drawable-hdpi\ic_launcher.png
+* build\res\all\debug\drawable-ldpi\
+* build\res\all\debug\drawable-ldpi\clock_notification.png
+* build\res\all\debug\drawable-ldpi\ic_action_bluetooth.png
+* build\res\all\debug\drawable-ldpi\ic_action_bluetooth1.png
+* build\res\all\debug\drawable-ldpi\ic_action_mobile_data.png
+* build\res\all\debug\drawable-ldpi\ic_action_wifi.png
+* build\res\all\debug\drawable-ldpi\ic_launcher.png
+* build\res\all\debug\drawable-mdpi\
+* build\res\all\debug\drawable-mdpi\clock_notification.png
+* build\res\all\debug\drawable-mdpi\ic_action_bluetooth.png
+* build\res\all\debug\drawable-mdpi\ic_action_mobile_data.png
+* build\res\all\debug\drawable-mdpi\ic_action_new.png
+* build\res\all\debug\drawable-mdpi\ic_action_wifi.png
+* build\res\all\debug\drawable-mdpi\ic_launcher.png
+* build\res\all\debug\drawable-xhdpi\
+* build\res\all\debug\drawable-xhdpi\clock_notification.png
+* build\res\all\debug\drawable-xhdpi\ic_action_bluetooth.png
+* build\res\all\debug\drawable-xhdpi\ic_action_bluetooth1.png
+* build\res\all\debug\drawable-xhdpi\ic_action_mobile_data.png
+* build\res\all\debug\drawable-xhdpi\ic_action_new.png
+* build\res\all\debug\drawable-xhdpi\ic_action_wifi.png
+* build\res\all\debug\drawable-xhdpi\ic_launcher.png
+* build\res\all\debug\drawable-xxhdpi\
+* build\res\all\debug\drawable-xxhdpi\ic_action_bluetooth.png
+* build\res\all\debug\drawable-xxhdpi\ic_action_mobile_data.png
+* build\res\all\debug\drawable-xxhdpi\ic_action_new.png
+* build\res\all\debug\drawable-xxhdpi\ic_launcher.png
+* build\res\all\debug\drawable\
+* build\res\all\debug\drawable\add_button.xml
+* build\res\all\debug\drawable\add_button_layers.xml
+* build\res\all\debug\drawable\add_button_layers_pressed.xml
+* build\res\all\debug\drawable\background.xml
+* build\res\all\debug\drawable\background_enabled_period.xml
+* build\res\all\debug\drawable\clock.xml
+* build\res\all\debug\drawable\day_button.xml
+* build\res\all\debug\drawable\dialog_button.xml
+* build\res\all\debug\drawable\gradient.xml
+* build\res\all\debug\drawable\time_button.xml
+* build\res\all\debug\drawable\toggle_button_textcolor.xml
+* build\res\all\debug\drawable\transition.xml
+* build\res\all\debug\drawable\underline.xml
+* build\res\all\debug\layout-small\
+* build\res\all\debug\layout-small\enabled_period.xml
+* build\res\all\debug\layout\
+* build\res\all\debug\layout\activity_main.xml
+* build\res\all\debug\layout\enabled_period.xml
+* build\res\all\debug\layout\fragment_schedule_period.xml
+* build\res\all\debug\layout\toggle_button_weekday.xml
+* build\res\all\debug\menu\
+* build\res\all\debug\menu\context_menu.xml
+* build\res\all\debug\values-v11\
+* build\res\all\debug\values-v11\values.xml
+* build\res\all\debug\values-v14\
+* build\res\all\debug\values-v14\values.xml
+* build\res\all\debug\values\
+* build\res\all\debug\values\values.xml
+* build\source\
+* build\source\buildConfig\
+* build\source\buildConfig\debug\
+* build\source\buildConfig\debug\com\
+* build\source\buildConfig\debug\com\manimahler\
+* build\source\buildConfig\debug\com\manimahler\android\
+* build\source\buildConfig\debug\com\manimahler\android\scheduler3g\
+* build\source\buildConfig\debug\com\manimahler\android\scheduler3g\BuildConfig.java
+* build\source\r\
+* build\source\r\debug\
+* build\source\r\debug\com\
+* build\source\r\debug\com\manimahler\
+* build\source\r\debug\com\manimahler\android\
+* build\source\r\debug\com\manimahler\android\scheduler3g\
+* build\source\r\debug\com\manimahler\android\scheduler3g\R.java
+* ic_launcher-web.png
+
+Replaced Jars with Dependencies:
+--------------------------------
+The importer recognized the following .jar files as third party
+libraries and replaced them with Gradle dependencies instead. This has
+the advantage that more explicit version information is known, and the
+libraries can be updated automatically. However, it is possible that
+the .jar file in your project was of an older version than the
+dependency we picked, which could render the project not compileable.
+You can disable the jar replacement in the import wizard and try again:
+
+android-support-v4.jar => com.android.support:support-v4:25.3.1
+
+Moved Files:
+------------
+Android Gradle projects use a different directory structure than ADT
+Eclipse projects. Here's how the projects were restructured:
+
+* AndroidManifest.xml => app\src\main\AndroidManifest.xml
+* proguard-project.txt => app\proguard-project.txt
+* res\ => app\src\main\res\
+* src\ => app\src\main\java\
+* C:\Work\Projects\Android\NetworkScheduler\NetworkSchedulerTest\res\ => app\src\androidTest\res\
+* C:\Work\Projects\Android\NetworkScheduler\NetworkSchedulerTest\src\ => app\src\androidTest\java\
+
+Next Steps:
+-----------
+You can now build the project. The Gradle project needs network
+connectivity to download dependencies.
+
+Bugs:
+-----
+If for some reason your project does not build, and you determine that
+it is due to a bug or limitation of the Eclipse to Gradle importer,
+please file a bug at http://b.android.com with category
+Component-Tools.
+
+(This import summary is for your information only, and can be deleted
+after import once you are satisfied with the results.)

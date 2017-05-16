@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "C:\\Work\\Projects\\Android\\NetworkScheduler\\app\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-xhdpi\\ic_launcher.png",
+        "source": "C:\\Work\\Projects\\Android\\NetworkScheduler\\app\\src\\androidTest\\res\\drawable-xhdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "C:\\Work\\Projects\\Android\\NetworkScheduler\\NetworkSchedulerApp\\app\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-xhdpi\\ic_launcher.png",
+        "source": "C:\\Work\\Projects\\Android\\NetworkScheduler\\NetworkSchedulerApp\\app\\src\\androidTest\\res\\drawable-xhdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "C:\\data\\android\\import2\\NetworkScheduler\\app\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-xhdpi\\ic_launcher.png",
+        "source": "C:\\data\\android\\import2\\NetworkScheduler\\app\\src\\androidTest\\res\\drawable-xhdpi\\ic_launcher.png"
+    }
+]

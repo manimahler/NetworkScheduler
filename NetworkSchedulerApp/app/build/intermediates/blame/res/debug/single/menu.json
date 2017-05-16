@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "C:\\Work\\Projects\\Android\\NetworkScheduler\\app\\build\\intermediates\\res\\merged\\debug\\menu\\options_menu.xml",
+        "source": "C:\\Work\\Projects\\Android\\NetworkScheduler\\app\\src\\main\\res\\menu\\options_menu.xml"
+    },
+    {
+        "merged": "C:\\Work\\Projects\\Android\\NetworkScheduler\\NetworkSchedulerApp\\app\\build\\intermediates\\res\\merged\\debug\\menu\\context_menu.xml",
+        "source": "C:\\Work\\Projects\\Android\\NetworkScheduler\\NetworkSchedulerApp\\app\\src\\main\\res\\menu\\context_menu.xml"
+    },
+    {
+        "merged": "C:\\Work\\Projects\\Android\\NetworkScheduler\\app\\build\\intermediates\\res\\merged\\debug\\menu\\context_menu.xml",
+        "source": "C:\\Work\\Projects\\Android\\NetworkScheduler\\app\\src\\main\\res\\menu\\context_menu.xml"
+    },
+    {
+        "merged": "C:\\data\\android\\import2\\NetworkScheduler\\app\\build\\intermediates\\res\\merged\\debug\\menu\\options_menu.xml",
+        "source": "C:\\data\\android\\import2\\NetworkScheduler\\app\\src\\main\\res\\menu\\options_menu.xml"
+    },
+    {
+        "merged": "C:\\data\\android\\import2\\NetworkScheduler\\app\\build\\intermediates\\res\\merged\\debug\\menu\\context_menu.xml",
+        "source": "C:\\data\\android\\import2\\NetworkScheduler\\app\\src\\main\\res\\menu\\context_menu.xml"
+    },
+    {
+        "merged": "C:\\Work\\Projects\\Android\\NetworkScheduler\\NetworkSchedulerApp\\app\\build\\intermediates\\res\\merged\\debug\\menu\\options_menu.xml",
+        "source": "C:\\Work\\Projects\\Android\\NetworkScheduler\\NetworkSchedulerApp\\app\\src\\main\\res\\menu\\options_menu.xml"
+    }
+]

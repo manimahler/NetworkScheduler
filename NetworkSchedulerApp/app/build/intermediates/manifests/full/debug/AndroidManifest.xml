@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.manimahler.android.scheduler3g"
+    android:versionCode="17"
+    android:versionName="1.6" >
+
+    <uses-sdk
+        android:minSdkVersion="9"
+        android:targetSdkVersion="25" />
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+    <!-- Docs: Starting in API level 19, this permission is not required to read/write files in your application-specific directories returned by getExternalFilesDir(String) and getExternalCacheDir(). -->
+    <!-- But this is most likely untrue: https://code.google.com/p/android/issues/detail?id=81357 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <meta-data
+        android:name="android.support.VERSION"
+        android:value="25.3.1" />
+    <!--
+ TODO: check if it also works from priv-apps without this (very dodgy) permission:
+    <uses-permission android:name="android.permission.MODIFY_PHONE_STATE" />
+    
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
+    -->
+    <!-- Change LED state: -->
+    <!-- uses-permission android:name="android.permission.WRITE_SETTINGS" -->
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name" >
+        <activity
+            android:name="com.manimahler.android.scheduler3g.MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/FullscreenTheme" > <!-- alternative: @style/Theme.Transparent -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.manimahler.android.scheduler3g.SettingsActivity"
+            android:label="@string/settings"
+            android:parentActivityName="com.manimahler.android.scheduler3g.MainActivity" >
+
+            <!-- Parent activity meta-data to support API level 7+ -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
+        <receiver android:name="com.manimahler.android.scheduler3g.AutostartNotifyReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.manimahler.android.scheduler3g.UserPresentBroadCastReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.manimahler.android.scheduler3g.BluetoothActionBroadCastReceiver" >
+            <intent-filter>
+                <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
+                <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Broadcast receiver -->
+        <receiver android:name="com.manimahler.android.scheduler3g.StartStopBroadcastReceiver" >
+        </receiver>
+        <receiver android:name="com.manimahler.android.scheduler3g.DelayStopBroadcastReceiver" >
+        </receiver>
+    </application>
+
+</manifest>

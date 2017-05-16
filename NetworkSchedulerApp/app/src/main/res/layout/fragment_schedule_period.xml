@@ -1,0 +1,280 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/background"
+    android:fillViewport="true"
+    android:fitsSystemWindows="true"
+    android:isScrollContainer="true"
+    android:orientation="vertical"
+    android:scrollbars="vertical" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="16dp"
+        android:theme="@android:style/Theme.Translucent" >
+
+        <EditText
+            android:id="@+id/editTextName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/name_hint"
+            android:inputType="text"
+            android:paddingTop="10dp"
+            android:paddingStart="10dp"
+            android:textColor="@android:color/white"
+            android:background="@null" >
+
+            <requestFocus />
+        </EditText>
+
+        <RelativeLayout
+            android:id="@+id/layout_on_off"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <LinearLayout
+                android:id="@+id/layout_time_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <CheckBox
+                    android:id="@+id/checkBoxScheduleStart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fillViewport="true"
+                    android:text="@string/on"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/on_green" />
+
+                <Button
+                    android:id="@+id/buttonTimeStart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/time_button"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/text_start_nextday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_time_stop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/layout_time_start" >
+
+                <CheckBox
+                    android:id="@+id/checkBoxScheduleStop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/off"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/off_red" />
+
+                <Button
+                    android:id="@+id/buttonTimeStop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/time_button"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/text_stop_nextday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            </LinearLayout>
+
+            <CheckBox
+                android:id="@+id/checkBoxActiveIsEnabled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:button="@drawable/swap_active_on"
+                android:paddingRight="8dp"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@android:color/white" />
+        </RelativeLayout>
+
+        <com.manimahler.android.scheduler3g.FlowLayout
+            android:id="@+id/flowlayout_weekdays"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+        </com.manimahler.android.scheduler3g.FlowLayout>
+
+        <LinearLayout
+            android:id="@+id/flowlayout_sensors"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:id="@+id/wifi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <CheckBox
+                    android:id="@+id/checkBoxWifi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/ic_action_wifi"
+                    android:text="@string/wifi"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@drawable/toggle_button_textcolor" />
+
+                <CheckBox
+                    android:id="@+id/checkBoxScheduleIntervalWifi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@+id/checkBoxWifi"
+                    android:layout_marginLeft="38dp"
+                    android:button="@drawable/ic_action_interval"
+                    android:text="@string/interval_text"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@drawable/toggle_button_textcolor" />
+
+                <ImageButton
+                    android:id="@+id/buttonIntervalWifiHelp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/checkBoxScheduleIntervalWifi"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignTop="@id/checkBoxScheduleIntervalWifi"
+                    android:background="@drawable/time_button"
+                    android:contentDescription="@string/interval_connection_help_content_desc"
+                    android:src="@drawable/ic_action_help"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/white" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/mobData"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <CheckBox
+                    android:id="@+id/checkBoxMobileData"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/ic_action_mobile_data"
+                    android:text="@string/mobile_data"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@drawable/toggle_button_textcolor" />
+
+                <CheckBox
+                    android:id="@+id/checkBoxScheduleIntervalMob"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@+id/checkBoxMobileData"
+                    android:layout_marginLeft="38dp"
+                    android:button="@drawable/ic_action_interval"
+                    android:text="@string/interval_text"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@drawable/toggle_button_textcolor" />
+
+                <ImageButton
+                    android:id="@+id/buttonIntervalMobDataHelp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/checkBoxScheduleIntervalMob"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignTop="@id/checkBoxScheduleIntervalMob"
+                    android:background="@drawable/time_button"
+                    android:contentDescription="@string/interval_connection_help_content_desc"
+                    android:src="@drawable/ic_action_help"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/white" />
+            </RelativeLayout>
+            
+           <RelativeLayout
+                android:id="@+id/bluetooth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" ><CheckBox
+                    android:id="@+id/checkBoxBluetooth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/ic_action_bluetooth1"
+                    android:text="@string/bluetooth"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@drawable/toggle_button_textcolor" />
+
+                <CheckBox
+                    android:id="@+id/checkBoxScheduleIntervalBt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@+id/checkBoxBluetooth"
+                    android:layout_marginLeft="38dp"
+                    android:button="@drawable/ic_action_interval"
+                    android:text="@string/interval_text"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@drawable/toggle_button_textcolor" />
+                
+                <ImageButton
+                    android:id="@+id/buttonIntervalBtHelp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/checkBoxScheduleIntervalBt"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignTop="@id/checkBoxScheduleIntervalBt"
+                    android:background="@drawable/time_button"
+                    android:contentDescription="@string/interval_connection_help_content_desc"
+                    android:src="@drawable/ic_action_help"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/white" />
+            </RelativeLayout>
+            
+            <RelativeLayout
+                android:id="@+id/volume"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <CheckBox
+                    android:id="@+id/checkBoxVolume"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/ic_action_volume_up"
+                    android:text="@string/volume_on"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@drawable/toggle_button_textcolor" />
+
+                <CheckBox
+                    android:id="@+id/checkBoxVolumeVibrate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@+id/checkBoxVolume"
+                    android:layout_marginLeft="38dp"
+                    android:button="@drawable/ic_action_vibrate"
+                    android:text="@string/volume_with_vibrate"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@drawable/toggle_button_textcolor" />
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/buttonMissingMobData"
+                android:layout_width = "match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left|center_vertical"
+                android:contentDescription="@string/interval_connection_help_content_desc"
+                android:drawableLeft="@drawable/ic_action_help"
+                android:background="@android:color/transparent"
+                android:text="@string/missing_MobData"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

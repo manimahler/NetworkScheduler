@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <!-- Adding the item programmatically makes the title disappear! -->
+<!-- 
+    <item
+        android:id="@+id/global_switch"
+        android:actionLayout="@layout/actionbar_switch"
+        android:showAsAction="always"
+        android:title=""/>
+ -->
+    <item
+        android:id="@+id/settings"
+        android:title="@string/settings"/>
+    <item
+        android:id="@+id/help"
+        android:title="@string/help"/>
+
+</menu>
