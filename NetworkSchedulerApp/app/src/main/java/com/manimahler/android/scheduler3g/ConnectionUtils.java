@@ -5,6 +5,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import junit.framework.Assert;
+
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -13,6 +15,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
@@ -339,8 +342,9 @@ public class ConnectionUtils {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
 			result = hasMobileDataSensor;
 		} else {
-			result = hasMobileDataSensor
-					&& RootCommandExecuter.canRunRootCommands();
+			result = hasMobileDataSensor &&
+					(checkCanToggleMobileDataAsSystemAppPermission(context)
+					|| RootCommandExecuter.canRunRootCommands());
 		}
 
 		_canToggleMobileData = result;
@@ -434,14 +438,13 @@ public class ConnectionUtils {
 		try {
 			
 			// Fix crash reported in developer console (Android 5.0) security exception, somehow not caught by the exception below
-			if (RootCommandExecuter.canRunRootCommands())
+			if (checkCanToggleMobileDataAsSystemAppPermission(context)) {
+				// it could have been made a system app and the phone un-rooted
+				setMobileDataStateLollipopAsSystemApp(context, mobileDataEnabled);
+			}
+			else if (RootCommandExecuter.canRunRootCommands())
 			{
 				setMobileDataStateLollipopCommandlineAsRoot(context, mobileDataEnabled);
-			}
-			else if (checkCanToggleMobileDataAsSystemAppPermission(context))
-			{
-				// it could have been made a system app...
-				setMobileDataStateLollipopAsSystemApp(context, mobileDataEnabled);
 			}
 			else {
 				UserLog.log(context, "Unable to toggle mobile data. Network Scheduler is not allowed to issue root commands and is no system app");
@@ -457,7 +460,18 @@ public class ConnectionUtils {
 	    String permission = "android.permission.MODIFY_PHONE_STATE";
 	    
 	    int result = context.checkCallingOrSelfPermission(permission);
-	    
+
+		result = android.support.v4.content.ContextCompat.checkSelfPermission(context, permission);
+
+		if (result != PackageManager.PERMISSION_GRANTED &&
+				context instanceof Activity){
+
+			String[] permissions = new String[1];
+			permissions[0] = permission;
+			ActivityCompat.requestPermissions((Activity) context, permissions, 0);
+
+		}
+
 	    return (result == PackageManager.PERMISSION_GRANTED);         
 	}
 
@@ -486,12 +500,8 @@ public class ConnectionUtils {
 	private static void setMobileDataStateLollipopCommandlineAsRoot(
 			Context context, boolean enable) {
 		try {
-			StringBuilder command = new StringBuilder();
-			command.append("su -c ");
-			command.append("\"svc data ");
 
-			command.append(enable ? "enable" : "disable");
-			command.append("\"\n");
+			String command = "svc data " + (enable ? "enable" : "disable");
 
 			Log.i(TAG, "Executing on the command line: " + command.toString());
 

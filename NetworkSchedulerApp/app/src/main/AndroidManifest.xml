@@ -17,6 +17,9 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+    <!-- Used if a system app in priv-apps -->
+    <uses-permission android:name="android.permission.MODIFY_PHONE_STATE" />
     
     <!-- Docs: Starting in API level 19, this permission is not required to read/write files in your application-specific directories returned by getExternalFilesDir(String) and getExternalCacheDir(). -->
 	<!-- But this is most likely untrue: https://code.google.com/p/android/issues/detail?id=81357 -->
