@@ -39,7 +39,7 @@ import android.widget.ToggleButton;
 import com.manimahler.android.scheduler3g.FlowLayout.LayoutParams;
 import com.manimahler.android.scheduler3g.NetworkScheduler.NetworkType;
 
-public class SchedulePeriodFragment extends DialogFragment {
+public class SchedulePeriodFragment extends DialogFragment implements TimePickerFragment.TimePickerDialogListener {
 
 	private static final int TEXT_VIEW_INDEX_NEXTDAY = 2;
 	private static final String TAG = SchedulePeriodFragment.class
@@ -717,16 +717,21 @@ public class SchedulePeriodFragment extends DialogFragment {
 
 		FragmentManager fm = getActivity().getSupportFragmentManager();
 
-		DialogFragment timePicker = new TimePickerFragment(
-				_enabledPeriod.get_startTimeMillis()) {
-			@Override
-			public void onTimeSetAndDone(int hourOfDay, int minute) {
-				Log.d(TAG, "chosen new start hour: " + hourOfDay);
-				startTimePicked(hourOfDay, minute);
-			}
-		};
+		TimePickerFragment timePicker = TimePickerFragment.newInstance(
+				_enabledPeriod.get_startTimeMillis(), TimePickerFragment.TYPE_START);
 
 		timePicker.show(fm, "timePickerStart");
+	}
+
+
+	public void buttonStopClicked(View v) {
+
+		FragmentManager fm = getActivity().getSupportFragmentManager();
+
+		DialogFragment timePicker = TimePickerFragment.newInstance(
+				_enabledPeriod.get_endTimeMillis(), TimePickerFragment.TYPE_END);
+
+		timePicker.show(fm, "timePickerStop");
 	}
 
 	private void updateCheckBoxEnableRadios(CompoundButton checkBox,
@@ -850,7 +855,7 @@ public class SchedulePeriodFragment extends DialogFragment {
 				Toast.LENGTH_LONG).show();
 	}
 
-	private void startTimePicked(int hourOfDay, int minute) {
+	public void onStartTimePicked(int hourOfDay, int minute) {
 
 		Log.d(TAG, "Picked start time " + hourOfDay + ":" + minute);
 
@@ -860,6 +865,21 @@ public class SchedulePeriodFragment extends DialogFragment {
 		_enabledPeriod.set_startTimeMillis(nextStartTimeInMillis);
 
 		setButtonTime(nextStartTimeInMillis, R.id.buttonTimeStart);
+
+		updateNextDayText();
+	}
+
+
+	public void onEndTimePicked(int hourOfDay, int minute) {
+
+		Log.d(TAG, "Picked end time " + hourOfDay + ":" + minute);
+
+		long nextEndTimeInMillis = DateTimeUtils.getNextTimeIn24hInMillis(
+				hourOfDay, minute);
+
+		_enabledPeriod.set_endTimeMillis(nextEndTimeInMillis);
+
+		setButtonTime(nextEndTimeInMillis, R.id.buttonTimeStop);
 
 		updateNextDayText();
 	}
@@ -895,35 +915,6 @@ public class SchedulePeriodFragment extends DialogFragment {
 
 	}
 
-	public void buttonStopClicked(View v) {
-
-		FragmentManager fm = getActivity().getSupportFragmentManager();
-
-		DialogFragment timePicker = new TimePickerFragment(
-				_enabledPeriod.get_endTimeMillis()) {
-			@Override
-			public void onTimeSetAndDone(int hourOfDay, int minute) {
-				// Do something with the time chosen by the user
-				endTimePicked(hourOfDay, minute);
-			}
-		};
-
-		timePicker.show(fm, "timePickerStop");
-	}
-
-	private void endTimePicked(int hourOfDay, int minute) {
-
-		Log.d(TAG, "Picked end time " + hourOfDay + ":" + minute);
-
-		long nextEndTimeInMillis = DateTimeUtils.getNextTimeIn24hInMillis(
-				hourOfDay, minute);
-
-		_enabledPeriod.set_endTimeMillis(nextEndTimeInMillis);
-
-		setButtonTime(nextEndTimeInMillis, R.id.buttonTimeStop);
-
-		updateNextDayText();
-	}
 
 	private void setButtonTime(long timeInMillis, int buttonId) {
 
