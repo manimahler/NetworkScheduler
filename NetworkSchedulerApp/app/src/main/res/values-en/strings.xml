@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Network Scheduler</string>
+    <string name="app_name" translatable="false">Network Scheduler</string>
 
     <!-- Global switch on/off -->
     <string name="global_switch_on_toast">Network Scheduler is enabled</string>
@@ -118,5 +118,9 @@
     <string name="pref_title_logging_delete">Delete log</string>
     <string name="pref_summary_logging_delete">Delete the log file (%sKB)</string>
     <string name="log_file_deleted">Log file deleted</string>
+
+    <!-- Toasts -->
+    <string name="change_ringer_granted">Permission granted, you can now change the ringer mode</string>
+    <string name="change_ringer_denied">Permission to change ringer mode was denied. Ringer mode cannot be changed!</string>
 
 </resources>

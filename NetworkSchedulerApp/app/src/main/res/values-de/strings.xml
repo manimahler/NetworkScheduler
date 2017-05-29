@@ -124,5 +124,9 @@
     <string name="pref_summary_logging_delete">Log-Datei löschen (%sKB)</string>
     
     <string name="log_file_deleted">Log-Datei gelöscht</string>
-    
+
+
+    <string name="change_ringer_granted">Berechtigung erteilt, Ton kann jetzt aktiviert werden</string>
+    <string name="change_ringer_denied">Berechtigung verweigert, Ton kann nicht aktiviert werden!</string>
+
 </resources>

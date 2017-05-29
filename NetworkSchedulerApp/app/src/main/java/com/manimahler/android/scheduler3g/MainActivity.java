@@ -9,6 +9,8 @@ import com.manimahler.android.scheduler3g.R;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -50,7 +52,9 @@ public class MainActivity extends FragmentActivity implements
 
 	private static final String TAG = MainActivity.class.getSimpleName();
 
-	private SchedulerSettings _settings;
+	public static final int REQUEST_DO_NOT_DISTURB_CODE = 1001;
+
+    private SchedulerSettings _settings;
 	private PeriodListAdapter _adapter;
 
 	@Override
@@ -403,6 +407,28 @@ public class MainActivity extends FragmentActivity implements
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// Check which request we're responding to
+		if (requestCode == MainActivity.REQUEST_DO_NOT_DISTURB_CODE ) {
+			// activity started in SchedulePeriodFragment.onToggleVolume()
+
+			if (Build.VERSION.SDK_INT < 23) {
+				return;
+			}
+
+			NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+			boolean wasGranted = notificationManager.isNotificationPolicyAccessGranted();
+			String toastText = getResources().getString(
+					wasGranted
+					? R.string.change_ringer_granted
+					: R.string.change_ringer_denied);
+
+			Toast.makeText(this, toastText, Toast.LENGTH_LONG).show();
+		}
 	}
 
 	private void initializePersistedFields() {

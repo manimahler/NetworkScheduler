@@ -18,6 +18,9 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
+    <!-- Required from N onward for ringer mode change -->
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+
     <!-- Used if a system app in priv-apps -->
     <uses-permission android:name="android.permission.MODIFY_PHONE_STATE" />
     

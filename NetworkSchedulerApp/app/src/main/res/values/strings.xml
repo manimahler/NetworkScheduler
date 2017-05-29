@@ -133,4 +133,8 @@
     <string name="pref_summary_logging_delete">Delete the log file (%sKB)</string>
     <string name="log_file_deleted">Log file deleted</string>
 
+    <!-- Toasts -->
+    <string name="change_ringer_granted">Permission granted, you can now change the ringer mode</string>
+    <string name="change_ringer_denied">Permission to change ringer mode was denied. Ringer mode cannot be changed!</string>
+
 </resources>

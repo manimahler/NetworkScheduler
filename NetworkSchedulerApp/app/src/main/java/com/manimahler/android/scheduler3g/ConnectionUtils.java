@@ -7,8 +7,10 @@ import java.lang.reflect.Method;
 import junit.framework.Assert;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
@@ -47,6 +49,11 @@ public class ConnectionUtils {
 
 	public static void toggleVolume(Context context, boolean enable,
 			boolean vibrateWhenSilent) {
+
+		if (! canChangeRingerMode(context)) {
+			return;
+		}
+
 		AudioManager audiomanager = (AudioManager) context
 				.getSystemService(Context.AUDIO_SERVICE);
 
@@ -63,6 +70,31 @@ public class ConnectionUtils {
 			UserLog.log(context, "Setting ringer mode to silent");
 			audiomanager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
 		}
+	}
+
+
+
+	private static boolean canChangeRingerMode(Context context) {
+
+		if (Build.VERSION.SDK_INT < 23) {
+			return true;
+		}
+
+		NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+		if (! notificationManager.isNotificationPolicyAccessGranted()) {
+			UserLog.log(TAG, context, "Cannot change ringer mode due to lacking permission (Do Not Disturb Access).");
+			return false;
+		}
+
+		AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+
+		if ( audioManager.isVolumeFixed()){
+			UserLog.log(TAG, context, "Cannot change ringer mode because device implements a fixed volume policy.");
+			return false;
+		}
+
+		return true;
 	}
 
 	public static boolean isVolumeOn(Context context) {

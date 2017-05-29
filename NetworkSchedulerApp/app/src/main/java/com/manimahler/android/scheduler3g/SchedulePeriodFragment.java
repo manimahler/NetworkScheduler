@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -671,6 +672,28 @@ public class SchedulePeriodFragment extends DialogFragment implements TimePicker
 	}
 
 	private void onToggleVolume(CompoundButton checkBox, boolean isChecked) {
+
+		if (Build.VERSION.SDK_INT >= 23 && isChecked) {
+
+			NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+
+			if (!notificationManager.isNotificationPolicyAccessGranted()) {
+
+				// Apparently crashes some LG phones (https://stackoverflow.com/questions/31862753/android-how-to-turn-on-do-not-disturb-dnd-programmatically)
+				try{
+					Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+					getActivity().startActivityForResult(intent, MainActivity.REQUEST_DO_NOT_DISTURB_CODE);
+				}
+				catch (Exception ex) {
+					Log.e(TAG, "Error requesting permission (do not disturb access)", ex);
+					UserLog.log(getActivity(), "Error requesting permission (do not disturb access).", ex);
+				}
+
+				// Wait until the permission is granted the first time until actually toggling it
+				checkBox.setChecked(false);
+				return;
+			}
+		}
 
 		// to avoid the scroll view from jumping back up
 		checkBox.requestFocusFromTouch();
