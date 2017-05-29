@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name" translatable="false">Network Scheduler</string>
-
     <!-- Global switch on/off -->
     <string name="global_switch_on_toast">Network Scheduler is enabled</string>
     <string name="global_switch_off_toast">Network Scheduler is completely disabled</string>

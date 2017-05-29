@@ -5,7 +5,7 @@
         <item>@string/unlock_policy_when_active</item>
         <item>@string/unlock_policy_always</item>
     </string-array>
-    <string-array name="listvalues_unlock_policy">
+    <string-array name="listvalues_unlock_policy" translatable="false">
         <item>1</item>
         <item>2</item>
         <item>3</item>

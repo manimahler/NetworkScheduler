@@ -110,8 +110,7 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 					scheduler.stopApproved(context, period, settings);
 				} else {
 					boolean manualActivation = false;
-					scheduler
-							.start(period, context, settings, manualActivation);
+					scheduler.start(period, context, settings, manualActivation);
 				}
 			}
 		} catch (Exception e) {
