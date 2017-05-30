@@ -21,18 +21,13 @@
     <!-- Required from N onward for ringer mode change -->
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
 
-    <!-- Used if a system app in priv-apps -->
-    <uses-permission android:name="android.permission.MODIFY_PHONE_STATE" />
-    
     <!-- Docs: Starting in API level 19, this permission is not required to read/write files in your application-specific directories returned by getExternalFilesDir(String) and getExternalCacheDir(). -->
 	<!-- But this is most likely untrue: https://code.google.com/p/android/issues/detail?id=81357 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    
-    <!-- TODO: check if it also works from priv-apps without this (very dodgy) permission:
+
+    <!-- Used if a system app in priv-apps - to be tested! -->
     <uses-permission android:name="android.permission.MODIFY_PHONE_STATE" />
-    
     <uses-feature android:name="android.hardware.telephony" android:required="false" />
-     -->
      
     <!-- Change LED state: -->
     <!-- uses-permission android:name="android.permission.WRITE_SETTINGS" -->
