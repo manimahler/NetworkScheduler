@@ -31,7 +31,7 @@ public class TimePickerFragment extends DialogFragment implements
     private int _minute;
     private byte _type;
 
-    private boolean cancelDialog = false;
+    private boolean timeSet = false;
 
     // Factory method
     public static TimePickerFragment newInstance(long timeInMilliSeconds, byte type) {
@@ -86,18 +86,21 @@ public class TimePickerFragment extends DialogFragment implements
     @Override
     public void onCancel(DialogInterface dialog) {
         super.onCancel(dialog);
-        cancelDialog = true;
+        // This is called when the back button is pressed, but NOT when cancel is pressed -> remember if
+        //cancelDialog = true;
     }
 
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
-        if (!cancelDialog) {
+        if (timeSet) {
 
             // work-around for onTimeSet being called always, even when
             // cancelling the dialog
             onTimeSetAndDone(_hourOfDay, _minute);
         }
+
+        timeSet = false;
     }
 
     public void onTimeSetAndDone(int hourOfDay, int minute) {
@@ -125,5 +128,7 @@ public class TimePickerFragment extends DialogFragment implements
         // Do something with the time chosen by the user
         _hourOfDay = hourOfDay;
         _minute = minute;
+
+        timeSet = true;
     }
 }
