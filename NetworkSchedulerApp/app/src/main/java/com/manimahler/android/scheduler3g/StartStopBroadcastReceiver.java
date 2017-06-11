@@ -116,7 +116,7 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 		} catch (Exception e) {
 			e.printStackTrace();
 
-			UserLog.log(context, "Error starting / stopping radio/volume.", e);
+			UserLog.log(context, "Error starting / stopping radio / volume.", e);
 		}
 	}
 

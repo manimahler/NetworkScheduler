@@ -7,7 +7,7 @@
     <string name="on">ein</string>
     <string name="off">aus</string>
     <string name="next_day">Folgetag</string>
-        <string name="everyday">Jeden Tag</string>
+    <string name="everyday">Jeden Tag</string>
     <string name="never">Nie</string>
     <string name="interval_text">Intervall-Verbindung</string>
     <string name="interval_connection_help_content_desc">Hilfe Anzeigen für Interval Connection</string>
