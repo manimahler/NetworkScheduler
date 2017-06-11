@@ -73,7 +73,7 @@ public class EnabledPeriodTest extends TestCase {
 
 		Calendar calendar = Calendar.getInstance();
 
-		// Tuesday, 25. Feb. 2014
+		// Start: Tuesday, 25. Feb. 2014, 22:30
 		int feb = 1; // MONTH is 0-based!
 		calendar.set(Calendar.YEAR, 2014);
 		calendar.set(Calendar.MONTH, feb);
@@ -83,7 +83,8 @@ public class EnabledPeriodTest extends TestCase {
 		calendar.set(Calendar.SECOND, 0);
 		
 		long start = calendar.getTimeInMillis();
-		
+
+		// End: Wednesday, 26. Feb. 2014, 07:00
 		calendar.set(Calendar.DAY_OF_MONTH, 26);
 		calendar.set(Calendar.HOUR_OF_DAY, 7);
 		long stop = calendar.getTimeInMillis();
@@ -93,20 +94,20 @@ public class EnabledPeriodTest extends TestCase {
 		
 		ScheduledPeriod period = new ScheduledPeriod(true, start, stop, days);
 		
-		// current time: after start, 26.th:
+		// current time: after start, 26. Feb, 04:00:
 		calendar.set(Calendar.HOUR_OF_DAY, 4);
 		assertTrue(period.isActiveAt(calendar.getTimeInMillis()));
 		
-		// no switch-off on wednesday morning
+		// switched-off on wednesday morning at 7, not active any more at 8
 		calendar.set(Calendar.HOUR_OF_DAY, 8);
-		assertTrue(period.isActiveAt(calendar.getTimeInMillis()));
+		assertFalse(period.isActiveAt(calendar.getTimeInMillis()));
 		
 		// add wednesday
 		days[2] = true;
 		// switch-off already happened
 		assertFalse(period.isActiveAt(calendar.getTimeInMillis()));
 		
-		// current time: after start, 25.th:
+		// current time: after start, Tue, 25. Feb.:
 		calendar.set(Calendar.DAY_OF_MONTH, 25);
 		calendar.set(Calendar.HOUR_OF_DAY, 23);
 		assertTrue(period.isActiveAt(calendar.getTimeInMillis()));

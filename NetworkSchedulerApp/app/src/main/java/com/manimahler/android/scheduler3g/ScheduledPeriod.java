@@ -105,7 +105,7 @@ public class ScheduledPeriod {
 		_overrideIntervalMob = bundle.getBoolean(OVERRIDE_MOB, false);
 	}
 
-	public ScheduledPeriod(SharedPreferences preferences, String qualifier) {
+	public ScheduledPeriod(SharedPreferences preferences, String qualifier, int persistenceVersion) {
 		_id = preferences.getInt(PERIOD_ID + qualifier, -1);
 
 		_name = preferences.getString(NAME + qualifier, "");
@@ -131,6 +131,23 @@ public class ScheduledPeriod {
 		for (int i = 0; i < 7; i++) {
 			_weekDays[i] = preferences.getBoolean(WEEK_DAYS + qualifier + "_"
 					+ i, false);
+		}
+
+		if (persistenceVersion == 0) {
+			// Starting with app version 19, we start the boolean array on SUNDAY
+			// Correct legacy storage using first day of week
+			int firstDay = Calendar.getInstance().getFirstDayOfWeek();
+
+			int firstDayOffset = firstDay - 1;
+
+			boolean[] correctedWeekDays = new boolean[7];
+			for (int i = 0; i < 7; i++) {
+
+				int correctedIndex = (i + firstDayOffset) % 7;
+				correctedWeekDays[correctedIndex] = _weekDays[i];
+			}
+
+			_weekDays = correctedWeekDays;
 		}
 
 		_intervalConnectWifi = preferences.getBoolean(INTERVAL_CONNECT_WIFI
@@ -545,7 +562,7 @@ public class ScheduledPeriod {
 	public boolean appliesToday(boolean enable, long considerNowWithinMillis)
 			throws Exception {
 
-		// do not use todays time but the official end time because the
+		// do not use today's time but the official end time because the
 		// broadcast might arrive late (esp. with inexact repeating on kitkat)
 
 		long alarmTime;

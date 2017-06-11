@@ -216,27 +216,33 @@ public class DateTimeUtils {
 		return text;
 	}
 
-	public static String[] getShortWeekdays(Context context) {
+	public static String[] getShortWeekdays(Context context, boolean respectLocaleFirstDayOfWeek) {
 		DateFormatSymbols dateFormatSymbols = new DateFormatSymbols();
 		String[] weekdays = dateFormatSymbols.getShortWeekdays();
 
-		int firstdDay = Calendar.getInstance().getFirstDayOfWeek();
-		int weekLength = 7;
+		// getShortWeekdays returns the following:
+		//shortWeekday =
+		//shortWeekday = Sun
+		//shortWeekday = Mon
+		//shortWeekday = Tue
+		//shortWeekday = Wed
+		//shortWeekday = Thu
+		//shortWeekday = Fri
+		//shortWeekday = Sat
+
+		int firstDay = 1;
+
+		if (respectLocaleFirstDayOfWeek) {
+			firstDay = Calendar.getInstance().getFirstDayOfWeek();
+		}
 
 		String[] result = new String[7];
 
 		int resultIndex = 0;
 
-		// NOTE: this approach has issues when changing the locale (first day)
-		// use official index for storing the results?
+		for (int i = firstDay; i < firstDay + weekdays.length; i++) {
 
-		for (int i = firstdDay; i < firstdDay + weekLength; i++) {
-			int dayIndex;
-			if (i <= 7) {
-				dayIndex = i;
-			} else {
-				dayIndex = i % weekLength;
-			}
+			int dayIndex = i % weekdays.length;
 
 			String day = weekdays[dayIndex];
 
@@ -256,7 +262,18 @@ public class DateTimeUtils {
 		return result;
 	}
 
+
 	public static int getWeekdayIndex(long milliseconds) throws Exception {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(milliseconds);
+
+		int weekday = calendar.get(Calendar.DAY_OF_WEEK);
+
+		// Sunday is the first day of week by convention, Sunday has value 1
+		return weekday - 1;
+	}
+
+	public static int getWeekdayIndexLegacy(long milliseconds) throws Exception {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(milliseconds);
 
@@ -281,22 +298,27 @@ public class DateTimeUtils {
 			String everyday, String never) {
 
 		StringBuilder resultBuilder = new StringBuilder();
-		String[] shortWeekdays = getShortWeekdays(context);
 
-		// get the first false value to start with
-		int start = 0;
-		while (start < weekDays.length && weekDays[start]) {
-			start++;
+		boolean respectLocaleFirstDayOfWeek = false;
+		String[] shortWeekdays = getShortWeekdays(context, respectLocaleFirstDayOfWeek);
+
+		int firstDayOfWeek = Calendar.getInstance().getFirstDayOfWeek();
+
+		// get the first false value to start with, start at the first day of week
+		int startIndex = firstDayOfWeek - 1;
+		int endIndex = startIndex + 7;
+		while (startIndex < endIndex && weekDays[startIndex % 7]) {
+			startIndex++;
 		}
 
-		if (start == weekDays.length) {
+		if (startIndex == endIndex) {
 			return everyday;
 		}
 
 		int[] consecutiveDays = new int[weekDays.length];
 
 		int consecutiveCount = 0;
-		for (int i = start + 1; i <= start + weekDays.length; i++) {
+		for (int i = startIndex + 1; i <= startIndex + weekDays.length; i++) {
 			int dayIdx = i % weekDays.length;
 
 			if (weekDays[dayIdx]) {
@@ -308,9 +330,11 @@ public class DateTimeUtils {
 		}
 
 		// now we can have an ordered list of short days
-		for (int d = 0; d < consecutiveDays.length; d++) {
-			if (consecutiveDays[d] > 0) {
-				add(resultBuilder, d, consecutiveDays[d], shortWeekdays);
+		int startDay = firstDayOfWeek - 1;
+		for (int d = startDay; d < startDay + 7; d++) {
+			int dayIdx = d % 7;
+			if (consecutiveDays[dayIdx] > 0) {
+				add(resultBuilder, dayIdx, consecutiveDays[dayIdx], shortWeekdays);
 			}
 		}
 

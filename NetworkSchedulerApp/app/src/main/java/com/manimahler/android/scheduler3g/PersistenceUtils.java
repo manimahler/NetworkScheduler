@@ -38,7 +38,9 @@ public class PersistenceUtils {
 			// TODO: get rid of this:
 			editor.clear();
 
-			int version = 0;
+			// Up to version 18: 0
+			// From version 19: 1
+			int version = 1;
 			editor.putInt(PREF_VERSION, version);
 
 			int size = periods.size();
@@ -108,7 +110,8 @@ public class PersistenceUtils {
 
 	public static ArrayList<ScheduledPeriod> readFromPreferences(
 			SharedPreferences preferences) {
-		preferences.getInt(PREF_VERSION, 0);
+
+		int persistenceVersion = preferences.getInt(PREF_VERSION, 0);
 
 		// assertion...
 		int size = preferences.getInt(ARRAY_SIZE, 0);
@@ -116,7 +119,7 @@ public class PersistenceUtils {
 		ArrayList<ScheduledPeriod> result = new ArrayList<ScheduledPeriod>(size);
 
 		for (int i = 0; i < size; i++) {
-			result.add(new ScheduledPeriod(preferences, Integer.toString(i)));
+			result.add(new ScheduledPeriod(preferences, Integer.toString(i), persistenceVersion));
 		}
 
 		return result;

@@ -505,7 +505,12 @@ public class SchedulePeriodFragment extends DialogFragment implements TimePicker
 	public void inflateWeekdays(LayoutInflater inflater, ViewGroup container,
 			FlowLayout flowlayout) {
 
-		String[] weekdays = DateTimeUtils.getShortWeekdays(getActivity());
+		String[] weekdays = DateTimeUtils.getShortWeekdays(getActivity(), true);
+
+		int firstDay = Calendar.getInstance().getFirstDayOfWeek();
+		// translate SUN => 0
+		// MON => 1 etc.
+		int firstDayOffset = firstDay - 1;
 
 		for (int i = 0; i < weekdays.length; i++) {
 			String day = weekdays[i];
@@ -513,7 +518,8 @@ public class SchedulePeriodFragment extends DialogFragment implements TimePicker
 			ToggleButton button = (ToggleButton) inflater.inflate(
 					R.layout.toggle_button_weekday, null);
 
-			button.setTag(i);
+			int arrayIdx = (i + firstDayOffset) % 7;
+			button.setTag(arrayIdx);
 
 			button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 				@Override
@@ -526,7 +532,7 @@ public class SchedulePeriodFragment extends DialogFragment implements TimePicker
 			button.setText(day);
 			button.setTextOff(day);
 			button.setTextOn(day);
-			button.setChecked(_enabledPeriod.get_weekDays()[i]);
+			button.setChecked(_enabledPeriod.get_weekDays()[arrayIdx]);
 
 			// this is critical: otherwise android tries to set the
 			// check boxes on its own but fails to do it properly:
