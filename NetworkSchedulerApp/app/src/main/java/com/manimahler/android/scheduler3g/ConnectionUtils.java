@@ -172,6 +172,15 @@ public class ConnectionUtils {
 		return isConnected(context, ConnectivityManager.TYPE_MOBILE);
 	}
 	
+
+	public static boolean isTelephoneCallStateIdle(Context context) {
+
+		TelephonyManager telephonyManager = (TelephonyManager) context
+				.getSystemService(Context.TELEPHONY_SERVICE);
+
+		return telephonyManager.getCallState() == TelephonyManager.CALL_STATE_IDLE;
+	}
+
 	private static boolean isConnected(Context context, int networkType) {
 		ConnectivityManager connManager = (ConnectivityManager) context
 				.getSystemService(Context.CONNECTIVITY_SERVICE);

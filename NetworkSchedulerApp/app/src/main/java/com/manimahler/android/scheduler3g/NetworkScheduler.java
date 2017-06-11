@@ -712,43 +712,22 @@ public class NetworkScheduler {
 			intervalWifi = false;
 			intervalMobData = false;
 		}
-		
-		ScreenLockDetector screenLockDetector = new ScreenLockDetector();
 
-		boolean screenIsOn = isScreenOn(context);
-		boolean isUserAbsent = screenLockDetector.isUserAbsent(context);
-
-		// NOTE: if key guard is not locked and the user switches the screen
-		// back on NO user_present broadcast is received! Therefore only
-		// switch off if locked.
-		if (!isUserAbsent || screenIsOn) {
-			String deviceActiveMsg = "";
-
-			if (screenIsOn) {
-				deviceActiveMsg = "Interval switch-off skipped (screen is ON)";
-			} else if (!isUserAbsent) {
-				deviceActiveMsg = "Interval switch-off skipped (keyguard is not yet locked)";
-			}
-
-			// Special rules if both intervalWifi and intervalMobData: keep only
+		if (SkipIntervalSwitchOff(context)) {
+						// Special rules if both intervalWifi and intervalMobData: keep only
 			// one sensor active
 			if (intervalMobData && ConnectionUtils.isWifiConnected(context)) {
 				ConnectionUtils.toggleMobileData(context, false);
-				UserLog.log(
-						TAG,
-						context,
-						"Interval/Unlock policy switch-off: Ensured mobile data is off because Wi-Fi is already connected");
+				UserLog.log(TAG, context,
+						"...however, mobile data was turned off because Wi-Fi is already connected.");
 			} else if (intervalWifi
 					&& ConnectionUtils.isMobileDataConnected(context)) {
 				ConnectionUtils.toggleWifi(context, false);
 				UserLog.log(
 						TAG,
 						context,
-						"Interval/Unlock policy switch-off: Ensured Wi-Fi is off because mobile data is already connected");
-			} else {
-				UserLog.log(TAG, context, deviceActiveMsg);
+						"...however, Wi-Fi was turned off because mobile data is already connected.");
 			}
-
 			scheduleIntervalSwitchOff(context, reTestIntervalSec, bundle);
 			return;
 		}
@@ -831,6 +810,37 @@ public class NetworkScheduler {
 				}
 			}
 		}
+	}
+
+	private boolean SkipIntervalSwitchOff(Context context) {
+
+		ScreenLockDetector screenLockDetector = new ScreenLockDetector();
+
+		boolean screenIsOn = isScreenOn(context);
+
+		if (screenIsOn) {
+			UserLog.log(TAG, context, "Interval switch-off skipped (screen is ON)...");
+			return true;
+		}
+
+		// NOTE: if key guard is not locked and the user switches the screen
+		// back on NO user_present broadcast is received! Therefore only
+		// switch off if locked.
+		boolean isUserAbsent = screenLockDetector.isUserAbsent(context);
+
+		if (! isUserAbsent) {
+			UserLog.log(TAG, context, "Interval switch-off skipped (keyguard is not yet locked)...");
+			return true;
+		}
+
+		boolean isTelephoneIdle = ConnectionUtils.isTelephoneCallStateIdle(context);
+
+		if (! isTelephoneIdle) {
+			UserLog.log(TAG, context, "Interval switch-off skipped (phone is ringing or in phone call)...");
+			return true;
+		}
+
+		return false;
 	}
 
 	private boolean isWifiIntervalConnectActive(
