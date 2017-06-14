@@ -32,6 +32,7 @@ public class TimePickerFragment extends DialogFragment implements
     private byte _type;
 
     private boolean timeSet = false;
+    private boolean cancelDialog = false;
 
     // Factory method
     public static TimePickerFragment newInstance(long timeInMilliSeconds, byte type) {
@@ -86,13 +87,18 @@ public class TimePickerFragment extends DialogFragment implements
     @Override
     public void onCancel(DialogInterface dialog) {
         super.onCancel(dialog);
-        // This is called when the back button is pressed, but NOT when cancel is pressed -> remember if
-        //cancelDialog = true;
+        // This is required for some android versions (4.4, others?)
+        cancelDialog = true;
     }
 
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
+
+        if (cancelDialog) {
+            return;
+        }
+
         if (timeSet) {
 
             // work-around for onTimeSet being called always, even when
