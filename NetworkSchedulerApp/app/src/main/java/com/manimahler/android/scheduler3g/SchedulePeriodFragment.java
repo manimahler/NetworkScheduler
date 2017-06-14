@@ -782,11 +782,11 @@ public class SchedulePeriodFragment extends DialogFragment implements TimePicker
 				bottomBarColor, R.drawable.swap_active_underline);
 
 		Drawable[] layers = new Drawable[2];
-		layers[0] = icon;
-		layers[1] = underline;
+		layers[0] = underline;
+		layers[1] = icon;
 
 		LayerDrawable layerDrawable = new LayerDrawable(layers);
-		layerDrawable.setLayerInset(1, 4, 24, 4, 0);
+		layerDrawable.setLayerInset(0, 4, 24, 4, 0);
 
 		checkBox.setButtonDrawable(layerDrawable);
 	}
