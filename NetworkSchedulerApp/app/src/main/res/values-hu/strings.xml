@@ -122,8 +122,7 @@
     <string name="pref_summary_logging_delete">Naplófájl törlése (%sKB)</string>
     <string name="log_file_deleted">Log file deleted</string>
 
-    <!-- TODO -->
-    <string name="change_ringer_granted">Permission granted, you can now change the ringer mode</string>
-    <string name="change_ringer_denied">Permission to change ringer mode was denied. Ringer mode cannot be changed!</string>
+    <string name="change_ringer_granted">A csengetési mód megváltoztatásának lehetősége engedélyezve. A csengetési mód változtatható.</string>
+    <string name="change_ringer_denied">A csengetési mód megváltoztatásának engedélyezése megtagadva. A csengetési mód nem változtatható.</string>
 
 </resources>
