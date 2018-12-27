@@ -14,7 +14,7 @@ import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
-import junit.framework.Assert;
+
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -515,9 +515,6 @@ public class ConnectionUtils {
 
         Method setMobileDataEnabledMethod = telephonyService.getClass()
                 .getDeclaredMethod("setDataEnabled", boolean.class);
-
-        Assert.assertNotNull("setMobileDataEnabledMethod not found",
-                setMobileDataEnabledMethod);
 
         setMobileDataEnabledMethod.invoke(telephonyService,
                 mobileDataEnabled);

@@ -4,10 +4,6 @@
     android:versionCode="20"
     android:versionName="1.9" >
 
-    <uses-sdk
-        android:minSdkVersion="9"
-        android:targetSdkVersion="25" />
-
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
