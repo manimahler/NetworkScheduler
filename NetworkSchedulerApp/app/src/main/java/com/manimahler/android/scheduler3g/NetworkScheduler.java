@@ -1,10 +1,5 @@
 package com.manimahler.android.scheduler3g;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -23,6 +18,14 @@ import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.util.Log;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class NetworkScheduler {
 
@@ -51,7 +54,7 @@ public class NetworkScheduler {
 	private static final int UNLOCK_POLICY_SWITCH_ON_NEVER = 1;
 	private static final int UNLOCK_POLICY_SWITCH_ON_WHEN_ACTIVE = 2;
 	private static final int UNLOCK_POLICY_SWITCH_ON_ALWAYS = 3;
-	
+
 	public enum NetworkType {
 		WiFi, MobileData, Bluetooth, Volume
 	}
@@ -659,7 +662,7 @@ public class NetworkScheduler {
 		if (!intervalWifi && !intervalMobData && !intervalBt) {
 			return;
 		}
-
+		
 		int connectTimeSec = (int) (60 * settings.get_connectDuration());
 
 		scheduleIntervalSwitchOff(
@@ -917,14 +920,19 @@ public class NetworkScheduler {
 				intervalSeconds);
 	}
 
-	private void scheduleIntervalSwitchOff(Context context, int connectTimeSec,
-			Bundle extras) {
+	private void scheduleIntervalSwitchOff(final Context context, int connectTimeSec,
+										   final Bundle extras) {
 
-		PendingIntent intervalOffIntent = getIntervalIntent(context,
-				ACTION_INTERVAL_OFF, extras);
+		ScheduledExecutorService scheduler =
+				Executors.newSingleThreadScheduledExecutor();
 
-		// Setting an exact alarm here has made the app unresponsive in android 6.0 emulator
-		AlarmUtils.setInexactAlarmSeconds(context, intervalOffIntent, connectTimeSec);
+		scheduler.schedule(
+				(new Runnable() {
+					public void run() {
+						SchedulerSettings settings = PersistenceUtils.readSettings(context);
+						intervalSwitchOff(context, settings, extras);
+					}
+				}), connectTimeSec, TimeUnit.SECONDS);
 	}
 
 	private void endToggleSensors(Context context, ScheduledPeriod period,
