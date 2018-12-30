@@ -57,6 +57,8 @@
     <string name="disabled_period_checking">Ez az esemény aktív, %1$s tiltva.</string>
 
     <!-- Switch-off notifications when screen is on -->
+    <string name="notification_channel_name_switchoff">Hálózati kapcsolat megszakítása</string>
+    <string name="notification_channel_name_autodelay">Bekapcsolva tartás aktív képernyőnél</string>
     <string name="switch_off_notification_title">Hálózati kapcsolat megszakítása</string>
     <string name="switch_off_shortly">"Kapcsolat bontása: "</string>
     <string name="not_today">Ma nem</string>

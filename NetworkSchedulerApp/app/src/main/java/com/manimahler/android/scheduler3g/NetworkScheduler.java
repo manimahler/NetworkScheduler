@@ -1038,6 +1038,8 @@ public class NetworkScheduler {
 	private void makeAutoDelayNotification(Context context,
 			ScheduledPeriod period, SchedulerSettings settings) {
 
+		String channelId = NotificationUtils.createNotificationChannelAutoDelay(context);
+
 		ArrayList<String> sensorsToSwitchOff = getEnabledSensorsInPeriodArrayList(
 				period, context);
 
@@ -1087,7 +1089,7 @@ public class NetworkScheduler {
 		}
 
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(
-				context)
+				context, channelId)
 				.setSmallIcon(R.drawable.clock_notification)
 				.setLargeIcon(bm)
 				.setContentTitle(title)
@@ -1119,6 +1121,8 @@ public class NetworkScheduler {
 
 	private void makeDisableNotification(Context context,
 			ScheduledPeriod period, SchedulerSettings settings) {
+
+		String channelId = NotificationUtils.createNotificationChannelSwitchOff(context);
 
 		String tickerText = getSwitchOffTickerText(period, context);
 
@@ -1166,7 +1170,7 @@ public class NetworkScheduler {
 				DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE);
 
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(
-				context)
+				context, channelId)
 				.setSmallIcon(R.drawable.clock_notification)
 				.setLargeIcon(bm)
 				.setContentTitle(

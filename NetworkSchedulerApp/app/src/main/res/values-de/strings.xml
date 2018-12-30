@@ -61,9 +61,10 @@
     <string name="switch_off_delayed_until">Abschaltung aufgeschoben bis %s</string>
     <string name="switch_off_auto_delayed_until">Aufgeschoben bis %s, da Gerät verwendet wird</string>
     <string name="switch_off_skipped_today">Abschaltung wird heute nicht durchgeführt</string>
-    
 
-
+    <!-- Switch-off notifications when screen is on -->
+    <string name="notification_channel_name_switchoff">Abschaltung</string>
+    <string name="notification_channel_name_autodelay">Abschaltung automatisch aufschieben</string>
     <string name="switch_off_notification_title">Netzwerk Trennung</string>
     <string name="not_today">heute nicht</string>
     <string name="switch_off_now">jetzt trennen</string>
