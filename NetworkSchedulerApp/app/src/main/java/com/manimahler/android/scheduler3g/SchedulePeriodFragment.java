@@ -25,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -468,10 +469,12 @@ public class SchedulePeriodFragment extends DialogFragment implements TimePicker
 
 		if (cancelButton != null) {
 			cancelButton.setBackgroundResource(R.drawable.dialog_button);
+
+			ViewParent bottomBar = cancelButton.getParent();
+			((View)bottomBar).setBackgroundResource(R.drawable.dialog_button);
 		}
 
 		if (okButton != null) {
-			// okButton.setBackgroundColor(getResources().getColor(R.color.button_blue));
 			okButton.setBackgroundResource(R.drawable.dialog_button);
 		}
 	}
