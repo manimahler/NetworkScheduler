@@ -35,7 +35,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/FullscreenTheme" > <!-- alternative: @style/Theme.Transparent -->
+            android:theme="@style/AppTheme" > <!-- alternative: @style/Theme.Transparent -->
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
 

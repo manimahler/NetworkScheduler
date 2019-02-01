@@ -1,13 +1,12 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    
-    android:layout_width="fill_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal" >
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
 
-    <ToggleButton
+    <android.support.v7.widget.SwitchCompat
         android:id="@+id/globalSwitch"
+        android:theme="@style/ToggleSwitchTheme"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:checkable="true" />
+        android:text="" />
 
-</RelativeLayout>
+</LinearLayout>

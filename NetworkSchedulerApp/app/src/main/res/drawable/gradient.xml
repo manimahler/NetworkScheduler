@@ -7,6 +7,4 @@
         android:angle="45"
         android:dither="true"
         />
-
-    
 </shape>

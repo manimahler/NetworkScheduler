@@ -18,6 +18,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -47,7 +48,7 @@ import android.widget.Toast;
  * start right away after a device reboot?
  */
 
-public class MainActivity extends FragmentActivity implements
+public class MainActivity extends AppCompatActivity implements
 		OnPeriodUpdatedListener {
 
 	private static final String TAG = MainActivity.class.getSimpleName();
@@ -66,14 +67,17 @@ public class MainActivity extends FragmentActivity implements
 		initializePersistedFields();
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-			ActionBar actionBar = getActionBar();
+			android.support.v7.app.ActionBar actionBar = getSupportActionBar();
 			actionBar.setDisplayShowTitleEnabled(true);
 			LinearLayout globalSwitch = (LinearLayout) getLayoutInflater()
 					.inflate(R.layout.actionbar_switch, null);
 
-			ActionBar.LayoutParams lp = new ActionBar.LayoutParams(
+			android.support.v7.app.ActionBar.LayoutParams lp =
+					new android.support.v7.app.ActionBar.LayoutParams(
 					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
 					Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+
+			lp.setMargins(0, 0, 30, 0);
 
 			actionBar.setCustomView(globalSwitch, lp);
 
