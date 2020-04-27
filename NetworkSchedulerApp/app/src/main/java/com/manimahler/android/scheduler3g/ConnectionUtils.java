@@ -380,7 +380,7 @@ public class ConnectionUtils {
         } else {
             result = hasMobileDataSensor &&
                     (checkCanToggleMobileDataAsSystemAppPermission(context)
-                            || RootCommandExecuter.canRunRootCommands());
+                            || RootCommandExecuter.isDeviceRooted());
         }
 
         _canToggleMobileData = result;
@@ -450,10 +450,8 @@ public class ConnectionUtils {
                     .get(conman);
             final Class<?> iConnectivityManagerClass = Class
                     .forName(iConnectivityManager.getClass().getName());
-            final Method setMobileDataEnabledMethod = iConnectivityManagerClass
-                    .getDeclaredMethod("setMobileDataEnabled", Boolean.TYPE);
 
-            setMobileDataEnabledMethod.setAccessible(true);
+            Method setMobileDataEnabledMethod;
 
             if (enable) {
                 UserLog.log(context, "Enabling Mobile Data");
@@ -461,8 +459,30 @@ public class ConnectionUtils {
                 UserLog.log(context, "Disabling Mobile Data");
             }
 
-            setMobileDataEnabledMethod.invoke(iConnectivityManager, enable);
+            try
+            {
+                setMobileDataEnabledMethod = iConnectivityManagerClass
+                        .getDeclaredMethod("setMobileDataEnabled", Boolean.TYPE);
 
+                setMobileDataEnabledMethod.setAccessible(true);
+
+                setMobileDataEnabledMethod.invoke(iConnectivityManager, enable);
+            }
+            catch (NoSuchMethodException e)
+            {
+                UserLog.log(context, "NoSuchMethodException for setMobileDataEnabled, trying the cyanogenmod way...");
+
+                Class[] cArg = new Class[2];
+                cArg[0] = String.class;
+                cArg[1] = Boolean.TYPE;
+                setMobileDataEnabledMethod = iConnectivityManagerClass.getDeclaredMethod("setMobileDataEnabled", cArg);
+
+                Object[] pArg = new Object[2];
+                pArg[0] = context.getPackageName();
+                pArg[1] = enable;
+                setMobileDataEnabledMethod.setAccessible(true);
+                setMobileDataEnabledMethod.invoke(iConnectivityManager, pArg);
+            }
         } catch (Exception e) {
             Log.e(TAG, "Error switching mobile data ", e);
             UserLog.log(context, "Error changing mobile data state: " + e.getMessage());
