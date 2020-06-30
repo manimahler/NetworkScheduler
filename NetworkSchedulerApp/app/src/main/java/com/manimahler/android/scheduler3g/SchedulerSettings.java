@@ -72,9 +72,9 @@ public class SchedulerSettings {
 		
 		_intervalConnectWifi = preferences.getBoolean(INTERVAL_CONNECT_WIFI, false);
 		_intervalConnectMobileData = preferences.getBoolean(INTERVAL_CONNECT_MOBILEDATA, false);
-				
+
 		_connectInterval = tryReadIntLarger0(preferences, CONNECT_INTERVAL, 20);
-		_connectDuration = tryReadDoubleLarger0(preferences, CONNECT_DURATION, 1);
+		_connectDuration = tryReadDoubleLarger0(preferences, CONNECT_DURATION, 0.25);
 		
 		_keepWifiConnected = preferences.getBoolean(INTERVAL_CONNECT_WIFI_KEEP, false);
 		_suspendIntervalConnectWhenCharging = preferences.getBoolean(INTERVAL_CONNECT_SUSPEND_WHEN_CHARGING, false);

@@ -48,11 +48,9 @@ public class StartStopBroadcastReceiver extends BroadcastReceiver {
 
 			SchedulerSettings settings = PersistenceUtils.readSettings(context);
 
-			// do not use == for string comparison in Java!
+			// interval-off is now handled by runnable.
 			if (action.equals(NetworkScheduler.ACTION_INTERVAL_ON)) {
 				scheduler.intervalSwitchOn(context, settings);
-			} else if (action.equals(NetworkScheduler.ACTION_INTERVAL_OFF)) {
-				scheduler.intervalSwitchOff(context, settings, bundle);
 			} else if (action.equals(NetworkScheduler.ACTION_OFF)) {
 				trySwitchOffConnections(context, periodId, stopTime, false);
 			} else if (action.equals(NetworkScheduler.ACTION_OFF_DELAYED)) {
