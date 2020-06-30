@@ -127,4 +127,6 @@
     <string name="change_ringer_granted">A csengetési mód megváltoztatásának lehetősége engedélyezve. A csengetési mód változtatható.</string>
     <string name="change_ringer_denied">A csengetési mód megváltoztatásának engedélyezése megtagadva. A csengetési mód nem változtatható.</string>
 
+    <!-- Snack bar -->
+    <string name="snack_whitelist_from_optimizations">A helyes ütemezés érdekében zárja ki a Hálózati ütemezőt az akkumulátoroptimalizálás az Android beállításokban.</string>
 </resources>

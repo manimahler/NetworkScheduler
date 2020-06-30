@@ -130,4 +130,6 @@
     <string name="change_ringer_granted">Berechtigung erteilt, Ton kann jetzt aktiviert werden</string>
     <string name="change_ringer_denied">Berechtigung verweigert, Ton kann nicht aktiviert werden!</string>
 
+    <!-- Snack bar -->
+    <string name="snack_whitelist_from_optimizations">Für korrekte Funktionsweise bitte in den Android Einstellungen die Akku-Optimierung für Network Scheduler deaktivieren.</string>
 </resources>

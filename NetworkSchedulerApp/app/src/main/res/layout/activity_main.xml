@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinator"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/background"
+    android:orientation="vertical" >
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainview"
@@ -6,6 +14,8 @@
     android:layout_height="fill_parent"
     android:background="@drawable/background"
     android:orientation="vertical" >
+
+
     <RelativeLayout 
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -23,8 +33,11 @@
         android:dividerHeight="15dp" 
         android:paddingBottom="48dp"
     	android:clipToPadding="false" />
+
+
+
     </RelativeLayout>
-    
+
 
     <RelativeLayout
         android:id="@+id/bottom_bar"
@@ -53,3 +66,4 @@
     </RelativeLayout>
 
 </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

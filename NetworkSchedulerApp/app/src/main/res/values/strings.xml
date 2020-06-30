@@ -139,4 +139,6 @@
     <string name="change_ringer_granted">Permission granted, you can now change the ringer mode</string>
     <string name="change_ringer_denied">Permission to change ringer mode was denied. Ringer mode cannot be changed!</string>
 
+    <!-- Snack bar -->
+    <string name="snack_whitelist_from_optimizations">For correct scheduling exclude Network Scheduler from battery optimizations in Android Settings</string>
 </resources>
