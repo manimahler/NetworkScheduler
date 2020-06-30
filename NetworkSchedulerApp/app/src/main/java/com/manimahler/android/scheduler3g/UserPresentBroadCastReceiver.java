@@ -24,7 +24,7 @@ public class UserPresentBroadCastReceiver extends BroadcastReceiver {
 				startSensorsInIntervalConnect(context);
 			}
 		} catch (Exception e) {
-			Log.e(USER_PRESENT_ACTION, "Error handling user-present event", e);
+			Log.e("USER_PRESENT_ACTION", "Error handling user-present event", e);
 		}
 	}
 

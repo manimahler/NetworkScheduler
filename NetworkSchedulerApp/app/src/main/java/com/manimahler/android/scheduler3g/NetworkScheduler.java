@@ -1069,11 +1069,7 @@ public class NetworkScheduler {
             return true;
         }
 
-        if (period.is_volume()) {
-            return true;
-        }
-
-        return false;
+        return period.is_volume();
     }
 
     private void makeAutoDelayNotification(Context context,
@@ -1366,11 +1362,7 @@ public class NetworkScheduler {
             return false;
         }
 
-        if (networkType == NetworkType.Volume && !forPeriod.is_volume()) {
-            return false;
-        }
-
-        return true;
+        return networkType != NetworkType.Volume || forPeriod.is_volume();
     }
 
     private ScheduledPeriod getLastActivatedActivePeriod(
