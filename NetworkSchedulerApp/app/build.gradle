@@ -1,12 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    // SAD NOTE: setWifiEnabled is deprecated in API level 29. This is most likely the end.
+    compileSdkVersion 28
 
     defaultConfig {
         applicationId "com.manimahler.android.scheduler3g"
         minSdkVersion 16
-        targetSdkVersion 29
+        targetSdkVersion 28
 
         testApplicationId "com.manimahler.android.scheduler3g.test"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
