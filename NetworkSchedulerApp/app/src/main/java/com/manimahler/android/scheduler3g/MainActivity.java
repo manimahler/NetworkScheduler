@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -166,15 +167,24 @@ public class MainActivity extends AppCompatActivity implements
                 String packageName = getPackageName();
                 PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 
-                if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+                boolean askForBatteryOptimzierExclusion = !pm.isIgnoringBatteryOptimizations(packageName);
+
+                if (askForBatteryOptimzierExclusion) {
                     View contextView = findViewById(R.id.mainview);
 
-                    Snackbar snackbar = Snackbar.make(contextView, R.string.snack_whitelist_from_optimizations, Snackbar.LENGTH_INDEFINITE);
+                    final Snackbar snackbar = Snackbar.make(contextView, R.string.snack_whitelist_from_optimizations, Snackbar.LENGTH_INDEFINITE);
 
                     View snackbarView = snackbar.getView();
                     TextView snackTextView = (TextView) snackbarView.findViewById(R.id.snackbar_text);
 
-                    snackTextView.setMaxLines(4);
+                    snackTextView.setMaxLines(7);
+
+                    snackbar.setAction(android.R.string.ok, new View.OnClickListener(){
+                        @Override
+                        public void onClick(View v) {
+                            snackbar.dismiss();
+                        }
+                    });
 
                     snackbar.show();
                 }

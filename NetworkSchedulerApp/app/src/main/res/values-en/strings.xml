@@ -124,5 +124,5 @@
     <string name="change_ringer_denied">Permission to change ringer mode was denied. Ringer mode cannot be changed!</string>
 
     <!-- Snack bar -->
-    <string name="snack_whitelist_from_optimizations">For correct scheduling exclude Network Scheduler from battery optimizations in Android Settings.</string>
+    <string name="snack_whitelist_from_optimizations">For correct scheduling exclude Network Scheduler from battery optimizations in Android Settings.\nAdditional permissions required are \'run at startup\' for auto-start after reboot and pop-up notifications for switch-off notifications.</string>
 </resources>
