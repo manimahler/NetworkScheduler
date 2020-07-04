@@ -228,7 +228,7 @@ public class MainActivity extends AppCompatActivity implements
         ScheduledPeriod newPeriod = new ScheduledPeriod(true, start, end,
                 weekDays);
 
-        showPeriodDetails(newPeriod);
+        _adapter.showPeriodDetails(newPeriod);
     }
 
     public void onGlobalOnClicked(CompoundButton buttonView, boolean isChecked) {
@@ -353,7 +353,7 @@ public class MainActivity extends AppCompatActivity implements
 
                     Log.d(TAG, "Edit pressed");
 
-                    showPeriodDetails(selectedPeriod);
+                    _adapter.showPeriodDetails(selectedPeriod);
                     return true;
                 case R.id.activate_now:
                     UserLog.log(this, "Manual activation for period "
@@ -498,10 +498,12 @@ public class MainActivity extends AppCompatActivity implements
             public void onItemClick(AdapterView<?> parent, final View view,
                                     int position, long id) {
 
+                // NOTE: This is not working any more once there are clickable buttons on the view
+                //  item.
                 Log.d(TAG, "Item clicked at " + position);
 
                 ScheduledPeriod item = _adapter.getItem(position);
-                showPeriodDetails(item);
+                _adapter.showPeriodDetails(item);
             }
         });
 
@@ -744,14 +746,6 @@ public class MainActivity extends AppCompatActivity implements
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-    }
-
-    private void showPeriodDetails(ScheduledPeriod item) {
-        FragmentManager fm = getSupportFragmentManager();
-        SchedulePeriodFragment schedulePeriodFragment = SchedulePeriodFragment
-                .newInstance(item);
-
-        schedulePeriodFragment.show(fm, "fragment_schedule_period");
     }
 
     public void showIntervalConnectExplanation(NetworkType radio) {

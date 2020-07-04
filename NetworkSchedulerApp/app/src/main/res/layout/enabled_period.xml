@@ -125,6 +125,7 @@
 
     <LinearLayout
         android:id="@+id/bottomButtons"
+        android:clickable="false"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -141,6 +142,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:focusable="false"
+            android:layout_marginRight="8dp"
             android:maxHeight="18dip"
             android:maxWidth="18dip"
             android:minHeight="18dip"
@@ -152,10 +154,34 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:focusable="false"
+            android:layout_marginRight="8dp"
             android:maxHeight="18dip"
             android:maxWidth="18dip"
             android:minHeight="18dip"
             android:minWidth="18dip" />
+
+        <ImageButton
+            android:id="@+id/buttonEdit"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@drawable/ic_action_edit"
+            android:focusable="false"
+            android:maxWidth="18dip"
+            android:maxHeight="18dip"
+            android:minWidth="18dip"
+            android:minHeight="18dip" />
+
+        <ImageButton
+            android:id="@+id/buttonContextMenu"
+            style="?android:attr/actionOverflowButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:maxWidth="18dip"
+            android:maxHeight="18dip"
+            android:minWidth="18dip"
+            android:minHeight="18dip" />
     </LinearLayout>
 
 </RelativeLayout>

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,32 +38,50 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		LayoutInflater inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View rowView = inflater.inflate(R.layout.enabled_period, parent, false);
+		final View rowView = inflater.inflate(R.layout.enabled_period, parent, false);
 
-		ScheduledPeriod period = values.get(position);
+		final ScheduledPeriod period = values.get(position);
 
-		View button = rowView.findViewById(R.id.buttonOn);
-		if (period.is_active()) {
-
-			// change to setBackground once support for < SDK v16 is dropped.
-			button.setBackgroundDrawable(context.getResources().getDrawable(
-					R.drawable.led_red));
-		} else {
-			button.setBackgroundColor(context.getResources().getColor(
-					R.color.transparent));
-		}
-
-		View skip = rowView.findViewById(R.id.buttonSkip);
+		View skipBtn = rowView.findViewById(R.id.buttonSkip);
 
 		if (period.is_skipped()) {
 
 			// change to setBackground once support for < SDK v16 is dropped.
-			skip.setBackgroundDrawable(context.getResources().getDrawable(
+			skipBtn.setBackgroundDrawable(context.getResources().getDrawable(
 					R.drawable.ic_action_next));
 		} else {
-			skip.setBackgroundColor(context.getResources().getColor(
+			skipBtn.setBackgroundColor(context.getResources().getColor(
 					R.color.transparent));
 		}
+
+		View periodOnLedBtn = rowView.findViewById(R.id.buttonOn);
+		if (period.is_active()) {
+
+			// change to setBackground once support for < SDK v16 is dropped.
+			periodOnLedBtn.setBackgroundDrawable(context.getResources().getDrawable(
+					R.drawable.led_red));
+		} else {
+			periodOnLedBtn.setBackgroundColor(context.getResources().getColor(
+					R.color.transparent));
+		}
+
+		View showPeriodBtn = rowView.findViewById(R.id.buttonEdit);
+
+		showPeriodBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				showPeriodDetails(period);
+			}
+		});
+
+		View showContextMenuBtn = rowView.findViewById(R.id.buttonContextMenu);
+
+		showContextMenuBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				rowView.showContextMenu();
+			}
+		});
 
 		if (period.get_name() != null && !period.get_name().isEmpty()) {
 			TextView name = (TextView) rowView.findViewById(R.id.TextViewName);
@@ -160,6 +180,13 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 
 	public ArrayList<ScheduledPeriod> getPeriods() {
 		return values;
+	}
+
+	public void showPeriodDetails(ScheduledPeriod item) {
+		FragmentManager fm = ((FragmentActivity)context).getSupportFragmentManager();
+		SchedulePeriodFragment schedulePeriodFragment = SchedulePeriodFragment.newInstance(item);
+
+		schedulePeriodFragment.show(fm, "fragment_schedule_period");
 	}
 
 	public void updateItem(ScheduledPeriod item) {
