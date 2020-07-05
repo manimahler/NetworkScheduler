@@ -363,12 +363,12 @@ public class PeriodListAdapter extends ArrayAdapter<ScheduledPeriod> {
 
 			if (period.is_scheduleStop()) {
 				stopView.setText(stopTime);
-				stopView.setTextColor(tint);
-				offView.setTextColor(tint);
+				stopView.setTextColor(context.getResources().getColor(tint));
+				offView.setTextColor(context.getResources().getColor(tint));
 			} else {
 				stopView.setText(null);
 				offView.setText("no switching off");
-				offView.setTextColor(tint);
+				offView.setTextColor(context.getResources().getColor(tint));
 			}
 		}
 	}
