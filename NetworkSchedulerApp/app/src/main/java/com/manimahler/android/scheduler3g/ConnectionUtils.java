@@ -268,12 +268,12 @@ public class ConnectionUtils {
 
         if (enable && !wifiManager.isWifiEnabled()) {
             UserLog.log(context, "Enabling Wi-Fi");
-            wifiManager.setWifiEnabled(enable);
+            ChangeWifiState(context, wifiManager, enable);
         }
 
         if (!enable && wifiManager.isWifiEnabled()) {
             UserLog.log(context, "Disabling Wi-Fi");
-            wifiManager.setWifiEnabled(enable);
+            ChangeWifiState(context, wifiManager, enable);
         }
 
         // This entire carefulness did not really resolve the KITKAT bug and
@@ -316,22 +316,19 @@ public class ConnectionUtils {
         // }
     }
 
-    //
-    // private static void setWifiEnabled(WifiManager wifiManager, boolean
-    // enable) {
-    //
-    //
-    // Log.d("ConnectionUtils", "Setting Wifi state change flag");
-    //
-    // // NOTE: setWifiEnabled returns long before the broadcast from the system
-    // // is received. So there is no point re-setting the flag in the finally
-    // clause here.
-    // WifiStateBroadcastReceiver.ChangingWifiState.set(true);
-    // boolean success = wifiManager.setWifiEnabled(enable);
-    //
-    // Log.d("ConnectionUtils", "Wifi toggle success: " + success);
-    //
-    // }
+    private static void ChangeWifiState(Context context, WifiManager wifiManager, boolean enable) {
+
+        boolean success = wifiManager.setWifiEnabled(enable);
+
+        Log.d("ConnectionUtils", "Wifi toggle success: " + success);
+
+        if (!success){
+            // Who knows how long until android allows this (deprecated) method to work.
+            // It already now returns false when targeting SDK Level 29!
+
+            UserLog.log(context, "WARNING: WiFi State was not changed! This can happen e.g. due to airplane mode.");
+        }
+    }
 
     public static void toggleBluetooth(Context context, boolean enable) {
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
@@ -552,9 +549,9 @@ public class ConnectionUtils {
 
             String command = "svc data " + (enable ? "enable" : "disable");
 
-            Log.i(TAG, "Executing on the command line: " + command.toString());
+            Log.i(TAG, "Executing on the command line: " + command);
 
-            int returnValue = RootCommandExecuter.execute(command.toString());
+            int returnValue = RootCommandExecuter.execute(command);
 
             if (returnValue != 0) {
                 UserLog.log(
