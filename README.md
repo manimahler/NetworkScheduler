@@ -1,4 +1,5 @@
-ThreeGScheduler
-===============
+Network Scheduler
+=================
 
-Enable and disable mobile data connection on an android device at specific times.
+Android app that schedules enabling/disabling of Wi-Fi, Bluetooth, mobile data (root only!) and ringer sound.
+Store listing: https://play.google.com/store/apps/details?id=com.manimahler.android.scheduler3g
